@@ -9,7 +9,6 @@
     <Property Name="ShopId" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="CheckCode" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="CheckTypeId" Type="int" />
-    <Property Name="PhotoName" Type="nvarchar(max)" />
     <Property Name="Remark" Type="nvarchar(max)" />
     <Property Name="OtherProperty" Type="nvarchar(max)" />
     <Property Name="Score" Type="decimal" Precision="19" Scale="2" />
@@ -18,6 +17,19 @@
     <Property Name="ModifyDateTime" Type="datetime" />
     <Property Name="InUserID" Type="nvarchar" MaxLength="50" />
     <Property Name="InDateTime" Type="datetime" />
+  </EntityType>
+  <EntityType Name="AnswerPhoto">
+    <Key>
+      <PropertyRef Name="AnswerId" />
+      <PropertyRef Name="PhotoId" />
+    </Key>
+    <Property Name="AnswerId" Type="bigint" Nullable="false" />
+    <Property Name="PhotoId" Type="int" Nullable="false" />
+    <Property Name="PhotoNameServer" Type="nvarchar" MaxLength="500" />
+    <Property Name="InUserId" Type="nvarchar" MaxLength="50" />
+    <Property Name="InDateTime" Type="datetime" />
+    <Property Name="ModifyUserId" Type="nvarchar" MaxLength="50" />
+    <Property Name="ModifyDateTime" Type="datetime" />
   </EntityType>
   <EntityType Name="CheckType">
     <Key>
@@ -131,6 +143,7 @@
   </EntityType>
   <EntityContainer Name="InventoryStoreContainer">
     <EntitySet Name="Answer" EntityType="Self.Answer" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AnswerPhoto" EntityType="Self.AnswerPhoto" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CheckType" EntityType="Self.CheckType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Note" EntityType="Self.Note" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="OtherProperty" EntityType="Self.OtherProperty" Schema="dbo" store:Type="Tables" />

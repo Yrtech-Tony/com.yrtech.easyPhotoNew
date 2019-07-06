@@ -4,7 +4,7 @@ using com.yrtech.InventoryAPI.Common;
 using System.Collections.Generic;
 using System;
 using com.yrtech.InventoryDAL;
-using com.yrtech.InventoryAPI.DTO.Master;
+using com.yrtech.InventoryAPI.DTO;
 
 namespace com.yrtech.InventoryAPI.Controllers
 {

@@ -54,6 +54,9 @@
     <Compile Include="Answer.cs">
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>
+    <Compile Include="AnswerPhoto.cs">
+      <DependentUpon>InventoryDAL.tt</DependentUpon>
+    </Compile>
     <Compile Include="CheckType.cs">
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>

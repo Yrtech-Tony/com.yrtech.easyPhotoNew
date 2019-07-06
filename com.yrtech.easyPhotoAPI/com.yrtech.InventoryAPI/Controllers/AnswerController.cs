@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using com.yrtech.InventoryDAL;
 using com.yrtech.InventoryAPI.Controllers;
+using com.yrtech.InventoryAPI.DTO;
 
 namespace com.yrtech.SurveyAPI.Controllers
 {
@@ -20,7 +21,11 @@ namespace com.yrtech.SurveyAPI.Controllers
         {
             try
             {
-                List<Answer> answerList = answerService.GetShopAnswerList(projectId,shopId,checkCode,checkTypeId,photoCheck,addCheck);
+                List<AnswerDto> answerList = answerService.GetShopAnswerList(projectId,shopId,checkCode,checkTypeId,photoCheck,addCheck);
+                foreach (AnswerDto answerDto in answerList)
+                {
+                    answerDto.answerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString());
+                }
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(answerList) };
             }
             catch (Exception ex)
@@ -31,11 +36,25 @@ namespace com.yrtech.SurveyAPI.Controllers
         }
         [HttpPost]
         [Route("Answer/SaveShopAnswer")]
-        public APIResult SaveShopAnswer(Answer answer)
+        public APIResult SaveShopAnswer(AnswerDto answer)
         {
             try
             {
                 answerService.SaveShopAnswer(answer);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
+        [HttpPost]
+        [Route("Answer/SaveShopAnswerPhoto")]
+        public APIResult SaveShopAnswer(AnswerPhotoDto photo)
+        {
+            try
+            {
+                AnswerDto answer = answerService.GetShopAnswerList(photo.ProjectId.ToString(), photo.ShopId.ToString(), photo.CheckCode, "", "", "")[0];
                 return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)

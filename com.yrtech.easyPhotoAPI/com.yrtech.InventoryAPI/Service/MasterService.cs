@@ -1,8 +1,5 @@
-﻿using com.yrtech.InventoryAPI.Common;
-using com.yrtech.InventoryAPI.DTO;
-using com.yrtech.InventoryAPI.DTO.Master;
+﻿using com.yrtech.InventoryAPI.DTO;
 using com.yrtech.InventoryDAL;
-using com.yrtech.SurveyAPI;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;

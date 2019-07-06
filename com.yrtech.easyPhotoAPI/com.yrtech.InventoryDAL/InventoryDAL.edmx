@@ -14,7 +14,6 @@
           <Property Name="ShopId" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="CheckCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="CheckTypeId" Type="int" />
-          <Property Name="PhotoName" Type="nvarchar(max)" />
           <Property Name="Remark" Type="nvarchar(max)" />
           <Property Name="OtherProperty" Type="nvarchar(max)" />
           <Property Name="Score" Type="decimal" Precision="19" Scale="2" />
@@ -23,6 +22,19 @@
           <Property Name="ModifyDateTime" Type="datetime" />
           <Property Name="InUserID" Type="nvarchar" MaxLength="50" />
           <Property Name="InDateTime" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AnswerPhoto">
+          <Key>
+            <PropertyRef Name="AnswerId" />
+            <PropertyRef Name="PhotoId" />
+          </Key>
+          <Property Name="AnswerId" Type="bigint" Nullable="false" />
+          <Property Name="PhotoId" Type="int" Nullable="false" />
+          <Property Name="PhotoNameServer" Type="nvarchar" MaxLength="500" />
+          <Property Name="InUserId" Type="nvarchar" MaxLength="50" />
+          <Property Name="InDateTime" Type="datetime" />
+          <Property Name="ModifyUserId" Type="nvarchar" MaxLength="50" />
+          <Property Name="ModifyDateTime" Type="datetime" />
         </EntityType>
         <EntityType Name="CheckType">
           <Key>
@@ -136,6 +148,7 @@
         </EntityType>
         <EntityContainer Name="InventoryStoreContainer">
           <EntitySet Name="Answer" EntityType="Self.Answer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AnswerPhoto" EntityType="Self.AnswerPhoto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CheckType" EntityType="Self.CheckType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Note" EntityType="Self.Note" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OtherProperty" EntityType="Self.OtherProperty" Schema="dbo" store:Type="Tables" />
@@ -155,8 +168,9 @@
           <EntitySet Name="UserInfo" EntityType="Inventory.UserInfo" />
           <EntitySet Name="UserInfoShop" EntityType="Inventory.UserInfoShop" />
           <EntitySet Name="PhotoList" EntityType="Inventory.PhotoList" />
-          <EntitySet Name="Answer" EntityType="Inventory.Answer" />
           <EntitySet Name="Note" EntityType="Inventory.Note" />
+          <EntitySet Name="Answer" EntityType="Inventory.Answer" />
+          <EntitySet Name="AnswerPhoto" EntityType="Inventory.AnswerPhoto" />
         </EntityContainer>
         <EntityType Name="CheckType">
           <Key>
@@ -254,25 +268,6 @@
           <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InDateTime" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="Answer">
-          <Key>
-            <PropertyRef Name="AnswerId" />
-          </Key>
-          <Property Name="AnswerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ProjectId" Type="Int32" Nullable="false" />
-          <Property Name="ShopId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CheckCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CheckTypeId" Type="Int32" />
-          <Property Name="PhotoName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="OtherProperty" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Score" Type="Decimal" Precision="19" Scale="2" />
-          <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
-          <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="InDateTime" Type="DateTime" Precision="3" />
-        </EntityType>
         <EntityType Name="Note">
           <Key>
             <PropertyRef Name="NoteID" />
@@ -282,6 +277,37 @@
           <Property Name="CheckTypeId" Type="Int32" Nullable="false" />
           <Property Name="NoteName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InDateTime" Type="DateTime" Precision="3" />
+          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Answer">
+          <Key>
+            <PropertyRef Name="AnswerId" />
+          </Key>
+          <Property Name="AnswerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectId" Type="Int32" Nullable="false" />
+          <Property Name="ShopId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CheckCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CheckTypeId" Type="Int32" />
+          <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OtherProperty" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Score" Type="Decimal" Precision="19" Scale="2" />
+          <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+          <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InDateTime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="AnswerPhoto">
+          <Key>
+            <PropertyRef Name="AnswerId" />
+            <PropertyRef Name="PhotoId" />
+          </Key>
+          <Property Name="AnswerId" Type="Int64" Nullable="false" />
+          <Property Name="PhotoId" Type="Int32" Nullable="false" />
+          <Property Name="PhotoNameServer" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InDateTime" Type="DateTime" Precision="3" />
           <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -391,26 +417,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Answer">
-            <EntityTypeMapping TypeName="Inventory.Answer">
-              <MappingFragment StoreEntitySet="Answer">
-                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-                <ScalarProperty Name="InUserID" ColumnName="InUserID" />
-                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-                <ScalarProperty Name="AddCheck" ColumnName="AddCheck" />
-                <ScalarProperty Name="Score" ColumnName="Score" />
-                <ScalarProperty Name="OtherProperty" ColumnName="OtherProperty" />
-                <ScalarProperty Name="Remark" ColumnName="Remark" />
-                <ScalarProperty Name="PhotoName" ColumnName="PhotoName" />
-                <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
-                <ScalarProperty Name="CheckCode" ColumnName="CheckCode" />
-                <ScalarProperty Name="ShopId" ColumnName="ShopId" />
-                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-                <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Note">
             <EntityTypeMapping TypeName="Inventory.Note">
               <MappingFragment StoreEntitySet="Note">
@@ -423,6 +429,38 @@
                 <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="NoteID" ColumnName="NoteID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Answer">
+            <EntityTypeMapping TypeName="Inventory.Answer">
+              <MappingFragment StoreEntitySet="Answer">
+                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+                <ScalarProperty Name="InUserID" ColumnName="InUserID" />
+                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+                <ScalarProperty Name="AddCheck" ColumnName="AddCheck" />
+                <ScalarProperty Name="Score" ColumnName="Score" />
+                <ScalarProperty Name="OtherProperty" ColumnName="OtherProperty" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
+                <ScalarProperty Name="CheckCode" ColumnName="CheckCode" />
+                <ScalarProperty Name="ShopId" ColumnName="ShopId" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AnswerPhoto">
+            <EntityTypeMapping TypeName="Inventory.AnswerPhoto">
+              <MappingFragment StoreEntitySet="AnswerPhoto">
+                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+                <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+                <ScalarProperty Name="PhotoNameServer" ColumnName="PhotoNameServer" />
+                <ScalarProperty Name="PhotoId" ColumnName="PhotoId" />
+                <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

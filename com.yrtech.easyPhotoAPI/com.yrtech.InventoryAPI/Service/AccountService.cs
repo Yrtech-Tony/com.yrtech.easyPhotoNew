@@ -1,6 +1,4 @@
 ﻿using com.yrtech.InventoryAPI.DTO;
-using com.yrtech.InventoryAPI.DTO.Account;
-using com.yrtech.InventoryDAL;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;

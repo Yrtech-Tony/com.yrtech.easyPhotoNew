@@ -1,4 +1,5 @@
 ﻿using com.yrtech.InventoryAPI.Common;
+using com.yrtech.InventoryAPI.DTO;
 using com.yrtech.InventoryDAL;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="allChk"></param>
         /// <param name="vinCode"></param>
         /// <returns></returns>
-        public List<Answer> GetShopAnswerList(string projectId, string shopId, string checkCode, string checkTypeId, string photoCheck, string addCheck)
+        public List<AnswerDto> GetShopAnswerList(string projectId, string shopId, string checkCode, string checkTypeId, string photoCheck, string addCheck)
         {
             if (projectId == null) projectId = "";
             if (shopId == null) shopId = "";
@@ -34,10 +35,11 @@ namespace com.yrtech.InventoryAPI.Service
                                                        new SqlParameter("@CheckTypeId", checkTypeId),
                                                         new SqlParameter("@PhotoCheck", photoCheck),
                                                         new SqlParameter("@AddCheck", addCheck)};
-            Type t = typeof(Answer);
+            Type t = typeof(AnswerDto);
             string sql = "";
-            sql = @"SELECT * 
-                    FROM Answer WHERE 1=1 ";
+            sql = @"SELECT *
+                    FROM Answer  
+                    WHERE 1=1 ";
             if (!string.IsNullOrEmpty(projectId))
             {
                 sql += " AND ProjectId = @ProjectId";
@@ -71,12 +73,49 @@ namespace com.yrtech.InventoryAPI.Service
             }
             
             sql += " Order By CheckTypeId, CheckCode";
-            return db.Database.SqlQuery(t, sql, para).Cast<Answer>().ToList();
+            return db.Database.SqlQuery(t, sql, para).Cast<AnswerDto>().ToList();
         }
-        public void SaveShopAnswer(Answer answer)
+        public List<AnswerPhotoDto> GetAnswerPhotoList(string answerId)
         {
-            if (answer.Remark == "请选择") answer.Remark = "";
-            // CommonHelper.log("ProjectCode:" + answer.ProjectCode + "ShopCode" + answer.ShopCode + "VinCode" + answer.VinCode + "Remark" + answer.Remark + "PhotoName" + answer.PhotoName );
+            if (answerId == null) answerId = "";
+            
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@AnswerId", answerId)
+                                                      };
+            Type t = typeof(AnswerPhotoDto);
+            string sql = "";
+            sql = @"SELECT A.ProjectId,A.ShopId,A.CheckCode,B.PhotoId,B.PhotoNameServer,C.PhotoName
+                    FROM Answer A INNER JOIN AnswerPhoto B ON A.AnswerId = B.AnswerId
+                                  INNER JOIN PhotoList C ON B.PhotoId = C.PhotoId
+                    WHERE 1=1 ";
+            if (!string.IsNullOrEmpty(answerId))
+            {
+                sql += " AND A.AnswerId = @AnswerId";
+            }
+            
+
+            sql += " Order By C.PhotoId";
+            return db.Database.SqlQuery(t, sql, para).Cast<AnswerPhotoDto>().ToList();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="answer"></param>
+        public void SaveShopAnswer(AnswerDto answerDto)
+        {
+            Answer answer = new Answer();
+            answer.AddCheck = answerDto.AddCheck;
+            answer.AnswerId = answerDto.AnswerId;
+            answer.CheckCode = answerDto.CheckCode;
+            answer.CheckTypeId = answerDto.CheckTypeId;
+            answer.InDateTime = DateTime.Now;
+            answer.InUserID = answerDto.InUserID;
+            answer.ModifyDateTime = DateTime.Now;
+            answer.ModifyUserId = answerDto.ModifyUserId;
+            answer.OtherProperty = answerDto.OtherProperty;
+            answer.ProjectId = answerDto.ProjectId;
+            answer.Remark = answerDto.Remark;
+            answer.Score = answerDto.Score;
+            answer.ShopId = answerDto.ShopId;
             Answer findOne = db.Answer.Where(x => (x.ProjectId == answer.ProjectId && x.ShopId == answer.ShopId && x.CheckCode == answer.CheckCode)).FirstOrDefault();
             if (findOne == null)
             {
@@ -86,10 +125,47 @@ namespace com.yrtech.InventoryAPI.Service
             }
             else
             {
-                findOne.PhotoName = answer.PhotoName;
+                //findOne.PhotoName = answer.PhotoName;
                 findOne.Remark = answer.Remark;
                 findOne.Score = answer.Score;
                 findOne.OtherProperty = answer.OtherProperty;
+
+            }
+            db.SaveChanges();
+
+            List<AnswerPhoto> answerPhotoList = new List<AnswerPhoto>();
+            foreach (AnswerPhotoDto photoDto in answerDto.answerPhotoList)
+            {
+                Answer answerfindOne = db.Answer.Where(x => (x.ProjectId == answer.ProjectId && x.ShopId == answer.ShopId && x.CheckCode == answer.CheckCode)).FirstOrDefault();
+
+                AnswerPhoto answerPhoto = new AnswerPhoto();
+                answerPhoto.AnswerId = answerfindOne.AnswerId;
+                answerPhoto.InDateTime = DateTime.Now;
+                answerPhoto.InUserId = answerDto.InUserID;
+                answerPhoto.ModifyDateTime = DateTime.Now;
+                answerPhoto.ModifyUserId = answerDto.ModifyUserId;
+                answerPhoto.PhotoId = photoDto.PhotoId;
+                answerPhoto.PhotoNameServer = photoDto.PhotoNameServer;
+                SaveShopAnswerPhoto(answerPhoto);
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="answerPhoto"></param>
+        public void SaveShopAnswerPhoto(AnswerPhoto answerPhoto)
+        {
+            
+            AnswerPhoto findOne = db.AnswerPhoto.Where(x => (x.AnswerId == answerPhoto.AnswerId && x.PhotoId == answerPhoto.PhotoId)).FirstOrDefault();
+            if (findOne == null)
+            {
+                answerPhoto.InDateTime = DateTime.Now;
+                db.AnswerPhoto.Add(answerPhoto);
+            }
+            else
+            {
+                findOne.PhotoNameServer = answerPhoto.PhotoNameServer;
+                findOne.ModifyDateTime = DateTime.Now;
 
             }
             db.SaveChanges();

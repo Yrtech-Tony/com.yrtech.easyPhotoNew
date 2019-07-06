@@ -4,7 +4,6 @@ using System.Web.Http;
 using com.yrtech.InventoryAPI.Common;
 using com.yrtech.InventoryAPI.Service;
 using com.yrtech.InventoryAPI.DTO;
-using com.yrtech.InventoryAPI.DTO.Account;
 
 namespace com.yrtech.InventoryAPI.Controllers
 {

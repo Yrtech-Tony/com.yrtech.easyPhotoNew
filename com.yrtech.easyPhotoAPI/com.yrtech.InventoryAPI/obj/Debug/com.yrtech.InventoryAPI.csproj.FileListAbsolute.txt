@@ -212,7 +212,6 @@ C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.Inventor
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\System.Web.WebPages.Razor.dll
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\WebGrease.dll
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\Antlr3.Runtime.pdb
-C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\com.yrtech.InventoryDAL.pdb
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\EntityFramework.xml
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\EntityFramework.SqlServer.xml
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
@@ -232,3 +231,4 @@ C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.Inventor
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\zh-Hans\System.Net.Http.Formatting.resources.dll
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\zh-Hans\System.Web.Http.resources.dll
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\zh-Hans\System.Web.Http.WebHost.resources.dll
+C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\com.yrtech.InventoryDAL.pdb

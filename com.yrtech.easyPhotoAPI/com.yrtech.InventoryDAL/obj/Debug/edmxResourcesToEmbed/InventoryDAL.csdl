@@ -7,8 +7,9 @@
     <EntitySet Name="UserInfo" EntityType="Inventory.UserInfo" />
     <EntitySet Name="UserInfoShop" EntityType="Inventory.UserInfoShop" />
     <EntitySet Name="PhotoList" EntityType="Inventory.PhotoList" />
-    <EntitySet Name="Answer" EntityType="Inventory.Answer" />
     <EntitySet Name="Note" EntityType="Inventory.Note" />
+    <EntitySet Name="Answer" EntityType="Inventory.Answer" />
+    <EntitySet Name="AnswerPhoto" EntityType="Inventory.AnswerPhoto" />
   </EntityContainer>
   <EntityType Name="CheckType">
     <Key>
@@ -106,25 +107,6 @@
     <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="InDateTime" Type="DateTime" Precision="3" />
   </EntityType>
-  <EntityType Name="Answer">
-    <Key>
-      <PropertyRef Name="AnswerId" />
-    </Key>
-    <Property Name="AnswerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="ProjectId" Type="Int32" Nullable="false" />
-    <Property Name="ShopId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="CheckCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="CheckTypeId" Type="Int32" />
-    <Property Name="PhotoName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="OtherProperty" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="Score" Type="Decimal" Precision="19" Scale="2" />
-    <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
-    <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="InDateTime" Type="DateTime" Precision="3" />
-  </EntityType>
   <EntityType Name="Note">
     <Key>
       <PropertyRef Name="NoteID" />
@@ -134,6 +116,37 @@
     <Property Name="CheckTypeId" Type="Int32" Nullable="false" />
     <Property Name="NoteName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InDateTime" Type="DateTime" Precision="3" />
+    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="Answer">
+    <Key>
+      <PropertyRef Name="AnswerId" />
+    </Key>
+    <Property Name="AnswerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ProjectId" Type="Int32" Nullable="false" />
+    <Property Name="ShopId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CheckCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CheckTypeId" Type="Int32" />
+    <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="OtherProperty" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Score" Type="Decimal" Precision="19" Scale="2" />
+    <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+    <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InDateTime" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="AnswerPhoto">
+    <Key>
+      <PropertyRef Name="AnswerId" />
+      <PropertyRef Name="PhotoId" />
+    </Key>
+    <Property Name="AnswerId" Type="Int64" Nullable="false" />
+    <Property Name="PhotoId" Type="Int32" Nullable="false" />
+    <Property Name="PhotoNameServer" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="InDateTime" Type="DateTime" Precision="3" />
     <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
