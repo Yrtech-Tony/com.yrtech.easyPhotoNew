@@ -21,7 +21,7 @@ namespace com.yrtech.InventoryAPI.Service
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@AccountId", accountId),
                                                        new SqlParameter("@Password",password)};
             Type t = typeof(AccountDto);
-            string sql = @"SELECT A.Id,A.TenantId,A.TenantName,AccountId,AccountName,A.TelNO,A.Email,A.HeadPicUrl
+            string sql = @"SELECT A.Id AS UserId,A.TenantId,A.TenantName,AccountId,AccountName,A.TelNO,A.Email,A.HeadPicUrl
                             FROM UserInfo A 
                             WHERE AccountId = @AccountId AND[Password] = @Password
                             AND GETDATE()<ExpireDateTime";

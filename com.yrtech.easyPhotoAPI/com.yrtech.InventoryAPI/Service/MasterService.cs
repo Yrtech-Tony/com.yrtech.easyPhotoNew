@@ -24,7 +24,7 @@ namespace com.yrtech.InventoryAPI.Service
                                                         new SqlParameter("@ProjectId", projectId)};
             Type t = typeof(Projects);
             string sql = "";
-            sql = @"SELECT *
+            sql = @"SELECT * FROM Projects
                     WHERE 1=1 AND GETDATE()<ExpireDateTime
                     ";
             if (!string.IsNullOrEmpty(tenantId))
@@ -78,7 +78,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (!string.IsNullOrEmpty(userId))
             {
-                sql += " AND Id = @UserId";
+                sql += " AND UserId= @UserId";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<UserInfoShop>().ToList();
         }
