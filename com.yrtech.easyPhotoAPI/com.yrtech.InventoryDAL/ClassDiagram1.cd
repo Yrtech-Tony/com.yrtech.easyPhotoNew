@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="com.yrtech.InventoryDAL.InventoryDAL" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAIAAAAAEACAABAgAAAAAgEAAQA=</HashCode>
+      <FileName>InventoryDAL.Context.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.yrtech.InventoryDAL.Answer" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wBACAQAAAAAAABgAAAYAAAAABAAAAAAAAAAAAABIEQA=</HashCode>
+      <FileName>Answer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.yrtech.InventoryDAL.CheckType" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAABBAAAQAAAAFBAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CheckType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.yrtech.InventoryDAL.Note" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAAAAAAAABAAAAQAAAABBCAAAAAAAAAAAABAAAE=</HashCode>
+      <FileName>Note.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.yrtech.InventoryDAL.OtherProperty" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAADAAAAQAIAABBAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>OtherProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.yrtech.InventoryDAL.PhotoList" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAAAAAAAABAAAAQAAAABBAAAAAAAAAACAAAIAAA=</HashCode>
+      <FileName>PhotoList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.yrtech.InventoryDAL.Projects" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAwAABAACABAACQQBAQAABAEAIABAAAAAAAAAAAA=</HashCode>
+      <FileName>Projects.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.yrtech.InventoryDAL.UserInfo" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gACCAAAAACAAABAAAwQABAIBAAAAAAACAAQgAAAAAAA=</HashCode>
+      <FileName>UserInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.yrtech.InventoryDAL.UserInfoShop" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wAAAAAAAAACAABAAAgQAAAABBAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>UserInfoShop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>
