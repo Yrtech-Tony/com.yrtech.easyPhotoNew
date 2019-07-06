@@ -33,3 +33,4 @@ C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.Inventor
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryDAL\bin\Debug\zh-Hans\EntityFramework.SqlServer.resources.dll
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryDAL\obj\Debug\com.yrtech.InventoryDAL.dll
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryDAL\obj\Debug\com.yrtech.InventoryDAL.pdb
+C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryDAL\obj\Debug\com.yrtech.InventoryDAL.csprojResolveAssemblyReference.cache

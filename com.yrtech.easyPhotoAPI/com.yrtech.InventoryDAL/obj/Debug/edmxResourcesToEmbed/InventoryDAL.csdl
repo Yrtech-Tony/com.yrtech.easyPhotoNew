@@ -8,8 +8,8 @@
     <EntitySet Name="Note" EntityType="Inventory.Note" />
     <EntitySet Name="Answer" EntityType="Inventory.Answer" />
     <EntitySet Name="AnswerPhoto" EntityType="Inventory.AnswerPhoto" />
-    <EntitySet Name="Projects" EntityType="Inventory.Projects" />
     <EntitySet Name="UserInfoShop" EntityType="Inventory.UserInfoShop" />
+    <EntitySet Name="Projects" EntityType="Inventory.Projects" />
   </EntityContainer>
   <EntityType Name="CheckType">
     <Key>
@@ -116,26 +116,6 @@
     <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
   </EntityType>
-  <EntityType Name="Projects">
-    <Key>
-      <PropertyRef Name="ProjectId" />
-    </Key>
-    <Property Name="ProjectId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="TanantId" Type="Int32" />
-    <Property Name="ProjectCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ProjectName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="Quarter" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="Year" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="OrderNO" Type="Int32" />
-    <Property Name="BrandName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="ExpireDateTime" Type="DateTime" Precision="3" />
-    <Property Name="ScoreShow" Type="Boolean" />
-    <Property Name="OtherPropertyShow" Type="Boolean" />
-    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
-    <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="InDateTime" Type="DateTime" Precision="3" />
-  </EntityType>
   <EntityType Name="UserInfoShop">
     <Key>
       <PropertyRef Name="UserId" />
@@ -151,5 +131,25 @@
     <Property Name="InDateTime" Type="DateTime" Precision="3" />
     <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="Projects">
+    <Key>
+      <PropertyRef Name="ProjectId" />
+    </Key>
+    <Property Name="ProjectId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TenantId" Type="Int32" />
+    <Property Name="ProjectCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ProjectName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Quarter" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Year" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="OrderNO" Type="Int32" />
+    <Property Name="BrandName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="ExpireDateTime" Type="DateTime" Precision="3" />
+    <Property Name="ScoreShow" Type="Boolean" />
+    <Property Name="OtherPropertyShow" Type="Boolean" />
+    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+    <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InDateTime" Type="DateTime" Precision="3" />
   </EntityType>
 </Schema>

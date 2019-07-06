@@ -90,7 +90,7 @@
       <PropertyRef Name="ProjectId" />
     </Key>
     <Property Name="ProjectId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="TanantId" Type="int" />
+    <Property Name="TenantId" Type="int" />
     <Property Name="ProjectCode" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="ProjectName" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="Quarter" Type="nvarchar" MaxLength="50" />

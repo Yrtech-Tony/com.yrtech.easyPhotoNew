@@ -15,7 +15,7 @@ namespace com.yrtech.InventoryDAL
     public partial class Projects
     {
         public int ProjectId { get; set; }
-        public Nullable<int> TanantId { get; set; }
+        public Nullable<int> TenantId { get; set; }
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }
         public string Quarter { get; set; }

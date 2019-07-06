@@ -110,6 +110,21 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="UserInfoShop">
+      <EntityTypeMapping TypeName="Inventory.UserInfoShop">
+        <MappingFragment StoreEntitySet="UserInfoShop">
+          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+          <ScalarProperty Name="ShopName" ColumnName="ShopName" />
+          <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+          <ScalarProperty Name="ShopId" ColumnName="ShopId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Projects">
       <EntityTypeMapping TypeName="Inventory.Projects">
         <MappingFragment StoreEntitySet="Projects">
@@ -126,23 +141,8 @@
           <ScalarProperty Name="Quarter" ColumnName="Quarter" />
           <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
           <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
-          <ScalarProperty Name="TanantId" ColumnName="TanantId" />
+          <ScalarProperty Name="TenantId" ColumnName="TenantId" />
           <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="UserInfoShop">
-      <EntityTypeMapping TypeName="Inventory.UserInfoShop">
-        <MappingFragment StoreEntitySet="UserInfoShop">
-          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-          <ScalarProperty Name="ShopName" ColumnName="ShopName" />
-          <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
-          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-          <ScalarProperty Name="ShopId" ColumnName="ShopId" />
-          <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
