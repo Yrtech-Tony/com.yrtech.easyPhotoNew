@@ -47,16 +47,16 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="shopCode"></param>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        public List<UserInfoShop> GetUserInfoShop(string projectId,string shopId,string shopCode,string accountId)
+        public List<UserInfoShop> GetUserInfoShop(string projectId,string shopId,string shopCode,string userId)
         {
             if(shopCode==null)shopCode="";
             if (shopId == null) shopId = "";
             if (projectId == null) projectId = "";
-            if (accountId == null) accountId = "";
+            if (userId == null) userId = "";
             SqlParameter[] para = new SqlParameter[] {new SqlParameter("@ProjectId", projectId),
                                                     new SqlParameter("@ShopId", shopId),
                                                     new SqlParameter("@ShopCode", shopCode),
-                                                    new SqlParameter("@AccountId", accountId)};
+                                                    new SqlParameter("@UserId", userId)};
             Type t = typeof(UserInfoShop);
             string sql = "";
             sql = @"SELECT 
@@ -76,9 +76,9 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 sql += " AND ProjectId = @ProjectId";
             }
-            if (!string.IsNullOrEmpty(accountId))
+            if (!string.IsNullOrEmpty(userId))
             {
-                sql += " AND AccountId = @AccountId";
+                sql += " AND Id = @UserId";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<UserInfoShop>().ToList();
         }

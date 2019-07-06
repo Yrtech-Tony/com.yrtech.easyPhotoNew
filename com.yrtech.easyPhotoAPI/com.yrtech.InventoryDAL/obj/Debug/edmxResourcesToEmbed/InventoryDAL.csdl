@@ -3,13 +3,13 @@
   <EntityContainer Name="InventoryDAL" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="CheckType" EntityType="Inventory.CheckType" />
     <EntitySet Name="OtherProperty" EntityType="Inventory.OtherProperty" />
-    <EntitySet Name="Projects" EntityType="Inventory.Projects" />
     <EntitySet Name="UserInfo" EntityType="Inventory.UserInfo" />
-    <EntitySet Name="UserInfoShop" EntityType="Inventory.UserInfoShop" />
     <EntitySet Name="PhotoList" EntityType="Inventory.PhotoList" />
     <EntitySet Name="Note" EntityType="Inventory.Note" />
     <EntitySet Name="Answer" EntityType="Inventory.Answer" />
     <EntitySet Name="AnswerPhoto" EntityType="Inventory.AnswerPhoto" />
+    <EntitySet Name="Projects" EntityType="Inventory.Projects" />
+    <EntitySet Name="UserInfoShop" EntityType="Inventory.UserInfoShop" />
   </EntityContainer>
   <EntityType Name="CheckType">
     <Key>
@@ -38,26 +38,6 @@
     <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
   </EntityType>
-  <EntityType Name="Projects">
-    <Key>
-      <PropertyRef Name="ProjectId" />
-    </Key>
-    <Property Name="ProjectId" Type="Int32" Nullable="false" />
-    <Property Name="TanantId" Type="Int32" />
-    <Property Name="ProjectCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ProjectName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="Quarter" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="Year" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="OrderNO" Type="Int32" />
-    <Property Name="BrandName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="ExpireDateTime" Type="DateTime" Precision="3" />
-    <Property Name="ScoreShow" Type="Boolean" />
-    <Property Name="OtherPropertyShow" Type="Boolean" />
-    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
-    <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="InDateTime" Type="DateTime" Precision="3" />
-  </EntityType>
   <EntityType Name="UserInfo">
     <Key>
       <PropertyRef Name="Id" />
@@ -76,22 +56,6 @@
     <Property Name="InUserId" Type="Int32" />
     <Property Name="InDateTime" Type="DateTime" Precision="3" />
     <Property Name="ModifyUserId" Type="Int32" />
-    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
-  </EntityType>
-  <EntityType Name="UserInfoShop">
-    <Key>
-      <PropertyRef Name="AccountId" />
-      <PropertyRef Name="ShopId" />
-      <PropertyRef Name="ProjectId" />
-    </Key>
-    <Property Name="AccountId" Type="Int32" Nullable="false" />
-    <Property Name="ShopId" Type="Int32" Nullable="false" />
-    <Property Name="ProjectId" Type="Int32" Nullable="false" />
-    <Property Name="ShopCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ShopName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="InDateTime" Type="DateTime" Precision="3" />
-    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="PhotoList">
@@ -147,6 +111,42 @@
     <Property Name="AnswerId" Type="Int64" Nullable="false" />
     <Property Name="PhotoId" Type="Int32" Nullable="false" />
     <Property Name="PhotoNameServer" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InDateTime" Type="DateTime" Precision="3" />
+    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="Projects">
+    <Key>
+      <PropertyRef Name="ProjectId" />
+    </Key>
+    <Property Name="ProjectId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TanantId" Type="Int32" />
+    <Property Name="ProjectCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ProjectName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Quarter" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Year" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="OrderNO" Type="Int32" />
+    <Property Name="BrandName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="ExpireDateTime" Type="DateTime" Precision="3" />
+    <Property Name="ScoreShow" Type="Boolean" />
+    <Property Name="OtherPropertyShow" Type="Boolean" />
+    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+    <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InDateTime" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="UserInfoShop">
+    <Key>
+      <PropertyRef Name="UserId" />
+      <PropertyRef Name="ShopId" />
+      <PropertyRef Name="ProjectId" />
+    </Key>
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="ShopId" Type="Int32" Nullable="false" />
+    <Property Name="ProjectId" Type="Int32" Nullable="false" />
+    <Property Name="ShopCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ShopName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="InDateTime" Type="DateTime" Precision="3" />
     <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />

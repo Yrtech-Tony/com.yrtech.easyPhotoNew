@@ -89,7 +89,7 @@
     <Key>
       <PropertyRef Name="ProjectId" />
     </Key>
-    <Property Name="ProjectId" Type="int" Nullable="false" />
+    <Property Name="ProjectId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="TanantId" Type="int" />
     <Property Name="ProjectCode" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="ProjectName" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -127,11 +127,11 @@
   </EntityType>
   <EntityType Name="UserInfoShop">
     <Key>
-      <PropertyRef Name="AccountId" />
+      <PropertyRef Name="UserId" />
       <PropertyRef Name="ShopId" />
       <PropertyRef Name="ProjectId" />
     </Key>
-    <Property Name="AccountId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
     <Property Name="ShopId" Type="int" Nullable="false" />
     <Property Name="ProjectId" Type="int" Nullable="false" />
     <Property Name="ShopCode" Type="nvarchar" MaxLength="50" />

@@ -14,7 +14,7 @@ namespace com.yrtech.InventoryDAL
     
     public partial class UserInfoShop
     {
-        public int AccountId { get; set; }
+        public int UserId { get; set; }
         public int ShopId { get; set; }
         public int ProjectId { get; set; }
         public string ShopCode { get; set; }
