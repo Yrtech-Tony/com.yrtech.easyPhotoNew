@@ -14,7 +14,7 @@ namespace com.yrtech.InventoryDAL
     
     public partial class CheckType
     {
-        public int ChecktTypeId { get; set; }
+        public int CheckTypeId { get; set; }
         public string CheckTypeName { get; set; }
         public int ProjectId { get; set; }
         public string InUserId { get; set; }

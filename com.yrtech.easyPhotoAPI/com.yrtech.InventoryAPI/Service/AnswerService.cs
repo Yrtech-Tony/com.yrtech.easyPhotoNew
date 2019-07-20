@@ -37,42 +37,42 @@ namespace com.yrtech.InventoryAPI.Service
                                                         new SqlParameter("@AddCheck", addCheck)};
             Type t = typeof(AnswerDto);
             string sql = "";
-            sql = @"SELECT *
-                    FROM Answer  
+            sql = @"SELECT A.*,B.CheckTypeName
+                    FROM Answer A INNER JOIN CheckType B ON A.CheckTypeId = B.CheckTypeId AND A.ProjectId = B.ProjectId
                     WHERE 1=1 ";
             if (!string.IsNullOrEmpty(projectId))
             {
-                sql += " AND ProjectId = @ProjectId";
+                sql += " AND A.ProjectId = @ProjectId";
             }
             if (!string.IsNullOrEmpty(shopId))
             {
-                sql += " AND ShopId = @ShopId";
+                sql += " AND A.ShopId = @ShopId";
             }
             if (!string.IsNullOrEmpty(checkCode))
             {
-                sql += " AND CheckCode LIKE '%'+@CheckCode+'%'";
+                sql += " AND A.CheckCode LIKE '%'+@CheckCode+'%'";
             }
             if (!string.IsNullOrEmpty(checkTypeId))
             {
-                sql += " AND CheckTypeId = @CheckTypeId";
+                sql += " AND A.CheckTypeId = @CheckTypeId";
             }
             if (!string.IsNullOrEmpty(photoCheck))
             {
                 if (photoCheck == "Y")
                 {
-                    sql += " AND (ISNULL(PhotoName,'')<>'' OR ISNULL(Remark,'')<>'' ";
+                    sql += " AND (EXISTS(SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId AND ISNULL(PhotoNameServer,'')<>'') OR ISNULL(Remark,'')<>'') ";
                 }
                 else
                 {
-                    sql += " AND (ISNULL(PhotoName,'')='' AND ISNULL(Remark,'')='' ";
+                    sql += " AND NOT EXISTS (SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId AND ISNULL(PhotoNameServer,'')<>'') AND ISNULL(Remark,'')='' ";
                 }
             }
             if (!string.IsNullOrEmpty(addCheck))
             {
-                sql += "AND AddCheck = @AddCheck";
+                sql += "AND A.AddCheck = @AddCheck";
             }
             
-            sql += " Order By CheckTypeId, CheckCode";
+            sql += " Order BY A.CheckTypeId, CheckCode";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerDto>().ToList();
         }
         public List<AnswerPhotoDto> GetAnswerPhotoList(string answerId)

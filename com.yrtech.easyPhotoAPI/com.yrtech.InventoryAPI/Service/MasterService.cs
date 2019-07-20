@@ -16,16 +16,19 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="tenantId"></param>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public List<Projects> GetProject(string tenantId,string projectId)
+        public List<Projects> GetProject(string tenantId,string projectId,string year,string expireDateTimeCheck)
         {
             if (tenantId == null) tenantId = "";
             if (projectId == null) projectId = "";
+            if (year == null) year = "";
+            if (expireDateTimeCheck == null) expireDateTimeCheck = "";
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@TenantId", tenantId),
-                                                        new SqlParameter("@ProjectId", projectId)};
+                                                        new SqlParameter("@ProjectId", projectId),
+                                                        new SqlParameter("@Year", year)};
             Type t = typeof(Projects);
             string sql = "";
             sql = @"SELECT * FROM Projects
-                    WHERE 1=1 AND GETDATE()<ExpireDateTime
+                    WHERE 1=1
                     ";
             if (!string.IsNullOrEmpty(tenantId))
             {
@@ -34,6 +37,14 @@ namespace com.yrtech.InventoryAPI.Service
             if (!string.IsNullOrEmpty(projectId))
             {
                 sql += " AND ProjectId = @ProjectId";
+            }
+            if (!string.IsNullOrEmpty(year))
+            {
+                sql += " AND Year = @Year";
+            }
+            if (expireDateTimeCheck=="N") // N:没有过期的，不传查询全部
+            {
+                sql += "  AND GETDATE()<ExpireDateTime";
             }
             sql += " ORDER BY OrderNO DESC";
             return db.Database.SqlQuery(t, sql, para).Cast<Projects>().ToList();

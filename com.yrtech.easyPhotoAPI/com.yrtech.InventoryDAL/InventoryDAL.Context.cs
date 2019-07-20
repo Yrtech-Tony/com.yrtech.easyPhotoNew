@@ -25,7 +25,6 @@ namespace com.yrtech.InventoryDAL
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<CheckType> CheckType { get; set; }
         public virtual DbSet<OtherProperty> OtherProperty { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
         public virtual DbSet<PhotoList> PhotoList { get; set; }
@@ -34,5 +33,6 @@ namespace com.yrtech.InventoryDAL
         public virtual DbSet<AnswerPhoto> AnswerPhoto { get; set; }
         public virtual DbSet<UserInfoShop> UserInfoShop { get; set; }
         public virtual DbSet<Projects> Projects { get; set; }
+        public virtual DbSet<CheckType> CheckType { get; set; }
     }
 }

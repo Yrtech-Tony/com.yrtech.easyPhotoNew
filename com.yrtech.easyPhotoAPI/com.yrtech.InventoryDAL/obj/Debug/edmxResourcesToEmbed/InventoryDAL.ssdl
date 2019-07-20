@@ -33,9 +33,9 @@
   </EntityType>
   <EntityType Name="CheckType">
     <Key>
-      <PropertyRef Name="ChecktTypeId" />
+      <PropertyRef Name="CheckTypeId" />
     </Key>
-    <Property Name="ChecktTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CheckTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="CheckTypeName" Type="nvarchar" MaxLength="50" />
     <Property Name="ProjectId" Type="int" Nullable="false" />
     <Property Name="InUserId" Type="nvarchar" MaxLength="50" />

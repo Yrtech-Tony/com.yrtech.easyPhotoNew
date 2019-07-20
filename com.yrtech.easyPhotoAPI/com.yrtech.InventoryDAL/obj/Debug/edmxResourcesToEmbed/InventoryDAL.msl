@@ -1,19 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="InventoryStoreContainer" CdmEntityContainer="InventoryDAL">
-    <EntitySetMapping Name="CheckType">
-      <EntityTypeMapping TypeName="Inventory.CheckType">
-        <MappingFragment StoreEntitySet="CheckType">
-          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-          <ScalarProperty Name="CheckTypeName" ColumnName="CheckTypeName" />
-          <ScalarProperty Name="ChecktTypeId" ColumnName="ChecktTypeId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="OtherProperty">
       <EntityTypeMapping TypeName="Inventory.OtherProperty">
         <MappingFragment StoreEntitySet="OtherProperty">
@@ -143,6 +130,19 @@
           <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
           <ScalarProperty Name="TenantId" ColumnName="TenantId" />
           <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CheckType">
+      <EntityTypeMapping TypeName="Inventory.CheckType">
+        <MappingFragment StoreEntitySet="CheckType">
+          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+          <ScalarProperty Name="CheckTypeName" ColumnName="CheckTypeName" />
+          <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

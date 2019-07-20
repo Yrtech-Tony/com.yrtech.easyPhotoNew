@@ -21,11 +21,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetProject")]
-        public APIResult GetProject(string tenantId,string projectId)
+        public APIResult GetProject(string tenantId,string projectId,string year,string expireDateTimeCheck)
         {
             try
             {
-                List<Projects> projectList = masterService.GetProject(tenantId,projectId);
+                List<Projects> projectList = masterService.GetProject(tenantId,projectId,year, expireDateTimeCheck);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(projectList) };
             }
             catch (Exception ex)

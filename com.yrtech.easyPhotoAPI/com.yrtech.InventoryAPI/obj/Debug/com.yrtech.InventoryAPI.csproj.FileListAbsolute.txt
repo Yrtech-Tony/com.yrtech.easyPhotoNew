@@ -232,3 +232,4 @@ C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.Inventor
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\zh-Hans\System.Web.Http.resources.dll
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\zh-Hans\System.Web.Http.WebHost.resources.dll
 C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\bin\com.yrtech.InventoryDAL.pdb
+C:\Workspace\com.yrtech.EasyPhotoNew\com.yrtech.easyPhotoAPI\com.yrtech.InventoryAPI\obj\Debug\com.yrtech.InventoryAPI.csprojResolveAssemblyReference.cache
