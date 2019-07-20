@@ -6,7 +6,7 @@
     </Key>
     <Property Name="AnswerId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ProjectId" Type="int" Nullable="false" />
-    <Property Name="ShopId" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="ShopId" Type="int" Nullable="false" />
     <Property Name="CheckCode" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="CheckTypeId" Type="int" />
     <Property Name="Remark" Type="nvarchar(max)" />
@@ -26,6 +26,7 @@
     <Property Name="AnswerId" Type="bigint" Nullable="false" />
     <Property Name="PhotoId" Type="int" Nullable="false" />
     <Property Name="PhotoNameServer" Type="nvarchar" MaxLength="500" />
+    <Property Name="PhotoUrl" Type="nvarchar" MaxLength="500" />
     <Property Name="InUserId" Type="nvarchar" MaxLength="50" />
     <Property Name="InDateTime" Type="datetime" />
     <Property Name="ModifyUserId" Type="nvarchar" MaxLength="50" />

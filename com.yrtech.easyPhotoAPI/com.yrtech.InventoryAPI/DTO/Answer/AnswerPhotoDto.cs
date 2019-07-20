@@ -15,6 +15,7 @@ namespace com.yrtech.InventoryAPI.DTO
         public string CheckCode { get; set; }
         public string PhotoNameServer  { get; set; }
         public string PhotoName { get; set; }
+        public string PhotoUrl { get; set; }
         
     }
 }

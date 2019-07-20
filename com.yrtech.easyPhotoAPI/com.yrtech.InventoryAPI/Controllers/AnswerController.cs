@@ -36,11 +36,12 @@ namespace com.yrtech.SurveyAPI.Controllers
         }
         [HttpPost]
         [Route("Answer/SaveShopAnswer")]
-        public APIResult SaveShopAnswer(AnswerDto answer)
+        public APIResult SaveShopAnswer(UploadData  answer)
         {
             try
             {
-                answerService.SaveShopAnswer(answer);
+                AnswerDto answerdto = CommonHelper.DecodeString<AnswerDto>(answer.AnswerListJson);
+                answerService.SaveShopAnswer(answerdto);
                 return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)

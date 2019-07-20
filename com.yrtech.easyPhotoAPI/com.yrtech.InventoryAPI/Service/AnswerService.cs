@@ -83,7 +83,7 @@ namespace com.yrtech.InventoryAPI.Service
                                                       };
             Type t = typeof(AnswerPhotoDto);
             string sql = "";
-            sql = @"SELECT A.ProjectId,A.ShopId,A.CheckCode,B.PhotoId,B.PhotoNameServer,C.PhotoName
+            sql = @"SELECT A.ProjectId,A.ShopId,A.CheckCode,B.PhotoId,B.PhotoNameServer,C.PhotoName,B.PhotoUrl
                     FROM Answer A INNER JOIN AnswerPhoto B ON A.AnswerId = B.AnswerId
                                   INNER JOIN PhotoList C ON B.PhotoId = C.PhotoId
                     WHERE 1=1 ";
@@ -146,6 +146,7 @@ namespace com.yrtech.InventoryAPI.Service
                 answerPhoto.ModifyUserId = answerDto.ModifyUserId;
                 answerPhoto.PhotoId = photoDto.PhotoId;
                 answerPhoto.PhotoNameServer = photoDto.PhotoNameServer;
+                answerPhoto.PhotoUrl = photoDto.PhotoUrl;
                 SaveShopAnswerPhoto(answerPhoto);
             }
         }
@@ -155,7 +156,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="answerPhoto"></param>
         public void SaveShopAnswerPhoto(AnswerPhoto answerPhoto)
         {
-            
+            if (answerPhoto.PhotoId == 0) return;
             AnswerPhoto findOne = db.AnswerPhoto.Where(x => (x.AnswerId == answerPhoto.AnswerId && x.PhotoId == answerPhoto.PhotoId)).FirstOrDefault();
             if (findOne == null)
             {
@@ -165,6 +166,7 @@ namespace com.yrtech.InventoryAPI.Service
             else
             {
                 findOne.PhotoNameServer = answerPhoto.PhotoNameServer;
+                findOne.PhotoUrl = answerPhoto.PhotoUrl;
                 findOne.ModifyDateTime = DateTime.Now;
 
             }

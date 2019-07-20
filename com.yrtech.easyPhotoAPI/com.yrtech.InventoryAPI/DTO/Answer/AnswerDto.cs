@@ -10,7 +10,7 @@ namespace com.yrtech.InventoryAPI.DTO
     {
         public long AnswerId { get; set; }
         public int ProjectId { get; set; }
-        public string ShopId { get; set; }
+        public int ShopId { get; set; }
         public string CheckCode { get; set; }
         public Nullable<int> CheckTypeId { get; set; }
         public string CheckTypeName { get; set; }
