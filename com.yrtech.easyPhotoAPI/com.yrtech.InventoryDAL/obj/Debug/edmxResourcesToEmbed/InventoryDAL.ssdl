@@ -50,7 +50,7 @@
     </Key>
     <Property Name="NoteID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ProjectId" Type="int" Nullable="false" />
-    <Property Name="CheckTypeId" Type="int" Nullable="false" />
+    <Property Name="CheckTypeId" Type="int" />
     <Property Name="NoteName" Type="nvarchar" MaxLength="150" />
     <Property Name="AddCheck" Type="nvarchar" MaxLength="50" />
     <Property Name="InUserId" Type="nvarchar" MaxLength="50" />
@@ -81,6 +81,7 @@
     <Property Name="PhotoName" Type="nvarchar" MaxLength="500" />
     <Property Name="ProjectId" Type="int" />
     <Property Name="CheckTypeId" Type="int" />
+    <Property Name="AddCheck" Type="nvarchar" MaxLength="50" />
     <Property Name="ModifyUserId" Type="int" />
     <Property Name="ModifyDateTime" Type="datetime" />
     <Property Name="InUserId" Type="nvarchar" MaxLength="50" />

@@ -36,35 +36,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="PhotoList">
-      <EntityTypeMapping TypeName="Inventory.PhotoList">
-        <MappingFragment StoreEntitySet="PhotoList">
-          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-          <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
-          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-          <ScalarProperty Name="PhotoName" ColumnName="PhotoName" />
-          <ScalarProperty Name="PhotoId" ColumnName="PhotoId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Note">
-      <EntityTypeMapping TypeName="Inventory.Note">
-        <MappingFragment StoreEntitySet="Note">
-          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-          <ScalarProperty Name="AddCheck" ColumnName="AddCheck" />
-          <ScalarProperty Name="NoteName" ColumnName="NoteName" />
-          <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
-          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-          <ScalarProperty Name="NoteID" ColumnName="NoteID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="UserInfoShop">
       <EntityTypeMapping TypeName="Inventory.UserInfoShop">
         <MappingFragment StoreEntitySet="UserInfoShop">
@@ -144,6 +115,36 @@
           <ScalarProperty Name="ShopId" ColumnName="ShopId" />
           <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
           <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Note">
+      <EntityTypeMapping TypeName="Inventory.Note">
+        <MappingFragment StoreEntitySet="Note">
+          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+          <ScalarProperty Name="AddCheck" ColumnName="AddCheck" />
+          <ScalarProperty Name="NoteName" ColumnName="NoteName" />
+          <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
+          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+          <ScalarProperty Name="NoteID" ColumnName="NoteID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PhotoList">
+      <EntityTypeMapping TypeName="Inventory.PhotoList">
+        <MappingFragment StoreEntitySet="PhotoList">
+          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+          <ScalarProperty Name="AddCheck" ColumnName="AddCheck" />
+          <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
+          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+          <ScalarProperty Name="PhotoName" ColumnName="PhotoName" />
+          <ScalarProperty Name="PhotoId" ColumnName="PhotoId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

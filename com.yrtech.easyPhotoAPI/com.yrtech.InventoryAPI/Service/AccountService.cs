@@ -1,4 +1,5 @@
 ﻿using com.yrtech.InventoryAPI.DTO;
+using com.yrtech.InventoryDAL;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -27,5 +28,6 @@ namespace com.yrtech.InventoryAPI.Service
                             AND GETDATE()<ExpireDateTime";
             return db.Database.SqlQuery(t, sql, para).Cast<AccountDto>().ToList();
         }
+      
     }
 }

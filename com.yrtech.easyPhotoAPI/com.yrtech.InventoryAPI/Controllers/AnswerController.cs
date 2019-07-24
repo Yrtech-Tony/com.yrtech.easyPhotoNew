@@ -49,21 +49,6 @@ namespace com.yrtech.SurveyAPI.Controllers
                 return new APIResult() { Status = false, Body = ex.Message.ToString() };
             }
         }
-        [HttpPost]
-        [Route("Answer/SaveShopAnswerPhoto")]
-        public APIResult SaveShopAnswer(AnswerPhotoDto photo)
-        {
-            try
-            {
-                AnswerDto answer = answerService.GetShopAnswerList(photo.ProjectId.ToString(), photo.ShopId.ToString(), photo.CheckCode, "", "", "")[0];
-                return new APIResult() { Status = true, Body = "" };
-            }
-            catch (Exception ex)
-            {
-                return new APIResult() { Status = false, Body = ex.Message.ToString() };
-            }
-        }
-
         [HttpGet]
         [Route("Answer/DownloadAnswerList")]
         public APIResult DownloadAnswerList(string projectCode, string shopCode)

@@ -16,7 +16,7 @@ namespace com.yrtech.InventoryDAL
     {
         public int NoteID { get; set; }
         public int ProjectId { get; set; }
-        public int CheckTypeId { get; set; }
+        public Nullable<int> CheckTypeId { get; set; }
         public string NoteName { get; set; }
         public string AddCheck { get; set; }
         public string InUserId { get; set; }
