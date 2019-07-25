@@ -319,6 +319,10 @@ namespace com.yrtech.InventoryAPI.Service
             }
             return db.Database.SqlQuery(t, sql, para).Cast<CheckType>().ToList();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="checkType"></param>
         public void SaveCheckType(CheckType checkType)
         {
             CheckType findOne = db.CheckType.Where(x => (x.CheckTypeId == checkType.CheckTypeId)).FirstOrDefault();
@@ -342,14 +346,16 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="otherType"></param>
         /// <param name="otherCode"></param>
         /// <returns></returns>
-        public List<OtherProperty> GetOtherProperty(string projectId, string otherType, string otherCode)
+        public List<OtherProperty> GetOtherProperty(string projectId, string otherType, string otherCode,string otherName)
         {
             if (projectId == null) projectId = "";
             if (otherType == null) otherType = "";
             if (otherCode == null) otherCode = "";
+            if (otherName == null) otherName = "";
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
                                                         , new SqlParameter("@OtherType", otherType)
-                                                        , new SqlParameter("@OtherCode", otherCode)};
+                                                        , new SqlParameter("@OtherCode", otherCode)
+                                                    , new SqlParameter("@OtherName", otherName)};
             Type t = typeof(OtherProperty);
             string sql = "";
             sql = @"SELECT *
@@ -362,14 +368,39 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (!string.IsNullOrEmpty(otherType))
             {
-                sql += " AND OtherType = @otherType";
+                sql += " AND OtherType = @OtherType";
             }
             if (!string.IsNullOrEmpty(otherCode))
             {
-                sql += " AND OtherCode = @otherCode";
+                sql += " AND OtherCode = @OtherCode";
+            }
+            if (!string.IsNullOrEmpty(otherName))
+            {
+                sql += " AND OtherName = @OtherName";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<OtherProperty>().ToList();
         }
+        public void SaveOtherProperty(OtherProperty otherProperty)
+        {
+            OtherProperty findOne = db.OtherProperty.Where(x => (x.ProjectId==otherProperty.ProjectId&&x.OtherType==otherProperty.OtherType&&x.OtherCode==otherProperty.OtherCode)).FirstOrDefault();
+            if (findOne == null)
+            {
+                otherProperty.InDateTime = DateTime.Now;
+                db.OtherProperty.Add(otherProperty);
+            }
+            else
+            {
+                findOne.ModifyDateTime = DateTime.Now;
+                findOne.ModifyUserId = otherProperty.ModifyUserId;
+                findOne.OtherName = otherProperty.OtherName;
+            }
+            db.SaveChanges();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
         public List<OtherPropertyTypeDto> GetOtherPropertyType(string projectId)
         {
             if (projectId == null) projectId = "";
@@ -392,14 +423,16 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="projectId"></param>
         /// <param name="checkTypeId"></param>
         /// <returns></returns>
-        public List<PhotoList> GetPhotoList(string projectId, string checkTypeId, string addCheck)
+        public List<PhotoList> GetPhotoList(string projectId, string checkTypeId, string addCheck,string photoName)
         {
             if (projectId == null) projectId = "";
             if (checkTypeId == null) checkTypeId = "";
             if (addCheck == null) addCheck = "";
+            if (photoName == null) photoName = "";
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
                                                         , new SqlParameter("@CheckTypeId", checkTypeId)
-                                                        , new SqlParameter("@AddCheck", addCheck) };
+                                                        , new SqlParameter("@AddCheck", addCheck)
+                                                        , new SqlParameter("@PhotoName", photoName)};
             Type t = typeof(PhotoList);
             string sql = "";
             sql = @"SELECT *
@@ -418,7 +451,31 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 sql += " AND AddCheck = @AddCheck";
             }
+            if (!string.IsNullOrEmpty(photoName))
+            {
+                sql += " AND PhotoName = @PhotoName";
+            }
             return db.Database.SqlQuery(t, sql, para).Cast<PhotoList>().ToList();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="photoList"></param>
+        public void SavePhotoList(PhotoList photoList)
+        {
+            PhotoList findOne = db.PhotoList.Where(x => (x.PhotoId==photoList.PhotoId)).FirstOrDefault();
+            if (findOne == null)
+            {
+                photoList.InDateTime = DateTime.Now;
+                db.PhotoList.Add(photoList);
+            }
+            else
+            {
+                findOne.ModifyDateTime = DateTime.Now;
+                findOne.ModifyUserId = photoList.ModifyUserId;
+                findOne.PhotoName = photoList.PhotoName;
+            }
+            db.SaveChanges();
         }
     }
 }
