@@ -227,7 +227,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<OtherProperty> otherPropertyList = masterService.GetOtherProperty(projectId, otherType, otherCode);
+                List<OtherProperty> otherPropertyList = masterService.GetOtherProperty(projectId, otherType, otherCode,"");
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(otherPropertyList) };
             }
             catch (Exception ex)
