@@ -106,7 +106,6 @@ namespace com.yrtech.InventoryAPI.Common
             }
             return strData;
         }
-
         public static void log(string message)
         {
             string appDomainPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -131,6 +130,24 @@ namespace com.yrtech.InventoryAPI.Common
             byte[] info = new UTF8Encoding(true).GetBytes(str);
             fs.Write(info, 0, info.Length);
             return info;
+        }
+        private static HttpClient _httpClient;
+        public static HttpClient GetHttpClient()
+        {
+            if (_httpClient == null)
+            {
+                _httpClient = new HttpClient();
+                _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", GenerateToken());
+            }
+            return _httpClient;
+        }
+        public string GetAPISurveyUrl
+        {
+            get
+            {
+                return "";
+            }
         }
     }
 }

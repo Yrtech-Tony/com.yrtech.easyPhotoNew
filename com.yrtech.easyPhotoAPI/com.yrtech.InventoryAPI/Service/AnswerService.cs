@@ -18,11 +18,14 @@ namespace com.yrtech.InventoryAPI.Service
         AccountService accountService = new AccountService();
 
         /// <summary>
+        /// 
         /// </summary>
-        /// <param name="projectCode"></param>
-        /// <param name="shopCode"></param>
-        /// <param name="allChk"></param>
-        /// <param name="vinCode"></param>
+        /// <param name="projectId"></param>
+        /// <param name="shopId"></param>
+        /// <param name="checkCode"></param>
+        /// <param name="checkTypeId"></param>
+        /// <param name="photoCheck"></param>
+        /// <param name="addCheck"></param>
         /// <returns></returns>
         public List<AnswerDto> GetShopAnswerList(string projectId, string shopId, string checkCode, string checkTypeId, string photoCheck, string addCheck)
         {
