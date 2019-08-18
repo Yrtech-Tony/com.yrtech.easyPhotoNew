@@ -133,6 +133,24 @@ namespace com.yrtech.InventoryAPI.Controllers
                 return new APIResult() { Status = false, Body = ex.Message.ToString() };
             }
         }
+        [HttpPost]
+        [Route("Master/DeleteUserInfoShop")]
+        public APIResult DeleteUserInfoShop(UploadData uploadData)
+        {
+            try
+            {
+                List<UserInfoShop> userInfoList = CommonHelper.DecodeString<List<UserInfoShop>>(uploadData.AnswerListJson);
+                foreach (UserInfoShop userInfoShop in userInfoList)
+                {
+                    masterService.DeleteUserInfoShop(userInfoShop);
+                }
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
         /// <summary>
         /// 
         /// </summary>

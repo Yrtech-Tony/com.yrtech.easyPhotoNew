@@ -22,6 +22,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (projectId == null) projectId = "";
             if (year == null) year = "";
             if (expireDateTimeCheck == null) expireDateTimeCheck = "";
+            if (brandId == null) brandId = "";
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@TenantId", tenantId),
                                                         new SqlParameter("@ProjectId", projectId),
                                                         new SqlParameter("@Year", year),new SqlParameter("@BrandId", brandId)};
@@ -228,6 +229,16 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.AccountName = userInfoShop.AccountName;
             }
             db.SaveChanges();
+        }
+        public void DeleteUserInfoShop(UserInfoShop userInfoShop)
+        {
+            string sql = "";
+            SqlParameter[] para = new SqlParameter[] {};
+            sql += "DELETE UserInfoShop WHERE ProjectId = " + userInfoShop.ProjectId.ToString();
+            sql += " AND ShopId = " + userInfoShop.ShopId.ToString();
+            sql += " AND UserId = " + userInfoShop.UserId.ToString();
+            db.Database.ExecuteSqlCommand(sql, para);
+
         }
         /// <summary>
         /// 
