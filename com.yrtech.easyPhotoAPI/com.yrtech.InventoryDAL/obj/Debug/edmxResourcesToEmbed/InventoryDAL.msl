@@ -36,27 +36,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Projects">
-      <EntityTypeMapping TypeName="Inventory.Projects">
-        <MappingFragment StoreEntitySet="Projects">
-          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-          <ScalarProperty Name="InUserID" ColumnName="InUserID" />
-          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-          <ScalarProperty Name="OtherPropertyShow" ColumnName="OtherPropertyShow" />
-          <ScalarProperty Name="ScoreShow" ColumnName="ScoreShow" />
-          <ScalarProperty Name="ExpireDateTime" ColumnName="ExpireDateTime" />
-          <ScalarProperty Name="BrandName" ColumnName="BrandName" />
-          <ScalarProperty Name="OrderNO" ColumnName="OrderNO" />
-          <ScalarProperty Name="Year" ColumnName="Year" />
-          <ScalarProperty Name="Quarter" ColumnName="Quarter" />
-          <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
-          <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
-          <ScalarProperty Name="TenantId" ColumnName="TenantId" />
-          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="CheckType">
       <EntityTypeMapping TypeName="Inventory.CheckType">
         <MappingFragment StoreEntitySet="CheckType">
@@ -147,6 +126,28 @@
           <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
           <ScalarProperty Name="ShopId" ColumnName="ShopId" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Projects">
+      <EntityTypeMapping TypeName="Inventory.Projects">
+        <MappingFragment StoreEntitySet="Projects">
+          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+          <ScalarProperty Name="InUserID" ColumnName="InUserID" />
+          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+          <ScalarProperty Name="OtherPropertyShow" ColumnName="OtherPropertyShow" />
+          <ScalarProperty Name="ScoreShow" ColumnName="ScoreShow" />
+          <ScalarProperty Name="ExpireDateTime" ColumnName="ExpireDateTime" />
+          <ScalarProperty Name="BrandName" ColumnName="BrandName" />
+          <ScalarProperty Name="BrandId" ColumnName="BrandId" />
+          <ScalarProperty Name="OrderNO" ColumnName="OrderNO" />
+          <ScalarProperty Name="Year" ColumnName="Year" />
+          <ScalarProperty Name="Quarter" ColumnName="Quarter" />
+          <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+          <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
+          <ScalarProperty Name="TenantId" ColumnName="TenantId" />
+          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

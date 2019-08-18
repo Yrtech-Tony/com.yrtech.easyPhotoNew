@@ -16,7 +16,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="tenantId"></param>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public List<Projects> GetProject(string tenantId, string projectId, string year, string expireDateTimeCheck)
+        public List<Projects> GetProject(string tenantId, string projectId,string brandId, string year, string expireDateTimeCheck)
         {
             if (tenantId == null) tenantId = "";
             if (projectId == null) projectId = "";
@@ -24,7 +24,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (expireDateTimeCheck == null) expireDateTimeCheck = "";
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@TenantId", tenantId),
                                                         new SqlParameter("@ProjectId", projectId),
-                                                        new SqlParameter("@Year", year)};
+                                                        new SqlParameter("@Year", year),new SqlParameter("@BrandId", brandId)};
             Type t = typeof(Projects);
             string sql = "";
             sql = @"SELECT * FROM Projects
@@ -37,6 +37,10 @@ namespace com.yrtech.InventoryAPI.Service
             if (!string.IsNullOrEmpty(projectId))
             {
                 sql += " AND ProjectId = @ProjectId";
+            }
+            if (!string.IsNullOrEmpty(brandId))
+            {
+                sql += " AND BrandId = @BrandId";
             }
             if (!string.IsNullOrEmpty(year))
             {
@@ -69,6 +73,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             else
             {
+                findOne.BrandId = project.BrandId;
                 findOne.BrandName = project.BrandName;
                 findOne.ExpireDateTime = project.ExpireDateTime;
                 findOne.ModifyUserId = project.ModifyUserId;

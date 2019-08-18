@@ -78,9 +78,21 @@ namespace com.yrtech.SurveyAPI.Controllers
         {
             try
             {
+                List<ShopDto> shopDtoList = new List<ShopDto>();
                 List<AnswerDto> answerList = CommonHelper.DecodeString<List<AnswerDto>>(answer.AnswerListJson);
-                answerService.ImportAnswerList(answerList[0].ProjectId.ToString(), answer.UserId, answerList);
-                return new APIResult() { Status = true, Body = "" };
+                foreach (AnswerDto answerDto in answerList)
+                {
+                    //List<AnswerDto> answerExistList = answerService.GetShopAnswerList(answer.ProjectId,CommonHelper.GetHttpClient)
+                }
+                if (shopDtoList.Count > 0)
+                {
+                    return new APIResult() { Status = false, Body = "账号重复，请使用其他账号" };
+                }
+                else
+                {
+                    answerService.ImportAnswerList(answerList[0].ProjectId.ToString(), answer.UserId, answerList);
+                    return new APIResult() { Status = true, Body = "" };
+                }
             }
             catch (Exception ex)
             {
@@ -89,7 +101,7 @@ namespace com.yrtech.SurveyAPI.Controllers
 
         }
         [HttpPost]
-        [Route("Answer/ImportAnswerList")]
+        [Route("Answer/DeleteAnswerList")]
         public APIResult DeleteAnswerList(UploadData answer)
         {
             try

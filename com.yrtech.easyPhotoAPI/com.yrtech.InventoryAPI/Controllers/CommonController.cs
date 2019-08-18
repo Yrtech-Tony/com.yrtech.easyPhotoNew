@@ -71,7 +71,7 @@ namespace com.yrtech.InventoryAPI.Controllers
             int rowIndex1 = 1;
             List<AnswerDto> answerList_N = answerList.Where(x => x.AddCheck == "N").ToList();
             List<AnswerDto> answerList_Y = answerList.Where(x => x.AddCheck == "Y").ToList();
-            Projects project = masterService.GetProject("", projectId, "", "")[0];
+            Projects project = masterService.GetProject("", projectId,"", "", "")[0];
             sheet.GetCell("D" + 2).Value = project.ProjectName;
             sheet1.GetCell("D" + 2).Value = project.ProjectName;
             if (project.ScoreShow == true)

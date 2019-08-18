@@ -110,7 +110,10 @@ namespace com.yrtech.InventoryAPI.Service
             Type t = typeof(int);
             foreach (AnswerDto answer in answerList)
             {
+                sql += "DELETE AnswerPhoto WHERE AnswerId IN (SELECT AnswerId FROM Answer WHERE ProjectId = " + projectId.ToString();
+                sql += " AND ShopId = " + answer.ShopId.ToString() + ") "+"/r/n";
                 sql += "DELETE Answer WHERE ShopId = " + answer.ShopId.ToString();
+                sql += " AND ProjectId = " + projectId.ToString() + " "+ "/r/n";
                 CheckType checkType = db.CheckType.Where(x => (x.CheckTypeName==answer.CheckTypeName)).FirstOrDefault();
 
                 sql += "INSERT INTO Answer(ProjectId,ShopId,CheckCode,CheckTypeId,OtherProperty,AddCheck,ModifyUserId,ModifyDateTime,InUserId,InDateTime) VALUES(";
@@ -122,7 +125,7 @@ namespace com.yrtech.InventoryAPI.Service
                 sql += "N"+ ",";
                 sql += userId + ",GETDATE(),";
                 sql += userId + ",GETDATE(),";
-                sql += " ";
+                sql += " "+ "/r/n";
             }
             db.Database.ExecuteSqlCommand(sql, para);
         }

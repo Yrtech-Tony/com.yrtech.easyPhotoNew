@@ -21,6 +21,7 @@ namespace com.yrtech.InventoryDAL
         public string Quarter { get; set; }
         public string Year { get; set; }
         public Nullable<int> OrderNO { get; set; }
+        public Nullable<int> BrandId { get; set; }
         public string BrandName { get; set; }
         public Nullable<System.DateTime> ExpireDateTime { get; set; }
         public Nullable<bool> ScoreShow { get; set; }
