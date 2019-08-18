@@ -44,7 +44,7 @@ namespace com.yrtech.InventoryAPI.Service
             Type t = typeof(AnswerDto);
             string sql = "";
             sql = @"SELECT A.*,B.CheckTypeName
-                    FROM Answer A LEFT JOIN CheckType B ON A.CheckTypeId = B.CheckTypeId AND A.ProjectId = B.ProjectId
+                    FROM Answer A INNER JOIN Shop C LEFT JOIN CheckType B ON A.CheckTypeId = B.CheckTypeId AND A.ProjectId = B.ProjectId
                     WHERE 1=1 ";
             if (!string.IsNullOrEmpty(projectId))
             {

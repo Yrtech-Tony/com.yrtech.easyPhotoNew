@@ -1,4 +1,5 @@
-﻿using com.yrtech.InventoryAPI.DTO;
+﻿using com.yrtech.InventoryAPI.Common;
+using com.yrtech.InventoryAPI.DTO;
 using com.yrtech.InventoryAPI.Service;
 using com.yrtech.InventoryDAL;
 using Infragistics.Documents.Excel;
@@ -21,7 +22,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             return View();
         }
-        
+
         public void DownloadAnswerList(string projectCode, string shopCode)
         {
             //DownloadReport(projectCode, shopCode);
@@ -33,7 +34,7 @@ namespace com.yrtech.InventoryAPI.Controllers
             if (stream == null) return;
             if (string.IsNullOrEmpty(excelName))
             {
-                excelName = "excel" + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                excelName = "excel" + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff")+".xls";
             }
             byte[] bytes = new byte[(int)stream.Length];
             stream.Position = 0;
@@ -52,86 +53,126 @@ namespace com.yrtech.InventoryAPI.Controllers
             }
         }
 
-        public void DownloadReport(string projectId, string shopId)
+        public async void DownloadReport(string projectId, string shopId)
         {
-            List<AnswerDto> answerList = answerService.GetShopAnswerList(projectId, shopId, "", "", "", "N");
-            List<AnswerDto> answerList_new = answerService.GetShopAnswerList(projectId, shopId, "", "", "", "Y");
+            List<AnswerDto> answerList = answerService.GetShopAnswerList(projectId, shopId, "", "", "", "");
             foreach (AnswerDto answerDto in answerList)
             {
                 answerDto.answerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString());
+                string result = await CommonHelper.GetHttpClient().GetStringAsync(CommonHelper.GetAPISurveyUrl + "/Master/GetShop/" + "" + "/" + answerDto.ShopId + "/" + "");
+                answerDto.ShopCode = CommonHelper.DecodeString<ShopDto>(result).ShopCode;
+                answerDto.ShopName = CommonHelper.DecodeString<ShopDto>(result).ShopName;
             }
-            foreach (AnswerDto answerDto in answerList_new)
-            {
-                answerDto.answerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString());
-            }
+            Workbook book = Workbook.Load(Server.MapPath("~") + @"Content\Excel\" + "easyPhoto.xls", false);
+            //填充数据
+            Worksheet sheet = book.Worksheets[0];
+            Worksheet sheet1 = book.Worksheets[1];
             int rowIndex = 1;
             int rowIndex1 = 1;
+            List<AnswerDto> answerList_N = answerList.Where(x => x.AddCheck == "N").ToList();
+            List<AnswerDto> answerList_Y = answerList.Where(x => x.AddCheck == "Y").ToList();
+            Projects project = masterService.GetProject("", projectId, "", "")[0];
+            sheet.GetCell("D" + 2).Value = project.ProjectName;
+            sheet1.GetCell("D" + 2).Value = project.ProjectName;
+            if (project.ScoreShow == true)
+            {
+                sheet.GetCell("J" + 6).Value = "得分";
+                sheet1.GetCell("G" + 6).Value = "得分";
+            }
             #region 检查信息列表
-            foreach (AnswerDto item in answerList)
+            foreach (AnswerDto item in answerList_N)
             {
                 //序号
-                sheet.GetCell("A" + (rowIndex + 6)).Value = rowIndex.ToString();
+                sheet.GetCell("A" + (rowIndex + 7)).Value = rowIndex.ToString();
                 //经销商名称
-                sheet.GetCell("B" + (rowIndex + 6)).Value = shopName;
+                sheet.GetCell("B" + (rowIndex + 7)).Value = item.ShopName;
                 //VinCode
-                sheet.GetCell("C" + (rowIndex + 6)).Value = item.VinCode;
-                //ModelName
-                //sheet.GetCell("D" + (rowIndex + 6)).Value = item.ModelName;
-                ////SubModelName
-                //sheet.GetCell("E" + (rowIndex + 6)).Value = item.SubModelName;
-                ////Stockage
-                //sheet.GetCell("F" + (rowIndex + 6)).Value = item.StockAge;
-                ////SaleFlag
-                //sheet.GetCell("G" + (rowIndex + 6)).Value = item.SaleFlag;
-                // 在库与否
-                if (string.IsNullOrEmpty(item.PhotoName))
+                sheet.GetCell("C" + (rowIndex + 7)).Value = item.CheckCode;
+                // 
+                sheet.GetCell("D" + (rowIndex + 7)).Value = item.CheckTypeName;
+                // 
+                if (item.answerPhotoList != null && item.answerPhotoList.Count > 0)
                 {
-                    sheet.GetCell("H" + (rowIndex + 6)).Value = "";
-                    sheet.GetCell("I" + (rowIndex + 6)).Value = "1";
-                    sheet.GetCell("J" + (rowIndex + 6)).Value = "无";
+                    string photoName = "";
+                    foreach (AnswerPhotoDto photo in item.answerPhotoList)
+                    {
+                        if (photo == item.answerPhotoList[item.answerPhotoList.Count - 1])
+                        {
+                            photoName += photo.PhotoNameServer;
+                        }
+                        else
+                        {
+                            photoName += photo.PhotoNameServer + ";";
+                        }
+                    }
+                    sheet.GetCell("E" + (rowIndex + 7)).Value = "1";
+                    sheet.GetCell("F" + (rowIndex + 7)).Value = "";
+                    sheet.GetCell("G" + (rowIndex + 7)).Value = photoName;
                 }
                 else
                 {
-                    sheet.GetCell("H" + (rowIndex + 6)).Value = "1";
-                    sheet.GetCell("I" + (rowIndex + 6)).Value = "";
-                    sheet.GetCell("J" + (rowIndex + 6)).Value = "有";
+                    sheet.GetCell("E" + (rowIndex + 7)).Value = "";
+                    sheet.GetCell("F" + (rowIndex + 7)).Value = "1";
+                    sheet.GetCell("G" + (rowIndex + 7)).Value = "无";
                 }
-                sheet.GetCell("K" + (rowIndex + 6)).Value = item.Remark;
+                sheet.GetCell("H" + (rowIndex + 7)).Value = item.Remark;
+                sheet.GetCell("I" + (rowIndex + 7)).Value = item.OtherProperty;
+                if (project.ScoreShow == true)
+                {
+                    sheet.GetCell("J" + (rowIndex + 7)).Value = item.Score;
+                }
+                else {
+                    sheet.GetCell("J" + (rowIndex + 7)).Value = "";
+                }
                 rowIndex++;
             }
             #endregion
-            #region 在库
-            sheet1.GetCell("B" + (2)).Value = shopName;
-            foreach (Answer item in listY)
+            #region 新增
+            
+            foreach (AnswerDto item in answerList_Y)
             {
                 //序号
-                sheet1.GetCell("A" + (rowIndex1 + 6)).Value = rowIndex1.ToString();
+                sheet1.GetCell("A" + (rowIndex + 7)).Value = rowIndex.ToString();
                 //经销商名称
-                sheet1.GetCell("B" + (rowIndex1 + 6)).Value = shopName;
+                sheet1.GetCell("B" + (rowIndex + 7)).Value = item.ShopName;
                 //VinCode
-                sheet1.GetCell("C" + (rowIndex1 + 6)).Value = item.VinCode;
-                //ModelName
-                //sheet1.GetCell("D" + (rowIndex1 + 6)).Value = item.ModelName;
-                //PhotoName
-                string photoName = "";
-                string[] photoNameList = item.PhotoName.Split(';');
-                if (photoNameList.Length == 2)
+                sheet1.GetCell("C" + (rowIndex + 7)).Value = item.CheckCode;
+                // 
+                if (item.answerPhotoList != null && item.answerPhotoList.Count > 0)
                 {
-                    photoName = item.VinCode + ".jpg;" + item.VinCode + "_车尾.jpg";
+                    string photoName = "";
+                    foreach (AnswerPhotoDto photo in item.answerPhotoList)
+                    {
+                        if (photo == item.answerPhotoList[item.answerPhotoList.Count - 1])
+                        {
+                            photoName += photo.PhotoNameServer;
+                        }
+                        else
+                        {
+                            photoName += photo.PhotoNameServer + ";";
+                        }
+                    }
+                    sheet1.GetCell("D" + (rowIndex + 7)).Value = photoName;
                 }
-                if (photoNameList.Length == 3)
+                else
                 {
-                    photoName = item.VinCode + ".jpg;" + item.VinCode + "_车尾.jpg;" + item.VinCode + "_销售发票.jpg";
+                    sheet1.GetCell("D" + (rowIndex + 7)).Value = "";
                 }
-                sheet1.GetCell("E" + (rowIndex1 + 6)).Value = photoName;
-                //Remark
-                sheet1.GetCell("F" + (rowIndex1 + 6)).Value = item.Remark;
-
+                sheet1.GetCell("E" + (rowIndex + 7)).Value = item.Remark;
+                sheet1.GetCell("F" + (rowIndex + 7)).Value = item.OtherProperty;
+                if (project.ScoreShow == true)
+                {
+                    sheet.GetCell("G" + (rowIndex + 7)).Value = item.Score;
+                }
+                else
+                {
+                    sheet.GetCell("G" + (rowIndex + 7)).Value = "";
+                }
                 rowIndex1++;
             }
             #endregion
             //保存excel文件
-            string fileName = shopName + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".xls";
+            string fileName = project.ProjectName+ DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".xls";
             string dirPath = Server.MapPath("~") + @"\Temp\";
             DirectoryInfo dir = new DirectoryInfo(dirPath);
             if (!dir.Exists)

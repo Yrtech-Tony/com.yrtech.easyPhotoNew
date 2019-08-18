@@ -14,11 +14,11 @@ namespace com.yrtech.InventoryAPI.Common
     public class CommonHelper
     {
         static JsonSerializerSettings defaultJsonSetting = new JsonSerializerSettings
-                {
-                    Formatting = Newtonsoft.Json.Formatting.Indented,
-                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
-                    NullValueHandling = NullValueHandling.Ignore
-                };
+        {
+            Formatting = Newtonsoft.Json.Formatting.Indented,
+            ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
+            NullValueHandling = NullValueHandling.Include
+        };
         public static string Encode(object obj)
         {
             string jsonString = string.Empty;
@@ -81,7 +81,7 @@ namespace com.yrtech.InventoryAPI.Common
                 return default(T);
             }
         }
-        public static string FormatterString(string str, int length,bool sign)
+        public static string FormatterString(string str, int length, bool sign)
         {
             decimal data;
             string strData = "-";
@@ -97,11 +97,11 @@ namespace com.yrtech.InventoryAPI.Common
                 }
                 else
                 {
-                    strData =Convert.ToInt32(data).ToString("N0");
+                    strData = Convert.ToInt32(data).ToString("N0");
                 }
                 if (sign)
                 {
-                    strData= strData + "%";
+                    strData = strData + "%";
                 }
             }
             return strData;
@@ -138,15 +138,16 @@ namespace com.yrtech.InventoryAPI.Common
             {
                 _httpClient = new HttpClient();
                 _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", GenerateToken());
+                // _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", GenerateToken());
             }
             return _httpClient;
         }
-        public string GetAPISurveyUrl
+        private static string _getAPISurveyUrl;
+        public static string GetAPISurveyUrl
         {
             get
             {
-                return "";
+                return "http://123.57.229.128:8001/survey";
             }
         }
     }

@@ -52,12 +52,12 @@ namespace com.yrtech.SurveyAPI.Controllers
         }
         [HttpGet]
         [Route("Answer/DownloadAnswerList")]
-        public HttpResponseMessage DownloadAnswerList(string projectCode, string shopCode)
+        public APIResult DownloadAnswerList(string projectCode, string shopCode)
         {
             try
             {
                 CommonController commonController = new CommonController();
-                //commonController.DownloadReport(projectCode, shopCode);
+                commonController.DownloadReport(projectCode, shopCode);
                 return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)
