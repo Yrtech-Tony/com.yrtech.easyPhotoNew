@@ -72,7 +72,7 @@ namespace com.yrtech.SurveyAPI.Controllers
             }
 
         }
-        [HttpGet]
+        [HttpPost]
         [Route("Answer/ImportAnswerList")]
         public APIResult ImportAnswerList(UploadData answer)
         {
@@ -80,6 +80,22 @@ namespace com.yrtech.SurveyAPI.Controllers
             {
                 List<AnswerDto> answerList = CommonHelper.DecodeString<List<AnswerDto>>(answer.AnswerListJson);
                 answerService.ImportAnswerList(answerList[0].ProjectId.ToString(), answer.UserId, answerList);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpPost]
+        [Route("Answer/ImportAnswerList")]
+        public APIResult DeleteAnswerList(UploadData answer)
+        {
+            try
+            {
+                List<AnswerDto> answerList = CommonHelper.DecodeString<List<AnswerDto>>(answer.AnswerListJson);
+                answerService.DeleteShopAnswer(answerList);
                 return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)

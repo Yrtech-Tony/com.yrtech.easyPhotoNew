@@ -180,6 +180,17 @@ namespace com.yrtech.InventoryAPI.Service
                 SaveShopAnswerPhoto(answerPhoto);
             }
         }
+        public void DeleteShopAnswer(List<AnswerDto> answerList)
+        {
+            string sql = "";
+            SqlParameter[] para = new SqlParameter[] { };
+            Type t = typeof(int);
+            foreach (AnswerDto answer in answerList)
+            {
+                sql += "DELETE Answer WHERE AnswerId = " + answer.AnswerId.ToString()+" ";
+            }
+            db.Database.ExecuteSqlCommand(sql, para);
+        }
         /// <summary>
         /// 
         /// </summary>
