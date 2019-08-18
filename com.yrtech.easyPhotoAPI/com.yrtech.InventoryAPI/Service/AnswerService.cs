@@ -102,6 +102,30 @@ namespace com.yrtech.InventoryAPI.Service
             sql += " Order By C.PhotoId";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerPhotoDto>().ToList();
         }
+        public void ImportAnswerList(string projectId, string userId, List<AnswerDto> answerList)
+        {
+            string sql = "";
+            int projectIdInt = Convert.ToInt32(projectId);
+            SqlParameter[] para = new SqlParameter[] { };
+            Type t = typeof(int);
+            foreach (AnswerDto answer in answerList)
+            {
+                sql += "DELETE Answer WHERE ShopId = " + answer.ShopId.ToString();
+                CheckType checkType = db.CheckType.Where(x => (x.CheckTypeName==answer.CheckTypeName)).FirstOrDefault();
+
+                sql += "INSERT INTO Answer(ProjectId,ShopId,CheckCode,CheckTypeId,OtherProperty,AddCheck,ModifyUserId,ModifyDateTime,InUserId,InDateTime) VALUES(";
+                sql += projectId + ",";
+                sql += answer.ShopId.ToString() + ",";
+                sql += answer.CheckCode+ ",";
+                sql += answer.CheckTypeId.ToString() + ",";
+                sql += answer.OtherProperty + ",";
+                sql += "N"+ ",";
+                sql += userId + ",GETDATE(),";
+                sql += userId + ",GETDATE(),";
+                sql += " ";
+            }
+            db.Database.ExecuteSqlCommand(sql, para);
+        }
         /// <summary>
         /// 
         /// </summary>

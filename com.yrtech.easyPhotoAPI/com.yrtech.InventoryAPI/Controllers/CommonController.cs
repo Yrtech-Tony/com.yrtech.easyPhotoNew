@@ -63,7 +63,7 @@ namespace com.yrtech.InventoryAPI.Controllers
                 answerDto.ShopCode = CommonHelper.DecodeString<ShopDto>(result).ShopCode;
                 answerDto.ShopName = CommonHelper.DecodeString<ShopDto>(result).ShopName;
             }
-            Workbook book = Workbook.Load(Server.MapPath("~") + @"Content\Excel\" + "easyPhoto.xls", false);
+            Workbook book = Workbook.Load(Server.MapPath("~") + @"Content\Excel\" + "easyPhotoExport.xls", false);
             //填充数据
             Worksheet sheet = book.Worksheets[0];
             Worksheet sheet1 = book.Worksheets[1];
