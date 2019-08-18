@@ -19,6 +19,8 @@ namespace com.yrtech.InventoryDAL
         public int ProjectId { get; set; }
         public string ShopCode { get; set; }
         public string ShopName { get; set; }
+        public string AccountId { get; set; }
+        public string AccountName { get; set; }
         public string InUserId { get; set; }
         public Nullable<System.DateTime> InDateTime { get; set; }
         public string ModifyUserId { get; set; }

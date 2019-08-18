@@ -143,11 +143,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetUserInfoShop")]
-        public APIResult GetUserInfoShop(string projectId, string shopId, string shopCode, string userId)
+        public APIResult GetUserInfoShop(string projectId, string shopId, string key, string userId)
         {
             try
             {
-                List<UserInfoShop> shopList = masterService.GetUserInfoShop(projectId, shopId, shopCode, userId);
+                List<UserInfoShop> shopList = masterService.GetUserInfoShop(projectId, shopId, key, userId);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(shopList) };
             }
             catch (Exception ex)

@@ -6,6 +6,7 @@ using System;
 using com.yrtech.InventoryDAL;
 using com.yrtech.InventoryAPI.Controllers;
 using com.yrtech.InventoryAPI.DTO;
+using System.Net.Http;
 
 namespace com.yrtech.SurveyAPI.Controllers
 {
@@ -51,7 +52,7 @@ namespace com.yrtech.SurveyAPI.Controllers
         }
         [HttpGet]
         [Route("Answer/DownloadAnswerList")]
-        public APIResult DownloadAnswerList(string projectCode, string shopCode)
+        public HttpResponseMessage DownloadAnswerList(string projectCode, string shopCode)
         {
             try
             {

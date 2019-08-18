@@ -36,21 +36,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="UserInfoShop">
-      <EntityTypeMapping TypeName="Inventory.UserInfoShop">
-        <MappingFragment StoreEntitySet="UserInfoShop">
-          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-          <ScalarProperty Name="ShopName" ColumnName="ShopName" />
-          <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
-          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-          <ScalarProperty Name="ShopId" ColumnName="ShopId" />
-          <ScalarProperty Name="UserId" ColumnName="UserId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="Projects">
       <EntityTypeMapping TypeName="Inventory.Projects">
         <MappingFragment StoreEntitySet="Projects">
@@ -145,6 +130,23 @@
           <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
           <ScalarProperty Name="PhotoName" ColumnName="PhotoName" />
           <ScalarProperty Name="PhotoId" ColumnName="PhotoId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserInfoShop">
+      <EntityTypeMapping TypeName="Inventory.UserInfoShop">
+        <MappingFragment StoreEntitySet="UserInfoShop">
+          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+          <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+          <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+          <ScalarProperty Name="ShopName" ColumnName="ShopName" />
+          <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+          <ScalarProperty Name="ShopId" ColumnName="ShopId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

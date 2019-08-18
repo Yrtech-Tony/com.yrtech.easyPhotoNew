@@ -141,8 +141,10 @@
           <Property Name="UserId" Type="int" Nullable="false" />
           <Property Name="ShopId" Type="int" Nullable="false" />
           <Property Name="ProjectId" Type="int" Nullable="false" />
-          <Property Name="ShopCode" Type="nvarchar" MaxLength="50" />
-          <Property Name="ShopName" Type="nvarchar" MaxLength="50" />
+          <Property Name="ShopCode" Type="nvarchar" MaxLength="500" />
+          <Property Name="ShopName" Type="nvarchar" MaxLength="500" />
+          <Property Name="AccountId" Type="nvarchar" MaxLength="100" />
+          <Property Name="AccountName" Type="nvarchar" MaxLength="100" />
           <Property Name="InUserId" Type="nvarchar" MaxLength="50" />
           <Property Name="InDateTime" Type="datetime" />
           <Property Name="ModifyUserId" Type="nvarchar" MaxLength="50" />
@@ -166,13 +168,13 @@
         <EntityContainer Name="InventoryDAL" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="OtherProperty" EntityType="Inventory.OtherProperty" />
           <EntitySet Name="UserInfo" EntityType="Inventory.UserInfo" />
-          <EntitySet Name="UserInfoShop" EntityType="Inventory.UserInfoShop" />
           <EntitySet Name="Projects" EntityType="Inventory.Projects" />
           <EntitySet Name="CheckType" EntityType="Inventory.CheckType" />
           <EntitySet Name="AnswerPhoto" EntityType="Inventory.AnswerPhoto" />
           <EntitySet Name="Answer" EntityType="Inventory.Answer" />
           <EntitySet Name="Note" EntityType="Inventory.Note" />
           <EntitySet Name="PhotoList" EntityType="Inventory.PhotoList" />
+          <EntitySet Name="UserInfoShop" EntityType="Inventory.UserInfoShop" />
         </EntityContainer>
         <EntityType Name="OtherProperty">
           <Key>
@@ -207,22 +209,6 @@
           <Property Name="InUserId" Type="Int32" />
           <Property Name="InDateTime" Type="DateTime" Precision="3" />
           <Property Name="ModifyUserId" Type="Int32" />
-          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="UserInfoShop">
-          <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="ShopId" />
-            <PropertyRef Name="ProjectId" />
-          </Key>
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="ShopId" Type="Int32" Nullable="false" />
-          <Property Name="ProjectId" Type="Int32" Nullable="false" />
-          <Property Name="ShopCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ShopName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="InDateTime" Type="DateTime" Precision="3" />
-          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Projects">
@@ -317,6 +303,24 @@
           <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InDateTime" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="UserInfoShop">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ShopId" />
+            <PropertyRef Name="ProjectId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="ShopId" Type="Int32" Nullable="false" />
+          <Property Name="ProjectId" Type="Int32" Nullable="false" />
+          <Property Name="ShopCode" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ShopName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="AccountId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AccountName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InDateTime" Type="DateTime" Precision="3" />
+          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -355,21 +359,6 @@
                 <ScalarProperty Name="TenantName" ColumnName="TenantName" />
                 <ScalarProperty Name="TenantId" ColumnName="TenantId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UserInfoShop">
-            <EntityTypeMapping TypeName="Inventory.UserInfoShop">
-              <MappingFragment StoreEntitySet="UserInfoShop">
-                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-                <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-                <ScalarProperty Name="ShopName" ColumnName="ShopName" />
-                <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
-                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-                <ScalarProperty Name="ShopId" ColumnName="ShopId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -467,6 +456,23 @@
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="PhotoName" ColumnName="PhotoName" />
                 <ScalarProperty Name="PhotoId" ColumnName="PhotoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserInfoShop">
+            <EntityTypeMapping TypeName="Inventory.UserInfoShop">
+              <MappingFragment StoreEntitySet="UserInfoShop">
+                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+                <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="ShopName" ColumnName="ShopName" />
+                <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="ShopId" ColumnName="ShopId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

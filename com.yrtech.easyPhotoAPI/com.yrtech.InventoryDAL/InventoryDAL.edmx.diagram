@@ -7,13 +7,13 @@
       <Diagram DiagramId="e2712e3741dd4920be75caa773f621b2" Name="Diagram1">
         <EntityTypeShape EntityType="Inventory.OtherProperty" Width="1.5" PointX="4.75" PointY="1.25" />
         <EntityTypeShape EntityType="Inventory.UserInfo" Width="1.5" PointX="13.5" PointY="3.25" />
-        <EntityTypeShape EntityType="Inventory.UserInfoShop" Width="1.5" PointX="5.375" PointY="5.75" />
         <EntityTypeShape EntityType="Inventory.Projects" Width="1.5" PointX="7.375" PointY="0.75" />
         <EntityTypeShape EntityType="Inventory.CheckType" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="Inventory.AnswerPhoto" Width="1.5" PointX="9.375" PointY="0.75" />
         <EntityTypeShape EntityType="Inventory.Answer" Width="1.5" PointX="7.375" PointY="5.75" />
         <EntityTypeShape EntityType="Inventory.Note" Width="1.5" PointX="0.75" PointY="4.75" />
         <EntityTypeShape EntityType="Inventory.PhotoList" Width="1.5" PointX="2.75" PointY="4.75" />
+        <EntityTypeShape EntityType="Inventory.UserInfoShop" Width="1.5" PointX="0.75" PointY="8.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

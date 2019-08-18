@@ -166,15 +166,15 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="shopCode"></param>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        public List<UserInfoShop> GetUserInfoShop(string projectId, string shopId, string shopCode, string userId)
+        public List<UserInfoShop> GetUserInfoShop(string projectId, string shopId, string key, string userId)
         {
-            if (shopCode == null) shopCode = "";
+            if (key == null) key = "";
             if (shopId == null) shopId = "";
             if (projectId == null) projectId = "";
             if (userId == null) userId = "";
             SqlParameter[] para = new SqlParameter[] {new SqlParameter("@ProjectId", projectId),
                                                     new SqlParameter("@ShopId", shopId),
-                                                    new SqlParameter("@ShopCode", shopCode),
+                                                    new SqlParameter("@Key", key),
                                                     new SqlParameter("@UserId", userId)};
             Type t = typeof(UserInfoShop);
             string sql = "";
@@ -183,9 +183,9 @@ namespace com.yrtech.InventoryAPI.Service
                       FROM [UserInfoShop]
                     WHERE  1=1 ";
 
-            if (!string.IsNullOrEmpty(shopCode))
+            if (!string.IsNullOrEmpty(key))
             {
-                sql += " AND ShopCode = @ShopCode";
+                sql += " AND (ShopCode LIKE '%'+@Key+'%' OR AccountId LIKE '%'+@Key+'%')";
             }
             if (!string.IsNullOrEmpty(shopId))
             {
@@ -219,6 +219,8 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.ModifyUserId = userInfoShop.ModifyUserId;
                 findOne.ShopCode = userInfoShop.ShopCode;
                 findOne.ShopName = userInfoShop.ShopName;
+                findOne.AccountId = userInfoShop.AccountId;
+                findOne.AccountName = userInfoShop.AccountName;
             }
             db.SaveChanges();
         }

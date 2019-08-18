@@ -136,8 +136,10 @@
     <Property Name="UserId" Type="int" Nullable="false" />
     <Property Name="ShopId" Type="int" Nullable="false" />
     <Property Name="ProjectId" Type="int" Nullable="false" />
-    <Property Name="ShopCode" Type="nvarchar" MaxLength="50" />
-    <Property Name="ShopName" Type="nvarchar" MaxLength="50" />
+    <Property Name="ShopCode" Type="nvarchar" MaxLength="500" />
+    <Property Name="ShopName" Type="nvarchar" MaxLength="500" />
+    <Property Name="AccountId" Type="nvarchar" MaxLength="100" />
+    <Property Name="AccountName" Type="nvarchar" MaxLength="100" />
     <Property Name="InUserId" Type="nvarchar" MaxLength="50" />
     <Property Name="InDateTime" Type="datetime" />
     <Property Name="ModifyUserId" Type="nvarchar" MaxLength="50" />
