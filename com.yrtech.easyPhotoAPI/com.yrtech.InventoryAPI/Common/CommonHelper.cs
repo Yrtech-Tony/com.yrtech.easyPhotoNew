@@ -19,6 +19,9 @@ namespace com.yrtech.InventoryAPI.Common
             ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
             NullValueHandling = NullValueHandling.Include
         };
+        #region 类型转化
+
+        
         public static string Encode(object obj)
         {
             string jsonString = string.Empty;
@@ -29,7 +32,6 @@ namespace com.yrtech.InventoryAPI.Common
             jsonString = JsonConvert.SerializeObject(obj, Formatting.Indented, defaultJsonSetting);
             return jsonString;
         }
-
         public static string EncodeDto<T>(IEnumerable t)
         {
             string jsonString = string.Empty;
@@ -106,6 +108,8 @@ namespace com.yrtech.InventoryAPI.Common
             }
             return strData;
         }
+        #endregion
+        #region 日志
         public static void log(string message)
         {
             string appDomainPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -131,6 +135,8 @@ namespace com.yrtech.InventoryAPI.Common
             fs.Write(info, 0, info.Length);
             return info;
         }
+        #endregion
+        #region HttpClient
         private static HttpClient _httpClient;
         public static HttpClient GetHttpClient()
         {
@@ -150,5 +156,7 @@ namespace com.yrtech.InventoryAPI.Common
                 return "http://123.57.229.128:8001/survey";
             }
         }
+        #endregion
+
     }
 }

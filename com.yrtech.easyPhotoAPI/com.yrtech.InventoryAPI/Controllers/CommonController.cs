@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -23,11 +24,11 @@ namespace com.yrtech.InventoryAPI.Controllers
             return View();
         }
 
-        public void DownloadAnswerList(string projectCode, string shopCode)
+        public async Task<List<ShopDto>> GetShopInfo(string brandId, string shopId, string shopCode, string key)
         {
-            //DownloadReport(projectCode, shopCode);
+            string result = await CommonHelper.GetHttpClient().GetStringAsync(CommonHelper.GetAPISurveyUrl + "/Master/GetShop/" + brandId + "/" + shopId + "/" + shopCode + "/" + key);
+            return CommonHelper.DecodeString<List<ShopDto>>(result);
         }
-
         public void DownloadExcel(string excelName, string filePath, bool isDeleteAfterDownload = false)
         {
             FileStream stream = new FileStream(filePath, FileMode.Open);
@@ -52,16 +53,18 @@ namespace com.yrtech.InventoryAPI.Controllers
                 System.IO.File.Delete(filePath);
             }
         }
-
-        public async void DownloadReport(string projectId, string shopId)
+        public  async void DownloadReport(string projectId, string shopId)
         {
             List<AnswerDto> answerList = answerService.GetShopAnswerList(projectId, shopId, "", "", "", "");
             foreach (AnswerDto answerDto in answerList)
             {
                 answerDto.answerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString());
-                string result = await CommonHelper.GetHttpClient().GetStringAsync(CommonHelper.GetAPISurveyUrl + "/Master/GetShop/" + "" + "/" + answerDto.ShopId + "/" + "");
-                answerDto.ShopCode = CommonHelper.DecodeString<ShopDto>(result).ShopCode;
-                answerDto.ShopName = CommonHelper.DecodeString<ShopDto>(result).ShopName;
+                List<ShopDto> shopList = await GetShopInfo("", shopId, "", "");
+                if (shopList != null && shopList.Count > 0)
+                {
+                    answerDto.ShopCode = shopList[0].ShopCode;
+                    answerDto.ShopName = shopList[0].ShopName;
+                }
             }
             Workbook book = Workbook.Load(Server.MapPath("~") + @"Content\Excel\" + "easyPhotoExport.xls", false);
             //填充数据
@@ -183,5 +186,8 @@ namespace com.yrtech.InventoryAPI.Controllers
             book.Save(filePath);
             DownloadExcel(fileName, filePath, true);
         }
+       
+
     }
+
 }

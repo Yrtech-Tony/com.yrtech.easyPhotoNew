@@ -12,7 +12,7 @@ namespace com.yrtech.SurveyAPI.Controllers
 {
 
     [RoutePrefix("easyPhoto/api")]
-    public class AnswerController : ApiController
+    public class AnswerController : BaseController
     {
         AnswerService answerService = new AnswerService();
         MasterService masterService = new MasterService();
@@ -74,7 +74,7 @@ namespace com.yrtech.SurveyAPI.Controllers
         }
         [HttpPost]
         [Route("Answer/ImportAnswerList")]
-        public APIResult ImportAnswerList(UploadData answer)
+        public  APIResult ImportAnswerList(UploadData answer)
         {
             try
             {
@@ -82,11 +82,25 @@ namespace com.yrtech.SurveyAPI.Controllers
                 List<AnswerDto> answerList = CommonHelper.DecodeString<List<AnswerDto>>(answer.AnswerListJson);
                 foreach (AnswerDto answerDto in answerList)
                 {
-                    //List<AnswerDto> answerExistList = answerService.GetShopAnswerList(answer.ProjectId,CommonHelper.GetHttpClient)
+                    string brandId = masterService.GetProject("", answerDto.ProjectId.ToString(), "", "", "")[0].BrandId.ToString();
+                    GetShopInfo(brandId,"",answerDto.ShopCode,"");
+                    if (_ShopInfo != null && _ShopInfo.Count > 0)
+                    {
+                        List<AnswerDto> answerListExist = answerService.GetShopAnswerList(answerDto.ProjectId.ToString(), _ShopInfo[0].ShopId.ToString(), "", "", "", "");
+                        if (answerListExist != null && answerListExist.Count > 0)
+                        {
+                            shopDtoList.Add(_ShopInfo[0]);
+                        }
+                    }
                 }
                 if (shopDtoList.Count > 0)
                 {
-                    return new APIResult() { Status = false, Body = "账号重复，请使用其他账号" };
+                    string existShop = "";
+                    foreach (ShopDto shop in shopDtoList)
+                    {
+                        existShop += shop.ShopName + ";";
+                    }
+                    return new APIResult() { Status = false, Body = "如下经销商已导入过，如需再次导入请先删除数据:"+existShop };
                 }
                 else
                 {

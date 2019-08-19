@@ -217,6 +217,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (findOne == null)
             {
                 userInfoShop.InDateTime = DateTime.Now;
+                userInfoShop.ModifyDateTime = DateTime.Now;
                 db.UserInfoShop.Add(userInfoShop);
             }
             else

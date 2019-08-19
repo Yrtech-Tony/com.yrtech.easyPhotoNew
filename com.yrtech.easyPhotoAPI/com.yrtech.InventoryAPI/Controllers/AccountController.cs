@@ -9,7 +9,7 @@ using com.yrtech.InventoryDAL;
 namespace com.yrtech.InventoryAPI.Controllers
 {
     [RoutePrefix("easyPhoto/api")]
-    public class AccountController : ApiController
+    public class AccountController : BaseController
     {
         AccountService accountService = new AccountService();
         MasterService masterService = new MasterService();
