@@ -80,19 +80,19 @@ namespace com.yrtech.SurveyAPI.Controllers
             {
                 List<ShopDto> shopDtoList = new List<ShopDto>();
                 List<AnswerDto> answerList = CommonHelper.DecodeString<List<AnswerDto>>(answer.AnswerListJson);
-                foreach (AnswerDto answerDto in answerList)
-                {
-                    string brandId = masterService.GetProject("", answerDto.ProjectId.ToString(), "", "", "")[0].BrandId.ToString();
-                    GetShopInfo(brandId,"",answerDto.ShopCode,"");
-                    if (_ShopInfo != null && _ShopInfo.Count > 0)
-                    {
-                        List<AnswerDto> answerListExist = answerService.GetShopAnswerList(answerDto.ProjectId.ToString(), _ShopInfo[0].ShopId.ToString(), "", "", "", "");
-                        if (answerListExist != null && answerListExist.Count > 0)
-                        {
-                            shopDtoList.Add(_ShopInfo[0]);
-                        }
-                    }
-                }
+                //foreach (AnswerDto answerDto in answerList)
+                //{
+                //    string brandId = masterService.GetProject("", answerDto.ProjectId.ToString(), "", "", "")[0].BrandId.ToString();
+                //    GetShopInfo(brandId,"",answerDto.ShopCode,"");
+                //    if (_ShopInfo != null && _ShopInfo.Count > 0)
+                //    {
+                //        List<AnswerDto> answerListExist = answerService.GetShopAnswerList(answerDto.ProjectId.ToString(), _ShopInfo[0].ShopId.ToString(), "", "", "", "");
+                //        if (answerListExist != null && answerListExist.Count > 0)
+                //        {
+                //            shopDtoList.Add(_ShopInfo[0]);
+                //        }
+                //    }
+                //}
                 if (shopDtoList.Count > 0)
                 {
                     string existShop = "";

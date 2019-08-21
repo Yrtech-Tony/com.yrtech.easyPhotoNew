@@ -5,11 +5,11 @@
     <EntitySet Name="UserInfo" EntityType="Inventory.UserInfo" />
     <EntitySet Name="CheckType" EntityType="Inventory.CheckType" />
     <EntitySet Name="AnswerPhoto" EntityType="Inventory.AnswerPhoto" />
-    <EntitySet Name="Answer" EntityType="Inventory.Answer" />
     <EntitySet Name="Note" EntityType="Inventory.Note" />
     <EntitySet Name="PhotoList" EntityType="Inventory.PhotoList" />
     <EntitySet Name="UserInfoShop" EntityType="Inventory.UserInfoShop" />
     <EntitySet Name="Projects" EntityType="Inventory.Projects" />
+    <EntitySet Name="Answer" EntityType="Inventory.Answer" />
   </EntityContainer>
   <EntityType Name="OtherProperty">
     <Key>
@@ -71,24 +71,6 @@
     <Property Name="InDateTime" Type="DateTime" Precision="3" />
     <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
-  </EntityType>
-  <EntityType Name="Answer">
-    <Key>
-      <PropertyRef Name="AnswerId" />
-    </Key>
-    <Property Name="AnswerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="ProjectId" Type="Int32" Nullable="false" />
-    <Property Name="ShopId" Type="Int32" Nullable="false" />
-    <Property Name="CheckCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="CheckTypeId" Type="Int32" />
-    <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="OtherProperty" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="Score" Type="Decimal" Precision="19" Scale="2" />
-    <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
-    <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="InDateTime" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="Note">
     <Key>
@@ -152,6 +134,26 @@
     <Property Name="ExpireDateTime" Type="DateTime" Precision="3" />
     <Property Name="ScoreShow" Type="Boolean" />
     <Property Name="OtherPropertyShow" Type="Boolean" />
+    <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+    <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InDateTime" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="Answer">
+    <Key>
+      <PropertyRef Name="AnswerId" />
+    </Key>
+    <Property Name="AnswerId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ProjectId" Type="Int32" Nullable="false" />
+    <Property Name="ShopId" Type="Int32" Nullable="false" />
+    <Property Name="ShopCode" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="ShopName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="CheckCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CheckTypeId" Type="Int32" />
+    <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="OtherProperty" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Score" Type="Decimal" Precision="19" Scale="2" />
+    <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
     <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />

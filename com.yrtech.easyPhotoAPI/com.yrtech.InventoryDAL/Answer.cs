@@ -17,6 +17,8 @@ namespace com.yrtech.InventoryDAL
         public long AnswerId { get; set; }
         public int ProjectId { get; set; }
         public int ShopId { get; set; }
+        public string ShopCode { get; set; }
+        public string ShopName { get; set; }
         public string CheckCode { get; set; }
         public Nullable<int> CheckTypeId { get; set; }
         public string Remark { get; set; }

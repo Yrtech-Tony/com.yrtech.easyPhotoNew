@@ -23,19 +23,13 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             return View();
         }
-
-        public async Task<List<ShopDto>> GetShopInfo(string brandId, string shopId, string shopCode, string key)
-        {
-            string result = await CommonHelper.GetHttpClient().GetStringAsync(CommonHelper.GetAPISurveyUrl + "/Master/GetShop/" + brandId + "/" + shopId + "/" + shopCode + "/" + key);
-            return CommonHelper.DecodeString<List<ShopDto>>(result);
-        }
         public void DownloadExcel(string excelName, string filePath, bool isDeleteAfterDownload = false)
         {
             FileStream stream = new FileStream(filePath, FileMode.Open);
             if (stream == null) return;
             if (string.IsNullOrEmpty(excelName))
             {
-                excelName = "excel" + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff")+".xls";
+                excelName = "excel" + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".xls";
             }
             byte[] bytes = new byte[(int)stream.Length];
             stream.Position = 0;
@@ -53,19 +47,9 @@ namespace com.yrtech.InventoryAPI.Controllers
                 System.IO.File.Delete(filePath);
             }
         }
-        public  async void DownloadReport(string projectId, string shopId)
+        public void DownloadReport(string projectId, string shopId)
         {
             List<AnswerDto> answerList = answerService.GetShopAnswerList(projectId, shopId, "", "", "", "");
-            foreach (AnswerDto answerDto in answerList)
-            {
-                answerDto.answerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString());
-                List<ShopDto> shopList = await GetShopInfo("", shopId, "", "");
-                if (shopList != null && shopList.Count > 0)
-                {
-                    answerDto.ShopCode = shopList[0].ShopCode;
-                    answerDto.ShopName = shopList[0].ShopName;
-                }
-            }
             Workbook book = Workbook.Load(Server.MapPath("~") + @"Content\Excel\" + "easyPhotoExport.xls", false);
             //填充数据
             Worksheet sheet = book.Worksheets[0];
@@ -74,7 +58,7 @@ namespace com.yrtech.InventoryAPI.Controllers
             int rowIndex1 = 1;
             List<AnswerDto> answerList_N = answerList.Where(x => x.AddCheck == "N").ToList();
             List<AnswerDto> answerList_Y = answerList.Where(x => x.AddCheck == "Y").ToList();
-            Projects project = masterService.GetProject("", projectId,"", "", "")[0];
+            Projects project = masterService.GetProject("", projectId, "", "", "")[0];
             sheet.GetCell("D" + 2).Value = project.ProjectName;
             sheet1.GetCell("D" + 2).Value = project.ProjectName;
             if (project.ScoreShow == true)
@@ -124,14 +108,15 @@ namespace com.yrtech.InventoryAPI.Controllers
                 {
                     sheet.GetCell("J" + (rowIndex + 7)).Value = item.Score;
                 }
-                else {
+                else
+                {
                     sheet.GetCell("J" + (rowIndex + 7)).Value = "";
                 }
                 rowIndex++;
             }
             #endregion
             #region 新增
-            
+
             foreach (AnswerDto item in answerList_Y)
             {
                 //序号
@@ -175,7 +160,7 @@ namespace com.yrtech.InventoryAPI.Controllers
             }
             #endregion
             //保存excel文件
-            string fileName = project.ProjectName+ DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".xls";
+            string fileName = project.ProjectName + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".xls";
             string dirPath = Server.MapPath("~") + @"\Temp\";
             DirectoryInfo dir = new DirectoryInfo(dirPath);
             if (!dir.Exists)
@@ -186,7 +171,7 @@ namespace com.yrtech.InventoryAPI.Controllers
             book.Save(filePath);
             DownloadExcel(fileName, filePath, true);
         }
-       
+
 
     }
 

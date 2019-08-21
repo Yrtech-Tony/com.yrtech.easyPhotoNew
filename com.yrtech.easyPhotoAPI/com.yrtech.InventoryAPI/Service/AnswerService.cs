@@ -44,7 +44,7 @@ namespace com.yrtech.InventoryAPI.Service
             Type t = typeof(AnswerDto);
             string sql = "";
             sql = @"SELECT A.*,B.CheckTypeName
-                    FROM Answer A INNER JOIN Shop C LEFT JOIN CheckType B ON A.CheckTypeId = B.CheckTypeId AND A.ProjectId = B.ProjectId
+                    FROM Answer A LEFT JOIN CheckType B ON A.CheckTypeId = B.CheckTypeId AND A.ProjectId = B.ProjectId
                     WHERE 1=1 ";
             if (!string.IsNullOrEmpty(projectId))
             {
@@ -116,9 +116,11 @@ namespace com.yrtech.InventoryAPI.Service
                 sql += " AND ProjectId = " + projectId.ToString() + " "+ "/r/n";
                 CheckType checkType = db.CheckType.Where(x => (x.CheckTypeName==answer.CheckTypeName)).FirstOrDefault();
 
-                sql += "INSERT INTO Answer(ProjectId,ShopId,CheckCode,CheckTypeId,OtherProperty,AddCheck,ModifyUserId,ModifyDateTime,InUserId,InDateTime) VALUES(";
+                sql += "INSERT INTO Answer(ProjectId,ShopId,ShopCode,ShopName,CheckCode,CheckTypeId,OtherProperty,AddCheck,ModifyUserId,ModifyDateTime,InUserId,InDateTime) VALUES(";
                 sql += projectId + ",";
                 sql += answer.ShopId.ToString() + ",";
+                sql += answer.ShopCode.ToString() + ",";
+                sql += answer.ShopName.ToString() + ",";
                 sql += answer.CheckCode+ ",";
                 sql += answer.CheckTypeId.ToString() + ",";
                 sql += answer.OtherProperty + ",";
