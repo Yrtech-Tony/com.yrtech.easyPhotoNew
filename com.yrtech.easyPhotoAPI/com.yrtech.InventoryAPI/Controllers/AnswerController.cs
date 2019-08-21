@@ -72,6 +72,22 @@ namespace com.yrtech.SurveyAPI.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("Answer/DownAnswerImportExcel")]
+        public APIResult DownAnswerImportExcel()
+        {
+            try
+            {
+                CommonController commonController = new CommonController();
+                commonController.DownAnswerImportExcel();
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
         [HttpPost]
         [Route("Answer/ImportAnswerList")]
         public  APIResult ImportAnswerList(UploadData answer)
