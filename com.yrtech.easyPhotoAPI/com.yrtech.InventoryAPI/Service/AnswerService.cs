@@ -111,23 +111,23 @@ namespace com.yrtech.InventoryAPI.Service
             foreach (AnswerDto answer in answerList)
             {
                 sql += "DELETE AnswerPhoto WHERE AnswerId IN (SELECT AnswerId FROM Answer WHERE ProjectId = " + projectId.ToString();
-                sql += " AND ShopId = " + answer.ShopId.ToString() + ") "+"/r/n";
+                sql += " AND ShopId = " + answer.ShopId.ToString() + ") ";
                 sql += "DELETE Answer WHERE ShopId = " + answer.ShopId.ToString();
-                sql += " AND ProjectId = " + projectId.ToString() + " "+ "/r/n";
+                sql += " AND ProjectId = " + projectId.ToString() + " ";
                 CheckType checkType = db.CheckType.Where(x => (x.CheckTypeName==answer.CheckTypeName)).FirstOrDefault();
 
-                sql += "INSERT INTO Answer(ProjectId,ShopId,ShopCode,ShopName,CheckCode,CheckTypeId,OtherProperty,AddCheck,ModifyUserId,ModifyDateTime,InUserId,InDateTime) VALUES(";
-                sql += projectId + ",";
-                sql += answer.ShopId.ToString() + ",";
-                sql += answer.ShopCode.ToString() + ",";
-                sql += answer.ShopName.ToString() + ",";
-                sql += answer.CheckCode+ ",";
-                sql += answer.CheckTypeId.ToString() + ",";
-                sql += answer.OtherProperty + ",";
-                sql += "N"+ ",";
+                sql += "INSERT INTO Answer(ProjectId,ShopId,ShopCode,ShopName,CheckCode,CheckTypeId,OtherProperty,AddCheck,ModifyUserId,ModifyDateTime,InUserId,InDateTime) VALUES('";
+                sql += projectId + "','";
+                sql += answer.ShopId.ToString() + "','";
+                sql += answer.ShopCode.ToString() + "','";
+                sql += answer.ShopName.ToString() + "','";
+                sql += answer.CheckCode+ "','";
+                sql += answer.CheckTypeId.ToString() + "','";
+                sql += answer.OtherProperty + "','";
+                sql += "N"+ "',";
                 sql += userId + ",GETDATE(),";
-                sql += userId + ",GETDATE(),";
-                sql += " "+ "/r/n";
+                sql += userId + ",GETDATE())";
+                sql += " ";
             }
             db.Database.ExecuteSqlCommand(sql, para);
         }

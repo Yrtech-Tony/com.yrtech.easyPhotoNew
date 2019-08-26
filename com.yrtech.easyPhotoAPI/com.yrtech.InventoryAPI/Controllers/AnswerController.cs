@@ -73,13 +73,13 @@ namespace com.yrtech.SurveyAPI.Controllers
 
         }
         [HttpGet]
-        [Route("Answer/DownAnswerImportExcel")]
-        public APIResult DownAnswerImportExcel()
+        [Route("Answer/DownLoadAnswerImportExcel")]
+        public APIResult DownLoadAnswerImportExcel()
         {
             try
             {
                 CommonController commonController = new CommonController();
-                commonController.DownAnswerImportExcel();
+                commonController.DownLoadAnswerImportExcel();
                 return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)

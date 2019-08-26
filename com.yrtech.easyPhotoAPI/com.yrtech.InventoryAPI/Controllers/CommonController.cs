@@ -171,10 +171,10 @@ namespace com.yrtech.InventoryAPI.Controllers
             book.Save(filePath);
             DownloadExcel(fileName, filePath, true);
         }
-        public void DownAnswerImportExcel()
+        public void DownLoadAnswerImportExcel()
         {
             string fileName = "easyPhotoImport";
-           
+
             string dirPath = Server.MapPath("~") + @"\Content\Excel\";
             string dirPath_Copy = Server.MapPath("~") + @"\Temp\";
             System.IO.File.Copy(dirPath + fileName + ".xls", dirPath_Copy + fileName + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".xls");
