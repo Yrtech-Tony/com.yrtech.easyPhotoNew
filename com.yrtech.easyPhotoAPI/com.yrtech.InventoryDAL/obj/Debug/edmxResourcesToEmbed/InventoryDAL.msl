@@ -1,20 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="InventoryStoreContainer" CdmEntityContainer="InventoryDAL">
-    <EntitySetMapping Name="OtherProperty">
-      <EntityTypeMapping TypeName="Inventory.OtherProperty">
-        <MappingFragment StoreEntitySet="OtherProperty">
-          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-          <ScalarProperty Name="OtherName" ColumnName="OtherName" />
-          <ScalarProperty Name="OtherCode" ColumnName="OtherCode" />
-          <ScalarProperty Name="OtherType" ColumnName="OtherType" />
-          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="UserInfo">
       <EntityTypeMapping TypeName="Inventory.UserInfo">
         <MappingFragment StoreEntitySet="UserInfo">
@@ -150,6 +136,21 @@
           <ScalarProperty Name="ShopId" ColumnName="ShopId" />
           <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
           <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="OtherProperty">
+      <EntityTypeMapping TypeName="Inventory.OtherProperty">
+        <MappingFragment StoreEntitySet="OtherProperty">
+          <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+          <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+          <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+          <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+          <ScalarProperty Name="OtherName" ColumnName="OtherName" />
+          <ScalarProperty Name="OtherCode" ColumnName="OtherCode" />
+          <ScalarProperty Name="OtherType" ColumnName="OtherType" />
+          <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+          <ScalarProperty Name="OtherPropertyId" ColumnName="OtherPropertyId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

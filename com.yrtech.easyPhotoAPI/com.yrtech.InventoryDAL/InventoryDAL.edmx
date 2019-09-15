@@ -67,10 +67,9 @@
         </EntityType>
         <EntityType Name="OtherProperty">
           <Key>
-            <PropertyRef Name="ProjectId" />
-            <PropertyRef Name="OtherType" />
-            <PropertyRef Name="OtherCode" />
+            <PropertyRef Name="OtherPropertyId" />
           </Key>
+          <Property Name="OtherPropertyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProjectId" Type="int" Nullable="false" />
           <Property Name="OtherType" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="OtherCode" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -169,7 +168,6 @@
     <edmx:ConceptualModels>
       <Schema Namespace="Inventory" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="InventoryDAL" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="OtherProperty" EntityType="Inventory.OtherProperty" />
           <EntitySet Name="UserInfo" EntityType="Inventory.UserInfo" />
           <EntitySet Name="CheckType" EntityType="Inventory.CheckType" />
           <EntitySet Name="AnswerPhoto" EntityType="Inventory.AnswerPhoto" />
@@ -178,22 +176,8 @@
           <EntitySet Name="UserInfoShop" EntityType="Inventory.UserInfoShop" />
           <EntitySet Name="Projects" EntityType="Inventory.Projects" />
           <EntitySet Name="Answer" EntityType="Inventory.Answer" />
+          <EntitySet Name="OtherProperty" EntityType="Inventory.OtherProperty" />
         </EntityContainer>
-        <EntityType Name="OtherProperty">
-          <Key>
-            <PropertyRef Name="ProjectId" />
-            <PropertyRef Name="OtherType" />
-            <PropertyRef Name="OtherCode" />
-          </Key>
-          <Property Name="ProjectId" Type="Int32" Nullable="false" />
-          <Property Name="OtherType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="OtherCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="OtherName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="InDateTime" Type="DateTime" Precision="3" />
-          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
-        </EntityType>
         <EntityType Name="UserInfo">
           <Key>
             <PropertyRef Name="Id" />
@@ -327,26 +311,26 @@
           <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InDateTime" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="OtherProperty">
+          <Key>
+            <PropertyRef Name="OtherPropertyId" />
+          </Key>
+          <Property Name="OtherPropertyId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectId" Type="Int32" Nullable="false" />
+          <Property Name="OtherType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OtherCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OtherName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InDateTime" Type="DateTime" Precision="3" />
+          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="InventoryStoreContainer" CdmEntityContainer="InventoryDAL">
-          <EntitySetMapping Name="OtherProperty">
-            <EntityTypeMapping TypeName="Inventory.OtherProperty">
-              <MappingFragment StoreEntitySet="OtherProperty">
-                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-                <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-                <ScalarProperty Name="OtherName" ColumnName="OtherName" />
-                <ScalarProperty Name="OtherCode" ColumnName="OtherCode" />
-                <ScalarProperty Name="OtherType" ColumnName="OtherType" />
-                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="UserInfo">
             <EntityTypeMapping TypeName="Inventory.UserInfo">
               <MappingFragment StoreEntitySet="UserInfo">
@@ -482,6 +466,21 @@
                 <ScalarProperty Name="ShopId" ColumnName="ShopId" />
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OtherProperty">
+            <EntityTypeMapping TypeName="Inventory.OtherProperty">
+              <MappingFragment StoreEntitySet="OtherProperty">
+                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+                <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+                <ScalarProperty Name="OtherName" ColumnName="OtherName" />
+                <ScalarProperty Name="OtherCode" ColumnName="OtherCode" />
+                <ScalarProperty Name="OtherType" ColumnName="OtherType" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="OtherPropertyId" ColumnName="OtherPropertyId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

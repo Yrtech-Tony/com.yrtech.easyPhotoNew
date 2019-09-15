@@ -14,6 +14,7 @@ namespace com.yrtech.InventoryDAL
     
     public partial class OtherProperty
     {
+        public int OtherPropertyId { get; set; }
         public int ProjectId { get; set; }
         public string OtherType { get; set; }
         public string OtherCode { get; set; }

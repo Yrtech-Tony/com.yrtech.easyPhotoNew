@@ -21,11 +21,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetProject")]
-        public APIResult GetProject(string tenantId, string projectId,string brandId, string year, string expireDateTimeCheck)
+        public APIResult GetProject(string tenantId, string projectId, string brandId, string year, string expireDateTimeCheck)
         {
             try
             {
-                List<Projects> projectList = masterService.GetProject(tenantId, projectId,brandId, year, expireDateTimeCheck);
+                List<Projects> projectList = masterService.GetProject(tenantId, projectId, brandId, year, expireDateTimeCheck);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(projectList) };
             }
             catch (Exception ex)
@@ -91,11 +91,11 @@ namespace com.yrtech.InventoryAPI.Controllers
                 List<UserInfo> userInfoList_accountId = masterService.GetUserInfo(userInfo.TenantId.ToString(), "", userInfo.AccountId, "", "");
                 List<UserInfo> userInfoList_TelNO = masterService.GetUserInfo(userInfo.TenantId.ToString(), "", "", userInfo.TelNO, "");
                 // 验证账号是否重复
-                if (userInfoList_accountId != null && userInfoList_accountId.Count != 0)
+                if (userInfoList_accountId != null && userInfoList_accountId.Count != 0 && userInfo.Id != userInfoList_accountId[0].Id)
                 {
                     return new APIResult() { Status = false, Body = "账号重复，请使用其他账号" };
                 }// 验证手机号是否重复
-                else if (userInfoList_TelNO != null && userInfoList_TelNO.Count != 0)
+                else if (userInfoList_TelNO != null && userInfoList_TelNO.Count != 0 && userInfo.Id != userInfoList_TelNO[0].Id)
                 {
                     return new APIResult() { Status = false, Body = "手机号重复" };
                 }
@@ -161,11 +161,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetUserInfoShop")]
-        public APIResult GetUserInfoShop(string projectId, string shopId, string key, string userId)
+        public APIResult GetUserInfoShop(string projectId, string shopId, string key, string userId, string roleType)
         {
             try
             {
-                List<UserInfoShop> shopList = masterService.GetUserInfoShop(projectId, shopId, key, userId);
+                List<UserInfoShop> shopList = masterService.GetUserInfoShop(projectId, shopId, key, userId, roleType);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(shopList) };
             }
             catch (Exception ex)
@@ -186,7 +186,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<Note> noteList = masterService.GetNote(projectId, checkTypeId, addCheck,""); 
+                List<Note> noteList = masterService.GetNote(projectId, checkTypeId, addCheck, "");
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(noteList) };
             }
             catch (Exception ex)
@@ -202,7 +202,7 @@ namespace com.yrtech.InventoryAPI.Controllers
             try
             {
                 List<Note> noteList = masterService.GetNote(note.ProjectId.ToString(), note.CheckTypeId.ToString(), "", note.NoteName);
-                if (noteList != null && noteList.Count != 0)
+                if (noteList != null && noteList.Count != 0 && note.NoteID != noteList[0].NoteID)
                 {
                     return new APIResult() { Status = false, Body = "备注名称重复" };
                 }
@@ -245,7 +245,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<OtherProperty> otherPropertyList = masterService.GetOtherProperty(projectId, otherType, otherCode,"");
+                List<OtherProperty> otherPropertyList = masterService.GetOtherProperty(projectId, otherType, otherCode, "");
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(otherPropertyList) };
             }
             catch (Exception ex)
@@ -260,8 +260,14 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<OtherProperty> otherPropertyList = masterService.GetOtherProperty(otherProperty.ProjectId.ToString(),otherProperty.OtherType,otherProperty.OtherCode,otherProperty.OtherName);
-                if (otherPropertyList != null && otherPropertyList.Count != 0)
+                List<OtherProperty> otherPropertyList_Code = masterService.GetOtherProperty(otherProperty.ProjectId.ToString(), otherProperty.OtherType, otherProperty.OtherCode, "");
+                List<OtherProperty> otherPropertyList_Name = masterService.GetOtherProperty(otherProperty.ProjectId.ToString(), otherProperty.OtherType, "", otherProperty.OtherName);
+                if (otherPropertyList_Code != null && otherPropertyList_Code.Count != 0 && otherProperty.OtherPropertyId != otherPropertyList_Code[0].OtherPropertyId)
+                {
+                    return new APIResult() { Status = false, Body = "其他属性代码重复" };
+
+                }
+                else if (otherPropertyList_Name != null && otherPropertyList_Name.Count != 0 && otherProperty.OtherPropertyId != otherPropertyList_Name[0].OtherPropertyId)
                 {
                     return new APIResult() { Status = false, Body = "其他属性名称重复" };
                 }
@@ -289,7 +295,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<PhotoList> photoList = masterService.GetPhotoList(projectId, checkTypeId, addCheck,"");
+                List<PhotoList> photoList = masterService.GetPhotoList(projectId, checkTypeId, addCheck, "");
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(photoList) };
             }
             catch (Exception ex)
@@ -310,7 +316,7 @@ namespace com.yrtech.InventoryAPI.Controllers
             try
             {
                 List<PhotoList> photoList = masterService.GetPhotoList(photo.ProjectId.ToString(), photo.CheckTypeId.ToString(), "", photo.PhotoName);
-                if (photoList != null && photoList.Count != 0)
+                if (photoList != null && photoList.Count != 0 && photo.PhotoId != photoList[0].PhotoId)
                 {
                     return new APIResult() { Status = false, Body = "照片名称重复" };
                 }

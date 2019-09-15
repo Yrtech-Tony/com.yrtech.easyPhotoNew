@@ -145,6 +145,11 @@ namespace com.yrtech.InventoryAPI.Service
             if (findOne == null)
             {
                 userinfo.InDateTime = DateTime.Now;
+                if (userinfo.ExpireDateTime == null)
+                {
+                    userinfo.ExpireDateTime = new DateTime(9999, 12, 31);
+                }
+                userinfo.ModifyDateTime = DateTime.Now;
                 db.UserInfo.Add(userinfo);
             }
             else
@@ -152,10 +157,14 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.AccountId = userinfo.AccountId;
                 findOne.AccountName = userinfo.AccountName;
                 findOne.Email = userinfo.Email;
+                if (userinfo.ExpireDateTime == null)
+                {
+                    findOne.ExpireDateTime = new DateTime(9999, 12, 31);
+                }
                 findOne.ExpireDateTime = userinfo.ExpireDateTime;
                 findOne.HeadPicUrl = userinfo.HeadPicUrl;
-                findOne.InDateTime = DateTime.Now;
-                findOne.InUserId = userinfo.InUserId;
+                //findOne.InDateTime = DateTime.Now;
+                //findOne.InUserId = userinfo.InUserId;
                 findOne.ModifyDateTime = DateTime.Now;
                 findOne.ModifyUserId = userinfo.ModifyUserId;
                 findOne.Password = userinfo.Password;
@@ -172,12 +181,13 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="shopCode"></param>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        public List<UserInfoShop> GetUserInfoShop(string projectId, string shopId, string key, string userId)
+        public List<UserInfoShop> GetUserInfoShop(string projectId, string shopId, string key, string userId,string roleType)
         {
             if (key == null) key = "";
             if (shopId == null) shopId = "";
             if (projectId == null) projectId = "";
             if (userId == null) userId = "";
+            if (roleType == null) roleType = "";
             SqlParameter[] para = new SqlParameter[] {new SqlParameter("@ProjectId", projectId),
                                                     new SqlParameter("@ShopId", shopId),
                                                     new SqlParameter("@Key", key),
@@ -201,9 +211,16 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 sql += " AND ProjectId = @ProjectId";
             }
-            if (!string.IsNullOrEmpty(userId))
+            if (roleType == "S_Sysadmin" || roleType == "S_BrandSysadmin")// 权限是租户管理员或者品牌管理员的时候查询所有数据
             {
-                sql += " AND UserId= @UserId";
+
+            }
+            else // 非租户管理员和品牌管理员是按照userId查询
+            {
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    sql += " AND UserId= @UserId";
+                }
             }
             return db.Database.SqlQuery(t, sql, para).Cast<UserInfoShop>().ToList();
         }
@@ -292,6 +309,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (findOne == null)
             {
                 note.InDateTime = DateTime.Now;
+                note.ModifyDateTime = DateTime.Now;
                 db.Note.Add(note);
             }
             else
@@ -401,10 +419,11 @@ namespace com.yrtech.InventoryAPI.Service
         }
         public void SaveOtherProperty(OtherProperty otherProperty)
         {
-            OtherProperty findOne = db.OtherProperty.Where(x => (x.ProjectId==otherProperty.ProjectId&&x.OtherType==otherProperty.OtherType&&x.OtherCode==otherProperty.OtherCode)).FirstOrDefault();
+            OtherProperty findOne = db.OtherProperty.Where(x => (x.OtherPropertyId==otherProperty.OtherPropertyId)).FirstOrDefault();
             if (findOne == null)
             {
                 otherProperty.InDateTime = DateTime.Now;
+                otherProperty.ModifyDateTime = DateTime.Now;
                 db.OtherProperty.Add(otherProperty);
             }
             else
@@ -486,6 +505,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (findOne == null)
             {
                 photoList.InDateTime = DateTime.Now;
+                photoList.ModifyDateTime = DateTime.Now;
                 db.PhotoList.Add(photoList);
             }
             else

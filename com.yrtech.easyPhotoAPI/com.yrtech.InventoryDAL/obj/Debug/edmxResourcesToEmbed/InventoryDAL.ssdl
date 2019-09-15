@@ -62,10 +62,9 @@
   </EntityType>
   <EntityType Name="OtherProperty">
     <Key>
-      <PropertyRef Name="ProjectId" />
-      <PropertyRef Name="OtherType" />
-      <PropertyRef Name="OtherCode" />
+      <PropertyRef Name="OtherPropertyId" />
     </Key>
+    <Property Name="OtherPropertyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ProjectId" Type="int" Nullable="false" />
     <Property Name="OtherType" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="OtherCode" Type="nvarchar" MaxLength="50" Nullable="false" />
