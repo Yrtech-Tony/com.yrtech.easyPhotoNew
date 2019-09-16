@@ -17,7 +17,8 @@ namespace com.yrtech.InventoryAPI.Common
         {
             Formatting = Newtonsoft.Json.Formatting.Indented,
             ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
-            NullValueHandling = NullValueHandling.Include
+            NullValueHandling = NullValueHandling.Include,
+            DateFormatString = "yyyy-MM-dd HH:mm:ss"
         };
         #region 类型转化
 
