@@ -24,7 +24,10 @@ namespace com.yrtech.InventoryAPI
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            config.Formatters.JsonFormatter.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new IsoDateTimeConverter()
+            {
+                DateTimeFormat = "yyyy-MM-dd HH:mm:ss"
+            })
         }
     }
 }
