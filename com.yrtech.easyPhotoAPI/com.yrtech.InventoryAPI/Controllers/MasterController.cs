@@ -365,7 +365,7 @@ namespace com.yrtech.InventoryAPI.Controllers
             try
             {
                 List<CheckType> checkTypeList = masterService.GetCheckType(checkType.ProjectId.ToString(), "", checkType.CheckTypeName);
-                if (checkTypeList != null && checkTypeList.Count != 0)
+                if (checkTypeList != null && checkTypeList.Count != 0&& checkTypeList[0].CheckTypeId!=checkType.CheckTypeId)
                 {
                     return new APIResult() { Status = false, Body = "检查类型重复" };
                 }
