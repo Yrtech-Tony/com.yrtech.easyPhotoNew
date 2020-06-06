@@ -17,16 +17,17 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="accountId"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public List<AccountDto> LoginForMobile(string accountId, string password)
+        public List<UserInfo> Login(string projectId,string accountId, string password)
         {
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@AccountId", accountId),
+            SqlParameter[] para = new SqlParameter[] {new SqlParameter("@AccountId", accountId),
+                                                       new SqlParameter("@AccountId", accountId),
                                                        new SqlParameter("@Password",password)};
-            Type t = typeof(AccountDto);
-            string sql = @"SELECT A.Id AS UserId,A.TenantId,A.TenantName,AccountId,AccountName,A.TelNO,A.Email,A.HeadPicUrl
+            Type t = typeof(UserInfo);
+            string sql = @"SELECT A.*
                             FROM UserInfo A 
-                            WHERE AccountId = @AccountId AND[Password] = @Password
+                            WHERE ProjectId = @ProjectId AND ShopCode = @AccountId AND [Password] = @Password
                             AND GETDATE()<ExpireDateTime";
-            return db.Database.SqlQuery(t, sql, para).Cast<AccountDto>().ToList();
+            return db.Database.SqlQuery(t, sql, para).Cast<UserInfo>().ToList();
         }
       
     }

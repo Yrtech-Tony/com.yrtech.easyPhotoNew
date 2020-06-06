@@ -12,13 +12,13 @@ namespace com.yrtech.InventoryDAL
     using System;
     using System.Collections.Generic;
     
-    public partial class OtherProperty
+    public partial class Remark
     {
-        public int OtherPropertyId { get; set; }
-        public int ProjectId { get; set; }
-        public string OtherType { get; set; }
-        public string OtherCode { get; set; }
-        public string OtherName { get; set; }
+        public int RemarkId { get; set; }
+        public Nullable<int> CheckTypeId { get; set; }
+        public string RemarkName { get; set; }
+        public string AddCheck { get; set; }
+        public Nullable<bool> UseChk { get; set; }
         public string InUserId { get; set; }
         public Nullable<System.DateTime> InDateTime { get; set; }
         public string ModifyUserId { get; set; }

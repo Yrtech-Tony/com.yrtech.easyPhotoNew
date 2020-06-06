@@ -60,6 +60,15 @@
     <Compile Include="CheckType.cs">
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>
+    <Compile Include="ExtendColumn.cs">
+      <DependentUpon>InventoryDAL.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExtendColumnProject.cs">
+      <DependentUpon>InventoryDAL.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExtendColumnProjectData.cs">
+      <DependentUpon>InventoryDAL.tt</DependentUpon>
+    </Compile>
     <Compile Include="InventoryDAL.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -75,12 +84,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>InventoryDAL.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Note.cs">
-      <DependentUpon>InventoryDAL.tt</DependentUpon>
-    </Compile>
-    <Compile Include="OtherProperty.cs">
-      <DependentUpon>InventoryDAL.tt</DependentUpon>
-    </Compile>
     <Compile Include="PhotoList.cs">
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>
@@ -88,10 +91,10 @@
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserInfo.cs">
+    <Compile Include="Remark.cs">
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>
-    <Compile Include="UserInfoShop.cs">
+    <Compile Include="UserInfo.cs">
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>
   </ItemGroup>

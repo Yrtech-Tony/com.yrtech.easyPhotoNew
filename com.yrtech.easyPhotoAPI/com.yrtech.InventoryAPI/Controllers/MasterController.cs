@@ -3,6 +3,7 @@ using com.yrtech.InventoryAPI.Service;
 using com.yrtech.InventoryAPI.Common;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using com.yrtech.InventoryDAL;
 using com.yrtech.InventoryAPI.DTO;
 
@@ -11,8 +12,8 @@ namespace com.yrtech.InventoryAPI.Controllers
     [RoutePrefix("easyPhoto/api")]
     public class MasterController : BaseController
     {
-        AnswerService answerService = new AnswerService();
         MasterService masterService = new MasterService();
+        ExcelDataService excelDataService = new ExcelDataService();
         /// <summary>
         /// 
         /// </summary>
@@ -45,6 +46,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
+
                 masterService.SaveProjects(project);
                 return new APIResult() { Status = true, Body = "" };
             }
@@ -65,12 +67,42 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetUserInfo")]
-        public APIResult GetUserInfo(string tenantId, string accountId, string telNo, string expireDateTimeCheck, string key)
+        public APIResult GetUserInfo(string projectId, string key)
         {
             try
             {
-                List<UserInfo> userInfoList = masterService.GetUserInfo(tenantId, key, accountId, telNo, expireDateTimeCheck);
+                List<UserInfo> userInfoList = masterService.GetUserInfo(projectId, key);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(userInfoList) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
+        [HttpPost]
+        [Route("Master/CreateUserInfo")]
+        public APIResult CreateUserInfo(UploadData uploadData)
+        {
+            try
+            {
+                List<UserInfo> userInfoList = CommonHelper.DecodeString<List<UserInfo>>(uploadData.ListJson);
+
+                masterService.CreateUserInfo(userInfoList);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
+        [HttpGet]
+        [Route("Master/ResetExpireDateTime")]
+        public APIResult ResetExpireDateTime(string projectId, string expireDateTime)
+        {
+            try
+            {
+                masterService.ResetExpireDateTime(projectId, expireDateTime);
+                return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)
             {
@@ -88,62 +120,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<UserInfo> userInfoList_accountId = masterService.GetUserInfo(userInfo.TenantId.ToString(), "", userInfo.AccountId, "", "");
-                List<UserInfo> userInfoList_TelNO = masterService.GetUserInfo(userInfo.TenantId.ToString(), "", "", userInfo.TelNO, "");
-                // 验证账号是否重复
-                if (userInfoList_accountId != null && userInfoList_accountId.Count != 0 && userInfo.Id != userInfoList_accountId[0].Id)
-                {
-                    return new APIResult() { Status = false, Body = "账号重复，请使用其他账号" };
-                }// 验证手机号是否重复
-                else if (userInfoList_TelNO != null && userInfoList_TelNO.Count != 0 && userInfo.Id != userInfoList_TelNO[0].Id)
-                {
-                    return new APIResult() { Status = false, Body = "手机号重复" };
-                }
-                else
-                {
-                    masterService.SaveUserInfo(userInfo);
-                    return new APIResult() { Status = true, Body = "" };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new APIResult() { Status = false, Body = ex.Message.ToString() };
-            }
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userInfo"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("Master/SaveUserInfoShop")]
-        public APIResult SaveUserInfoShop(UploadData uploadData)
-        {
-            try
-            {
-                List<UserInfoShop> userInfoList = CommonHelper.DecodeString<List<UserInfoShop>>(uploadData.AnswerListJson);
-                foreach (UserInfoShop userInfoShop in userInfoList)
-                {
-                    masterService.SaveUserInfoShop(userInfoShop);
-                }
-                return new APIResult() { Status = true, Body = "" };
-            }
-            catch (Exception ex)
-            {
-                return new APIResult() { Status = false, Body = ex.Message.ToString() };
-            }
-        }
-        [HttpPost]
-        [Route("Master/DeleteUserInfoShop")]
-        public APIResult DeleteUserInfoShop(UploadData uploadData)
-        {
-            try
-            {
-                List<UserInfoShop> userInfoList = CommonHelper.DecodeString<List<UserInfoShop>>(uploadData.AnswerListJson);
-                foreach (UserInfoShop userInfoShop in userInfoList)
-                {
-                    masterService.DeleteUserInfoShop(userInfoShop);
-                }
+                masterService.SaveUserInfo(userInfo);
                 return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)
@@ -155,24 +132,21 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// 
         /// </summary>
         /// <param name="projectId"></param>
-        /// <param name="shopId"></param>
-        /// <param name="shopCode"></param>
-        /// <param name="accountId"></param>
+        /// <param name="key"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Master/GetUserInfoShop")]
-        public APIResult GetUserInfoShop(string projectId, string shopId, string key, string userId, string roleType)
+        [Route("Master/UserInfoDownload")]
+        public APIResult UserInfoDownload(string projectId, string key)
         {
             try
             {
-                List<UserInfoShop> shopList = masterService.GetUserInfoShop(projectId, shopId, key, userId, roleType);
-                return new APIResult() { Status = true, Body = CommonHelper.Encode(shopList) };
+                string downloadPath = excelDataService.UserInfoExport(projectId, key);
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(downloadPath) };
             }
             catch (Exception ex)
             {
                 return new APIResult() { Status = false, Body = ex.Message.ToString() };
             }
-
         }
         /// <summary>
         /// 
@@ -181,13 +155,13 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <param name="checkTypeId"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Master/GetNote")]
-        public APIResult GetNote(string projectId, string checkTypeId, string addCheck)
+        [Route("Master/GetRemark")]
+        public APIResult GetRemark(string checkTypeId, string remarkId, string addCheck, bool? useChk)
         {
             try
             {
-                List<Note> noteList = masterService.GetNote(projectId, checkTypeId, addCheck, "");
-                return new APIResult() { Status = true, Body = CommonHelper.Encode(noteList) };
+                List<Remark> remarkList = masterService.GetRemark(checkTypeId, remarkId, addCheck, "", useChk);
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(remarkList) };
             }
             catch (Exception ex)
             {
@@ -196,85 +170,18 @@ namespace com.yrtech.InventoryAPI.Controllers
 
         }
         [HttpPost]
-        [Route("Master/SaveNote")]
-        public APIResult SaveNote(Note note)
+        [Route("Master/SaveRemark")]
+        public APIResult SaveRemark(Remark remark)
         {
             try
             {
-                List<Note> noteList = masterService.GetNote(note.ProjectId.ToString(), note.CheckTypeId.ToString(), "", note.NoteName);
-                if (noteList != null && noteList.Count != 0 && note.NoteID != noteList[0].NoteID)
+                List<Remark> remarkList = masterService.GetRemark("", "", "", remark.RemarkName, null);
+                if (remarkList != null && remarkList.Count != 0 && remark.RemarkId != remarkList[0].RemarkId)
                 {
                     return new APIResult() { Status = false, Body = "备注名称重复" };
                 }
-                else
-                {
-                    masterService.SaveNote(note);
-                }
 
-                return new APIResult() { Status = true, Body = "" };
-            }
-            catch (Exception ex)
-            {
-                return new APIResult() { Status = false, Body = ex.Message.ToString() };
-            }
-        }
-        [HttpGet]
-        [Route("Master/GetOtherPropertyType")]
-        public APIResult GetOtherPropertyType(string projectId)
-        {
-            try
-            {
-                List<OtherPropertyTypeDto> otherPropertyTypeList = masterService.GetOtherPropertyType(projectId); ;
-                return new APIResult() { Status = true, Body = CommonHelper.Encode(otherPropertyTypeList) };
-            }
-            catch (Exception ex)
-            {
-                return new APIResult() { Status = false, Body = ex.Message.ToString() };
-            }
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="projectId"></param>
-        /// <param name="otherType"></param>
-        /// <param name="otherCode"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("Master/GetOtherProperty")]
-        public APIResult GetOtherProperty(string projectId, string otherType, string otherCode)
-        {
-            try
-            {
-                List<OtherProperty> otherPropertyList = masterService.GetOtherProperty(projectId, otherType, otherCode, "");
-                return new APIResult() { Status = true, Body = CommonHelper.Encode(otherPropertyList) };
-            }
-            catch (Exception ex)
-            {
-                return new APIResult() { Status = false, Body = ex.Message.ToString() };
-            }
-
-        }
-        [HttpPost]
-        [Route("Master/SaveOtherProperty")]
-        public APIResult SaveOtherProperty(OtherProperty otherProperty)
-        {
-            try
-            {
-                List<OtherProperty> otherPropertyList_Code = masterService.GetOtherProperty(otherProperty.ProjectId.ToString(), otherProperty.OtherType, otherProperty.OtherCode, "");
-                List<OtherProperty> otherPropertyList_Name = masterService.GetOtherProperty(otherProperty.ProjectId.ToString(), otherProperty.OtherType, "", otherProperty.OtherName);
-                if (otherPropertyList_Code != null && otherPropertyList_Code.Count != 0 && otherProperty.OtherPropertyId != otherPropertyList_Code[0].OtherPropertyId)
-                {
-                    return new APIResult() { Status = false, Body = "其他属性代码重复" };
-
-                }
-                else if (otherPropertyList_Name != null && otherPropertyList_Name.Count != 0 && otherProperty.OtherPropertyId != otherPropertyList_Name[0].OtherPropertyId)
-                {
-                    return new APIResult() { Status = false, Body = "其他属性名称重复" };
-                }
-                else
-                {
-                    masterService.SaveOtherProperty(otherProperty);
-                }
+                masterService.SaveRemark(remark);
 
                 return new APIResult() { Status = true, Body = "" };
             }
@@ -291,11 +198,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetPhotoList")]
-        public APIResult GetPhotoList(string projectId, string checkTypeId, string addCheck)
+        public APIResult GetPhotoList(string checkTypeId, string photoId, string addCheck, bool? useChk)
         {
             try
             {
-                List<PhotoList> photoList = masterService.GetPhotoList(projectId, checkTypeId, addCheck, "");
+                List<PhotoList> photoList = masterService.GetPhotoList(checkTypeId, photoId, addCheck, "", useChk);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(photoList) };
             }
             catch (Exception ex)
@@ -315,7 +222,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<PhotoList> photoList = masterService.GetPhotoList(photo.ProjectId.ToString(), photo.CheckTypeId.ToString(), "", photo.PhotoName);
+                List<PhotoList> photoList = masterService.GetPhotoList("", "", "", photo.PhotoName, null);
                 if (photoList != null && photoList.Count != 0 && photo.PhotoId != photoList[0].PhotoId)
                 {
                     return new APIResult() { Status = false, Body = "照片名称重复" };
@@ -340,11 +247,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetCheckTypeList")]
-        public APIResult GetCheckTypeList(string projectId, string checkTypeId, string checkTypeName)
+        public APIResult GetCheckTypeList(string projectId, string checkTypeId, string checkTypeName, bool? useChk)
         {
             try
             {
-                List<CheckType> checkTypeList = masterService.GetCheckType(projectId, checkTypeId, checkTypeName);
+                List<CheckType> checkTypeList = masterService.GetCheckType(projectId, checkTypeId, checkTypeName, useChk);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(checkTypeList) };
             }
             catch (Exception ex)
@@ -364,16 +271,102 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<CheckType> checkTypeList = masterService.GetCheckType(checkType.ProjectId.ToString(), "", checkType.CheckTypeName);
-                if (checkTypeList != null && checkTypeList.Count != 0&& checkTypeList[0].CheckTypeId!=checkType.CheckTypeId)
+                if (string.IsNullOrEmpty(checkType.CheckTypeName))
+                {
+                    return new APIResult() { Status = false, Body = "检查类型名称不能为空" };
+                }
+                List<CheckType> checkTypeList = masterService.GetCheckType(checkType.ProjectId.ToString(), "", checkType.CheckTypeName, null);
+                if (checkTypeList != null && checkTypeList.Count != 0 && checkTypeList[0].CheckTypeId != checkType.CheckTypeId)
                 {
                     return new APIResult() { Status = false, Body = "检查类型重复" };
                 }
-                else
-                {
-                    masterService.SaveCheckType(checkType);
-                    return new APIResult() { Status = true, Body = "" };
+
+                masterService.SaveCheckType(checkType);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
+        [HttpGet]
+        [Route("Master/GetExtendColumnProject")]
+        public APIResult GetExtendColumnProject(string projectId, string columnCode,bool? addShowChk)
+        {
+            try
+            {
+                List<ExtendColumnProject> extendColumnProjectList = masterService.GetExtendColumnProject(projectId, columnCode);
+                if (addShowChk == true) {
+                    extendColumnProjectList = extendColumnProjectList.Where(x => x.AddShowChk == true && x.UseChk == true).ToList();
                 }
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(extendColumnProjectList) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpPost]
+        [Route("Master/SaveExtendColumnProject")]
+        public APIResult SaveExtendColumnProject(ExtendColumnProject extendColumnProject)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(extendColumnProject.ColumnName))
+                {
+                    return new APIResult() { Status = false, Body = "扩展列名称不能为空" };
+                }
+                masterService.SaveExtendColumnProject(extendColumnProject);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
+        [HttpGet]
+        [Route("Master/GetExtendColumnProjectData")]
+        public APIResult GetExtendColumnProjectData(string projectId, string columnCode)
+        {
+            try
+            {
+                List<ExtendColumnProjectData> extendColumnProjectList = masterService.GetExtendColumnProjectData(projectId, columnCode, "");
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(extendColumnProjectList) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpPost]
+        [Route("Master/SaveExtendColumnProjectData")]
+        public APIResult SaveExtendColumnProjectData(ExtendColumnProjectData extendColumnProjectData)
+        {
+            try
+            {
+                List<ExtendColumnProjectData> list = masterService.GetExtendColumnProjectData(extendColumnProjectData.ProjectId.ToString(), extendColumnProjectData.ColumnCode, extendColumnProjectData.ColumnValue);
+                if (list != null && list.Count > 0)
+                {
+                    return new APIResult() { Status = false, Body = "数据重复" };
+                }
+                masterService.SaveExtendColumnProjectData(extendColumnProjectData);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
+        [HttpPost]
+        [Route("Master/DeleteExtendColumnProjectData")]
+        public APIResult DeleteExtendColumnProjectData(ExtendColumnProjectData extendColumnProjectData)
+        {
+            try
+            {
+                masterService.DeleteExtendColumnProjectData(extendColumnProjectData);
+                return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)
             {

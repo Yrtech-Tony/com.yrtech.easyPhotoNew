@@ -12,16 +12,8 @@ namespace com.yrtech.InventoryDAL
     using System;
     using System.Collections.Generic;
     
-    public partial class Note
+    public partial class ExtendColumn
     {
-        public int NoteID { get; set; }
-        public int ProjectId { get; set; }
-        public Nullable<int> CheckTypeId { get; set; }
-        public string NoteName { get; set; }
-        public string AddCheck { get; set; }
-        public string InUserId { get; set; }
-        public Nullable<System.DateTime> InDateTime { get; set; }
-        public string ModifyUserId { get; set; }
-        public Nullable<System.DateTime> ModifyDateTime { get; set; }
+        public string ColumnCode { get; set; }
     }
 }

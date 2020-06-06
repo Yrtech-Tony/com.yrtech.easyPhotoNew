@@ -15,12 +15,12 @@ namespace com.yrtech.InventoryAPI.Controllers
         MasterService masterService = new MasterService();
 
         [HttpGet]
-        [Route("Account/LoginForMobile")]
-        public APIResult LoginForMobile(string accountId, string password)
+        [Route("Account/Login")]
+        public APIResult Login(string projectId,string accountId, string password)
         {
             try
             {
-                List<AccountDto> accountlist = accountService.LoginForMobile(accountId, password);
+                List<UserInfo> accountlist = accountService.Login(projectId,accountId, password);
                 if (accountlist != null && accountlist.Count != 0)
                 {
                     return new APIResult() { Status = true, Body = CommonHelper.Encode(accountlist) };

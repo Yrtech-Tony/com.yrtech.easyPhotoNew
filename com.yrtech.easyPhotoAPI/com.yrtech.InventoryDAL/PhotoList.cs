@@ -16,9 +16,9 @@ namespace com.yrtech.InventoryDAL
     {
         public int PhotoId { get; set; }
         public string PhotoName { get; set; }
-        public Nullable<int> ProjectId { get; set; }
         public Nullable<int> CheckTypeId { get; set; }
         public string AddCheck { get; set; }
+        public Nullable<bool> UseChk { get; set; }
         public Nullable<int> ModifyUserId { get; set; }
         public Nullable<System.DateTime> ModifyDateTime { get; set; }
         public string InUserId { get; set; }

@@ -13,24 +13,28 @@ namespace com.yrtech.InventoryAPI.Service
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="tenantId"></param>
         /// <param name="projectId"></param>
+        /// <param name="brandId"></param>
+        /// <param name="year"></param>
+        /// <param name="expireDateTimeCheck"></param>
         /// <returns></returns>
-        public List<Projects> GetProject(string tenantId, string projectId,string brandId, string year, string expireDateTimeCheck)
+        public List<Projects> GetProject(string tenantId, string projectId, string brandId, string year, string expireDateTimeCheck)
         {
-            if (tenantId == null) tenantId = "";
             if (projectId == null) projectId = "";
+            if (tenantId == null) tenantId = "";
             if (year == null) year = "";
             if (expireDateTimeCheck == null) expireDateTimeCheck = "";
             if (brandId == null) brandId = "";
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@TenantId", tenantId),
                                                         new SqlParameter("@ProjectId", projectId),
-                                                        new SqlParameter("@Year", year),new SqlParameter("@BrandId", brandId)};
+                                                        new SqlParameter("@Year", year),
+                                                        new SqlParameter("@BrandId", brandId)};
             Type t = typeof(Projects);
             string sql = "";
             sql = @"SELECT * FROM Projects
                     WHERE 1=1
-                    ";
+              
+      ";
             if (!string.IsNullOrEmpty(tenantId))
             {
                 sql += " AND TenantId = @TenantId";
@@ -79,11 +83,9 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.ExpireDateTime = project.ExpireDateTime;
                 findOne.ModifyUserId = project.ModifyUserId;
                 findOne.OrderNO = project.OrderNO;
-                findOne.OtherPropertyShow = project.OtherPropertyShow;
                 findOne.ProjectCode = project.ProjectCode;
                 findOne.ProjectName = project.ProjectName;
                 findOne.Quarter = project.Quarter;
-                findOne.ScoreShow = project.ScoreShow;
                 findOne.Year = project.Year;
                 findOne.ModifyDateTime = DateTime.Now;
             }
@@ -97,41 +99,19 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="accountName"></param>
         /// <param name="expireDateCheck">N:未过期</param>
         /// <returns></returns>
-        public List<UserInfo> GetUserInfo(string tenantId, string key, string accountId, string telNo, string expireDateTimeCheck)
+        public List<UserInfo> GetUserInfo(string projectId, string key)
         {
-            if (tenantId == null) tenantId = "";
+            if (projectId == null) projectId = "";
             if (key == null) key = "";
-            if (expireDateTimeCheck == null) expireDateTimeCheck = "";
-            if (accountId == null) accountId = "";
-            if (telNo == null) telNo = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@TenantId", tenantId)
-                                                       ,new SqlParameter("@Key",key)
-                                                       ,new SqlParameter("@ExpireDateTimeCheck",expireDateTimeCheck)
-                                                       ,new SqlParameter("@TelNO",telNo)
-                                                       ,new SqlParameter("@AccountId",accountId)};
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
+                                                       ,new SqlParameter("@Key",key)};
             Type t = typeof(UserInfo);
             string sql = @"SELECT *
                             FROM UserInfo A 
-                            WHERE TenantId = @TenantId";
-            if (expireDateTimeCheck == "N")// N:没有过期的，不传查询全部
-            {
-                sql += " AND GETDATE<ExpireDateTime";
-            }
-            else if (expireDateTimeCheck == "Y")
-            {
-                sql += " AND GETDATE>ExpireDateTime";
-            }
+                            WHERE ProjectId = @ProjectId";
             if (!string.IsNullOrEmpty(key))
             {
-                sql += " AND (AccountName LIKE '%'+@Key+'%' OR AccontId LIKE '%'+@Key+'%' OR Email LIKE '%'+@Key+'%' OR TelNo LIKE '%'+@Key+'%'";
-            }
-            if (!string.IsNullOrEmpty(telNo))
-            {
-                sql += " AND TelNo = @TelNO";
-            }
-            if (!string.IsNullOrEmpty(accountId))
-            {
-                sql += " AND AccountId = @AccountId";
+                sql += " AND (ShopCode LIKE '%'+@Key+'%' OR ShopName LIKE '%'+@Key+'%'";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<UserInfo>().ToList();
         }
@@ -139,186 +119,48 @@ namespace com.yrtech.InventoryAPI.Service
         /// 
         /// </summary>
         /// <param name="userinfo"></param>
-        public void SaveUserInfo(UserInfo userinfo)
+        public void CreateUserInfo(List<UserInfo> userInfoList)
         {
-            UserInfo findOne = db.UserInfo.Where(x => (x.Id == userinfo.Id)).FirstOrDefault();
-            if (findOne == null)
-            {
-                userinfo.InDateTime = DateTime.Now;
-                if (userinfo.ExpireDateTime == null)
-                {
-                    userinfo.ExpireDateTime = new DateTime(9999, 12, 31);
-                }
-                userinfo.ModifyDateTime = DateTime.Now;
-                db.UserInfo.Add(userinfo);
-            }
-            else
-            {
-                findOne.AccountId = userinfo.AccountId;
-                findOne.AccountName = userinfo.AccountName;
-                findOne.Email = userinfo.Email;
-                if (userinfo.ExpireDateTime == null)
-                {
-                    findOne.ExpireDateTime = new DateTime(9999, 12, 31);
-                }
-                findOne.ExpireDateTime = userinfo.ExpireDateTime;
-                findOne.HeadPicUrl = userinfo.HeadPicUrl;
-                //findOne.InDateTime = DateTime.Now;
-                //findOne.InUserId = userinfo.InUserId;
-                findOne.ModifyDateTime = DateTime.Now;
-                findOne.ModifyUserId = userinfo.ModifyUserId;
-                findOne.Password = userinfo.Password;
-                findOne.TelNO = userinfo.TelNO;
-                findOne.UseChk = userinfo.UseChk;
-            }
-            db.SaveChanges();
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="projectId"></param>
-        /// <param name="shopId"></param>
-        /// <param name="shopCode"></param>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
-        public List<UserInfoShop> GetUserInfoShop(string projectId, string shopId, string key, string userId,string roleType)
-        {
-            if (key == null) key = "";
-            if (shopId == null) shopId = "";
-            if (projectId == null) projectId = "";
-            if (userId == null) userId = "";
-            if (roleType == null) roleType = "";
-            SqlParameter[] para = new SqlParameter[] {new SqlParameter("@ProjectId", projectId),
-                                                    new SqlParameter("@ShopId", shopId),
-                                                    new SqlParameter("@Key", key),
-                                                    new SqlParameter("@UserId", userId)};
-            Type t = typeof(UserInfoShop);
+            if (userInfoList == null || userInfoList.Count == 0) return;
             string sql = "";
-            sql = @"SELECT 
-                       *
-                      FROM [UserInfoShop]
-                    WHERE  1=1 ";
-
-            if (!string.IsNullOrEmpty(key))
+            string sqlDelete = "DELETE UserInfo WHERE ProjectId = '" + userInfoList[0].ProjectId.ToString() + "'";
+            SqlParameter[] para = new SqlParameter[] { };
+            db.Database.ExecuteSqlCommand(sqlDelete, para);
+            foreach (UserInfo userInfo in userInfoList)
             {
-                sql += " AND (ShopCode LIKE '%'+@Key+'%' OR AccountId LIKE '%'+@Key+'%')";
-            }
-            if (!string.IsNullOrEmpty(shopId))
-            {
-                sql += " AND ShopId = @ShopId";
-            }
-            if (!string.IsNullOrEmpty(projectId))
-            {
-                sql += " AND ProjectId = @ProjectId";
-            }
-            if (roleType == "S_Sysadmin" || roleType == "S_BrandSysadmin")// 权限是租户管理员或者品牌管理员的时候查询所有数据
-            {
+                sql += " INSERT INTO UserInfo VALUES('";
+                sql += userInfo.ShopCode + "','";
+                sql += userInfo.ShopName + "','";
+                sql += Guid.NewGuid().ToString().Substring(0, 6) + "','";
+                sql += userInfo.ExpireDateTime.ToString() + "','";
+                sql += userInfo.InUserId.ToString() + "','";
+                sql += DateTime.Now.ToString() + "','";
+                sql += userInfo.ModifyUserId.ToString() + "','";
+                sql += DateTime.Now.ToString() + "')";
 
             }
-            else // 非租户管理员和品牌管理员是按照userId查询
-            {
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    sql += " AND UserId= @UserId";
-                }
-            }
-            return db.Database.SqlQuery(t, sql, para).Cast<UserInfoShop>().ToList();
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userInfoShop"></param>
-        public void SaveUserInfoShop(UserInfoShop userInfoShop)
-        {
-            UserInfoShop findOne = db.UserInfoShop.Where(x => (x.UserId == userInfoShop.UserId && x.ShopId == userInfoShop.ShopId && x.ProjectId == userInfoShop.ProjectId)).FirstOrDefault();
-            if (findOne == null)
-            {
-                userInfoShop.InDateTime = DateTime.Now;
-                userInfoShop.ModifyDateTime = DateTime.Now;
-                db.UserInfoShop.Add(userInfoShop);
-            }
-            else
-            {
-                findOne.ModifyDateTime = DateTime.Now;
-                findOne.ModifyUserId = userInfoShop.ModifyUserId;
-                findOne.ShopCode = userInfoShop.ShopCode;
-                findOne.ShopName = userInfoShop.ShopName;
-                findOne.AccountId = userInfoShop.AccountId;
-                findOne.AccountName = userInfoShop.AccountName;
-            }
-            db.SaveChanges();
-        }
-        public void DeleteUserInfoShop(UserInfoShop userInfoShop)
-        {
-            string sql = "";
-            SqlParameter[] para = new SqlParameter[] {};
-            sql += "DELETE UserInfoShop WHERE ProjectId = " + userInfoShop.ProjectId.ToString();
-            sql += " AND ShopId = " + userInfoShop.ShopId.ToString();
-            sql += " AND UserId = " + userInfoShop.UserId.ToString();
             db.Database.ExecuteSqlCommand(sql, para);
-
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="projectId"></param>
-        /// <param name="checkTypeId"></param>
-        /// <returns></returns>
-        public List<Note> GetNote(string projectId, string checkTypeId, string addCheck,string noteName)
+        public void ResetExpireDateTime(string projectId, string expireDateTime)
         {
-            if (projectId == null) projectId = "";
-            if (checkTypeId == null) checkTypeId = "";
-            if (addCheck == null) addCheck = "";
-            if (noteName == null) noteName = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
-                                                        , new SqlParameter("@CheckTypeId", checkTypeId)
-                                                        , new SqlParameter("@AddCheck", addCheck)
-                                                        , new SqlParameter("@NoteName", noteName)};
-            Type t = typeof(Note);
-            string sql = "";
-            sql = @"SELECT *
-                    FROM [Note]
-                    WHERE 1=1   
-                    ";
-            if (!string.IsNullOrEmpty(projectId))
-            {
-                sql += " AND ProjectId = @ProjectId";
-            }
-            if (!string.IsNullOrEmpty(checkTypeId))
-            {
-                sql += " AND CheckTypeId = @CheckTypeId";
-            }
-            if (!string.IsNullOrEmpty(addCheck))
-            {
-                sql += " AND AddCheck = @AddCheck";
-            }
-            if (!string.IsNullOrEmpty(noteName))
-            {
-                sql += " AND NoteName = @NoteName";
-            }
-            return db.Database.SqlQuery(t, sql, para).Cast<Note>().ToList();
+            string sql = @"UPDATE UserInfo SET  ExpireDateTime = '" + expireDateTime + "' WHERE  ProjectId = '" + projectId + "'";
+            SqlParameter[] para = new SqlParameter[] { };
+            db.Database.ExecuteSqlCommand(sql, para);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="note"></param>
-        public void SaveNote(Note note)
+        public void SaveUserInfo(UserInfo userInfo)
         {
-            Note findOne = db.Note.Where(x => (x.NoteID==note.NoteID)).FirstOrDefault();
+            UserInfo findOne = db.UserInfo.Where(x => (x.Id == userInfo.Id)).FirstOrDefault();
             if (findOne == null)
             {
-                note.InDateTime = DateTime.Now;
-                note.ModifyDateTime = DateTime.Now;
-                db.Note.Add(note);
+                userInfo.InDateTime = DateTime.Now;
+                db.UserInfo.Add(userInfo);
             }
             else
             {
+                findOne.ExpireDateTime = userInfo.ExpireDateTime;
+                findOne.ModifyUserId = userInfo.ModifyUserId;
+                findOne.Password = userInfo.Password;
                 findOne.ModifyDateTime = DateTime.Now;
-                findOne.ModifyUserId = note.ModifyUserId;
-                findOne.AddCheck=note.AddCheck;
-                findOne.CheckTypeId =note.CheckTypeId;
-                findOne.NoteName = note.NoteName;
             }
             db.SaveChanges();
         }
@@ -327,15 +169,17 @@ namespace com.yrtech.InventoryAPI.Service
         /// </summary>
         /// <param name="projectId"></param>
         /// <param name="checkTypeId"></param>
+        /// <param name="checkTypeName"></param>
         /// <returns></returns>
-        public List<CheckType> GetCheckType(string projectId, string checkTypeId, string checkTypeName)
+        public List<CheckType> GetCheckType(string projectId, string checkTypeId, string checkTypeName, bool? useChk)
         {
             if (projectId == null) projectId = "";
             if (checkTypeId == null) checkTypeId = "";
             if (checkTypeName == null) checkTypeName = "";
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
                                                         , new SqlParameter("@CheckTypeId", checkTypeId)
-                                                     , new SqlParameter("@CheckTypeName", checkTypeName)};
+                                                     , new SqlParameter("@CheckTypeName", checkTypeName)
+                                                     , new SqlParameter("@UseChk", useChk)};
             Type t = typeof(CheckType);
             string sql = "";
             sql = @"SELECT *
@@ -353,6 +197,10 @@ namespace com.yrtech.InventoryAPI.Service
             if (!string.IsNullOrEmpty(checkTypeName))
             {
                 sql += " AND CheckTypeName = @CheckTypeName";
+            }
+            if (useChk != null)
+            {
+                sql += " AND UseChk = @UseChk";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<CheckType>().ToList();
         }
@@ -373,6 +221,7 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.ModifyDateTime = DateTime.Now;
                 findOne.ModifyUserId = checkType.ModifyUserId;
                 findOne.CheckTypeName = checkType.CheckTypeName;
+                findOne.UseChk = checkType.UseChk;
             }
             db.SaveChanges();
         }
@@ -380,110 +229,107 @@ namespace com.yrtech.InventoryAPI.Service
         /// 
         /// </summary>
         /// <param name="projectId"></param>
-        /// <param name="otherType"></param>
-        /// <param name="otherCode"></param>
+        /// <param name="addCheck"></param>
+        /// <param name="noteName"></param>
         /// <returns></returns>
-        public List<OtherProperty> GetOtherProperty(string projectId, string otherType, string otherCode,string otherName)
+        public List<Remark> GetRemark(string checkTypeId, string remarkId, string addCheck, string remarkName, bool? useChk)
         {
-            if (projectId == null) projectId = "";
-            if (otherType == null) otherType = "";
-            if (otherCode == null) otherCode = "";
-            if (otherName == null) otherName = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
-                                                        , new SqlParameter("@OtherType", otherType)
-                                                        , new SqlParameter("@OtherCode", otherCode)
-                                                    , new SqlParameter("@OtherName", otherName)};
-            Type t = typeof(OtherProperty);
+            if (checkTypeId == null) checkTypeId = "";
+            if (addCheck == null) addCheck = "";
+            if (remarkId == null) remarkId = "";
+            if (remarkName == null) remarkName = "";
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@CheckTypeId", checkTypeId)
+                                                       , new SqlParameter("@RemarkId", remarkId)
+                                                        , new SqlParameter("@AddCheck", addCheck)
+                                                        , new SqlParameter("@RemarkName", remarkName)
+                                                        , new SqlParameter("@UseChk", useChk)};
+            Type t = typeof(Remark);
             string sql = "";
             sql = @"SELECT *
-                    FROM [OtherProperty]
-                    WHERE 1=1   
+                    FROM [Remark]
+                    WHERE 1=1 
                     ";
-            if (!string.IsNullOrEmpty(projectId))
+            if (!string.IsNullOrEmpty(checkTypeId))
             {
-                sql += " AND ProjectId = @ProjectId";
+                sql += " AND CheckTypeId = @CheckTypeId";
             }
-            if (!string.IsNullOrEmpty(otherType))
+            if (!string.IsNullOrEmpty(remarkId))
             {
-                sql += " AND OtherType = @OtherType";
+                sql += " AND RemarkId = @RemarkId";
             }
-            if (!string.IsNullOrEmpty(otherCode))
+            if (!string.IsNullOrEmpty(addCheck))
             {
-                sql += " AND OtherCode = @OtherCode";
+                sql += " AND AddCheck = @AddCheck";
             }
-            if (!string.IsNullOrEmpty(otherName))
+            if (!string.IsNullOrEmpty(remarkName))
             {
-                sql += " AND OtherName = @OtherName";
+                sql += " AND RemarkName = @RemarkName";
             }
-            return db.Database.SqlQuery(t, sql, para).Cast<OtherProperty>().ToList();
+            if (useChk != null)
+            {
+                sql += " AND UseChk = @UseChk";
+            }
+            return db.Database.SqlQuery(t, sql, para).Cast<Remark>().ToList();
         }
-        public void SaveOtherProperty(OtherProperty otherProperty)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="remark"></param>
+        public void SaveRemark(Remark remark)
         {
-            OtherProperty findOne = db.OtherProperty.Where(x => (x.OtherPropertyId==otherProperty.OtherPropertyId)).FirstOrDefault();
+            Remark findOne = db.Remark.Where(x => (x.RemarkId == remark.RemarkId)).FirstOrDefault();
             if (findOne == null)
             {
-                otherProperty.InDateTime = DateTime.Now;
-                otherProperty.ModifyDateTime = DateTime.Now;
-                db.OtherProperty.Add(otherProperty);
+                remark.InDateTime = DateTime.Now;
+                remark.ModifyDateTime = DateTime.Now;
+                db.Remark.Add(remark);
             }
             else
             {
                 findOne.ModifyDateTime = DateTime.Now;
-                findOne.ModifyUserId = otherProperty.ModifyUserId;
-                findOne.OtherName = otherProperty.OtherName;
+                findOne.ModifyUserId = remark.ModifyUserId;
+                findOne.AddCheck = remark.AddCheck;
+                findOne.RemarkName = remark.RemarkName;
+                findOne.UseChk = remark.UseChk;
             }
             db.SaveChanges();
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="projectId"></param>
-        /// <returns></returns>
-        public List<OtherPropertyTypeDto> GetOtherPropertyType(string projectId)
-        {
-            if (projectId == null) projectId = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId) };
-            Type t = typeof(OtherPropertyTypeDto);
-            string sql = "";
-            sql = @"SELECT DISTINCT ProjectId,OtherType
-                    FROM [OtherProperty]
-                    WHERE 1=1   
-                    ";
-            if (!string.IsNullOrEmpty(projectId))
-            {
-                sql += " AND ProjectId = @ProjectId";
-            }
-            return db.Database.SqlQuery(t, sql, para).Cast<OtherPropertyTypeDto>().ToList();
-        }
+
+
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="projectId"></param>
         /// <param name="checkTypeId"></param>
+        /// <param name="addCheck"></param>
+        /// <param name="photoName"></param>
         /// <returns></returns>
-        public List<PhotoList> GetPhotoList(string projectId, string checkTypeId, string addCheck,string photoName)
+        public List<PhotoList> GetPhotoList(string checkTypeId, string photoId, string addCheck, string photoName, bool? useChk)
         {
-            if (projectId == null) projectId = "";
             if (checkTypeId == null) checkTypeId = "";
+            if (photoId == null) photoId = "";
             if (addCheck == null) addCheck = "";
             if (photoName == null) photoName = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
-                                                        , new SqlParameter("@CheckTypeId", checkTypeId)
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@CheckTypeId", checkTypeId)
+                                                        ,new SqlParameter("@PhotoId", photoId)
                                                         , new SqlParameter("@AddCheck", addCheck)
-                                                        , new SqlParameter("@PhotoName", photoName)};
+                                                        , new SqlParameter("@PhotoName", photoName)
+                                                     , new SqlParameter("@UseChk", useChk)};
             Type t = typeof(PhotoList);
             string sql = "";
             sql = @"SELECT *
                     FROM [PhotoList]
                     WHERE 1=1   
                     ";
-            if (!string.IsNullOrEmpty(projectId))
-            {
-                sql += " AND ProjectId = @ProjectId";
-            }
             if (!string.IsNullOrEmpty(checkTypeId))
             {
                 sql += " AND CheckTypeId = @CheckTypeId";
+            }
+            if (!string.IsNullOrEmpty(photoId))
+            {
+                sql += " AND PhotoId = @PhotoId";
             }
             if (!string.IsNullOrEmpty(addCheck))
             {
@@ -493,6 +339,10 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 sql += " AND PhotoName = @PhotoName";
             }
+            if (useChk != null)
+            {
+                sql += " AND UseChk = @UseChk";
+            }
             return db.Database.SqlQuery(t, sql, para).Cast<PhotoList>().ToList();
         }
         /// <summary>
@@ -501,7 +351,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="photoList"></param>
         public void SavePhotoList(PhotoList photoList)
         {
-            PhotoList findOne = db.PhotoList.Where(x => (x.PhotoId==photoList.PhotoId)).FirstOrDefault();
+            PhotoList findOne = db.PhotoList.Where(x => (x.PhotoId == photoList.PhotoId)).FirstOrDefault();
             if (findOne == null)
             {
                 photoList.InDateTime = DateTime.Now;
@@ -513,8 +363,92 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.ModifyDateTime = DateTime.Now;
                 findOne.ModifyUserId = photoList.ModifyUserId;
                 findOne.PhotoName = photoList.PhotoName;
+                findOne.UseChk = photoList.UseChk;
             }
             db.SaveChanges();
         }
+        /// <summary>
+        /// 获取当前期要显示的列
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public List<ExtendColumnProject> GetExtendColumnProject(string projectId,string columnCode)
+        {
+            if (projectId == null) projectId = "";
+            if (columnCode == null) columnCode = "";
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
+                                                    ,new SqlParameter("@ColumnCode", columnCode) };
+            Type t = typeof(ExtendColumnProject);
+            string sql = @"SELECT @ProjectId AS ProjectId,ColumnCode,
+                            ISNULL((SELECT ColumnName FROM ExtendColumnProject WHERE ProjectId = @ProjectId  AND ColumnCode = A.ColumnCode),'') AS ColumnName
+                            ,(SELECT AddShowChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS AddShowChk
+                            ,(SELECT UseChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS UseChk
+                            FROM ExtendColumn A WHERE 1=1";
+            if (!string.IsNullOrEmpty(columnCode))
+            {
+                sql += " AND ColumnCode = @ColumnCode";
+            }
+            sql += "ColumnCode ASC";
+            return db.Database.SqlQuery(t, sql, para).Cast<ExtendColumnProject>().ToList();
+        }
+        public void SaveExtendColumnProject(ExtendColumnProject extendColumnProject)
+        {
+            ExtendColumnProject findOne = db.ExtendColumnProject.Where(x => (x.ProjectId == extendColumnProject.ProjectId && x.ColumnCode == extendColumnProject.ColumnCode)).FirstOrDefault();
+            if (findOne == null)
+            {
+                extendColumnProject.InDateTime = DateTime.Now;
+                extendColumnProject.ModifyDateTime = DateTime.Now;
+                db.ExtendColumnProject.Add(extendColumnProject);
+            }
+            else
+            {
+                findOne.ModifyDateTime = DateTime.Now;
+                findOne.ModifyUserId = extendColumnProject.ModifyUserId;
+                findOne.ColumnName = extendColumnProject.ColumnName;
+                findOne.AddShowChk = extendColumnProject.AddShowChk;
+                findOne.UseChk = extendColumnProject.UseChk;
+            }
+            db.SaveChanges();
+        }
+        public List<ExtendColumnProjectData> GetExtendColumnProjectData(string projectId, string columnCode,string columnValue)
+        {
+            if (projectId == null) projectId = "";
+            if (columnCode == null) columnCode = "";
+            if (columnValue == null) columnValue = "";
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
+                                                    ,new SqlParameter("@ColumnCode", columnCode)
+                                                    ,new SqlParameter("@ColumnValue", columnValue) };
+            Type t = typeof(ExtendColumnProjectData);
+            string sql = @"SELECT ColumnCode,
+                           ColumnValue
+                            FROM ExtendColumnProject A WHERE ProjectId = @ProjectId AND ColumnCode = @ColumnCode";
+            if (!string.IsNullOrEmpty(columnValue))
+            {
+                sql += " AND ColumnValue = @ColumnValue";
+            }
+            return db.Database.SqlQuery(t, sql, para).Cast<ExtendColumnProjectData>().ToList();
+        }
+        /// <summary>
+        /// 不需要更新直接插入即可
+        /// </summary>
+        /// <param name="extendColumnProjectData"></param>
+        public void SaveExtendColumnProjectData(ExtendColumnProjectData extendColumnProjectData)
+        {
+            extendColumnProjectData.InDateTime = DateTime.Now;
+            extendColumnProjectData.ModifyDateTime = DateTime.Now;
+            db.ExtendColumnProjectData.Add(extendColumnProjectData);
+            db.SaveChanges();
+        }
+        public void DeleteExtendColumnProjectData(ExtendColumnProjectData extendColumnProjectData)
+        {
+            
+            string sql = "DELETE ExtendColumnProjectData WHERE ProjectId = '" + extendColumnProjectData.ProjectId.ToString() + "'";
+            sql += " AND ColumnCode = '" + extendColumnProjectData.ColumnCode + "'";
+            sql += " AND ColumnValue = '" + extendColumnProjectData.ColumnValue + "'";
+            SqlParameter[] para = new SqlParameter[] { };
+            db.Database.ExecuteSqlCommand(sql, para);
+            
+        }
+
     }
 }

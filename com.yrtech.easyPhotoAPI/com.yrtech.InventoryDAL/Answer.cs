@@ -16,14 +16,20 @@ namespace com.yrtech.InventoryDAL
     {
         public long AnswerId { get; set; }
         public int ProjectId { get; set; }
-        public int ShopId { get; set; }
         public string ShopCode { get; set; }
         public string ShopName { get; set; }
         public string CheckCode { get; set; }
         public Nullable<int> CheckTypeId { get; set; }
-        public string Remark { get; set; }
-        public string OtherProperty { get; set; }
-        public Nullable<decimal> Score { get; set; }
+        public Nullable<int> RemarkId { get; set; }
+        public string Column1 { get; set; }
+        public string Column2 { get; set; }
+        public string Column3 { get; set; }
+        public string Column4 { get; set; }
+        public string Column5 { get; set; }
+        public string Column6 { get; set; }
+        public string Column7 { get; set; }
+        public string Column8 { get; set; }
+        public string Column9 { get; set; }
         public string AddCheck { get; set; }
         public string ModifyUserId { get; set; }
         public Nullable<System.DateTime> ModifyDateTime { get; set; }

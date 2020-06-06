@@ -16,7 +16,6 @@ namespace com.yrtech.InventoryDAL
     {
         public long AnswerId { get; set; }
         public int PhotoId { get; set; }
-        public string PhotoNameServer { get; set; }
         public string PhotoUrl { get; set; }
         public string InUserId { get; set; }
         public Nullable<System.DateTime> InDateTime { get; set; }

@@ -27,32 +27,69 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="photoCheck"></param>
         /// <param name="addCheck"></param>
         /// <returns></returns>
-        public List<AnswerDto> GetShopAnswerList(string projectId, string shopId, string checkCode, string checkTypeId, string photoCheck, string addCheck)
+        public List<AnswerDto> GetShopAnswerList(string answerId, string projectId, string shopCode, string checkCode, string checkTypeId, string photoCheck, string addCheck, string key)
         {
             if (projectId == null) projectId = "";
-            if (shopId == null) shopId = "";
+            if (shopCode == null) shopCode = "";
             if (checkCode == null) checkCode = "";
             if (checkTypeId == null) checkTypeId = "";
             if (photoCheck == null) photoCheck = "";
             if (addCheck == null) addCheck = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId),
-                                                       new SqlParameter("@ShopId", shopId),
+            if (answerId == null) answerId = "";
+            if (key == null) key = "";
+            SqlParameter[] para = new SqlParameter[] {  new SqlParameter("@AnswerId", answerId),
+                                                        new SqlParameter("@ProjectId", projectId),
+                                                       new SqlParameter("@ShopCode", shopCode),
                                                        new SqlParameter("@CheckCode", checkCode),
                                                        new SqlParameter("@CheckTypeId", checkTypeId),
                                                         new SqlParameter("@PhotoCheck", photoCheck),
-                                                        new SqlParameter("@AddCheck", addCheck)};
+                                                        new SqlParameter("@AddCheck", addCheck),
+                                                        new SqlParameter("@Key", key)};
             Type t = typeof(AnswerDto);
             string sql = "";
-            sql = @"SELECT A.*,B.CheckTypeName
-                    FROM Answer A LEFT JOIN CheckType B ON A.CheckTypeId = B.CheckTypeId AND A.ProjectId = B.ProjectId
+            sql = @"SELECT A.AnswerId,A.ProjectId,A.ShopCode,A.ShopName,B.CheckTypeName,A.CheckCode,A.CheckTypeId,B.CheckTypeName,
+                    A.RemarkId, ISNULL((SELECT RemarkName FROM Remark WHERE RemarkId = A.RemarkId),'') AS Remark
+                    A.AddCheck,A.ModifyUserId,A.ModifyDateTime,A.InUserId,A.InDateTime,
+                    CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column1' AND UseChk = 1)
+                         THEN Column1
+                    END AS Column1,
+                    CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column2' AND UseChk = 1)
+                         THEN Column2
+                    END AS Column2,
+                    CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column3' AND UseChk = 1)
+                         THEN Column3
+                    END AS Column3,
+                    CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column4' AND UseChk = 1)
+                         THEN Column4
+                    END AS Column4,
+                    CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column5' AND UseChk = 1)
+                         THEN Column5
+                    END AS Column5,
+                    CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column6' AND UseChk = 1)
+                         THEN Column6
+                    END AS Column6,
+                    CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column7' AND UseChk = 1)
+                         THEN Column7
+                    END AS Column7,
+                    CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column8' AND UseChk = 1)
+                         THEN Column8
+                    END AS Column8,
+                    CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column9' AND UseChk = 1)
+                         THEN Column9
+                    END AS Column9
+                    FROM Answer A INNER JOIN CheckType B ON A.CheckTypeId = B.CheckTypeId AND A.ProjectId = B.ProjectId
                     WHERE 1=1 ";
+            if (!string.IsNullOrEmpty(answerId))
+            {
+                sql += " AND A.AnswerId = @AnswerId";
+            }
             if (!string.IsNullOrEmpty(projectId))
             {
                 sql += " AND A.ProjectId = @ProjectId";
             }
-            if (!string.IsNullOrEmpty(shopId))
+            if (!string.IsNullOrEmpty(shopCode))
             {
-                sql += " AND A.ShopId = @ShopId";
+                sql += " AND A.ShopCode = @ShopCode";
             }
             if (!string.IsNullOrEmpty(checkCode))
             {
@@ -66,30 +103,33 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 if (photoCheck == "Y")
                 {
-                    sql += " AND (EXISTS(SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId AND ISNULL(PhotoNameServer,'')<>'') OR ISNULL(Remark,'')<>'') ";
+                    sql += " AND EXISTS(SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId ) ";
                 }
                 else
                 {
-                    sql += " AND NOT EXISTS (SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId AND ISNULL(PhotoNameServer,'')<>'') AND ISNULL(Remark,'')='' ";
+                    sql += " AND NOT EXISTS (SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId ) ";
                 }
             }
             if (!string.IsNullOrEmpty(addCheck))
             {
                 sql += " AND A.AddCheck = @AddCheck";
             }
-            
+            if (!string.IsNullOrEmpty(key))
+            {
+                sql += " AND (A.ShopCode LIKE '%'+ @Key+'%' OR A.ShopName LIKE '%'+@Key+'%')";
+            }
             sql += " Order BY A.CheckTypeId, CheckCode";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerDto>().ToList();
         }
         public List<AnswerPhotoDto> GetAnswerPhotoList(string answerId)
         {
             if (answerId == null) answerId = "";
-            
+
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@AnswerId", answerId)
                                                       };
             Type t = typeof(AnswerPhotoDto);
             string sql = "";
-            sql = @"SELECT A.ProjectId,A.ShopId,A.CheckCode,B.PhotoId,B.PhotoNameServer,C.PhotoName,B.PhotoUrl
+            sql = @"SELECT A.ProjectId,A.CheckCode,B.PhotoId,B.PhotoUrl,C.PhotoName
                     FROM Answer A INNER JOIN AnswerPhoto B ON A.AnswerId = B.AnswerId
                                   INNER JOIN PhotoList C ON B.PhotoId = C.PhotoId
                     WHERE 1=1 ";
@@ -97,37 +137,54 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 sql += " AND A.AnswerId = @AnswerId";
             }
-            
-
-            sql += " Order By C.PhotoId";
+            if (!string.IsNullOrEmpty(answerId))
+            {
+                sql += " AND A.AnswerId = @AnswerId";
+            }
+            sql += " Order By B.PhotoId";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerPhotoDto>().ToList();
         }
-        public void ImportAnswerList(string projectId, string userId, List<AnswerDto> answerList)
+        public void ImportAnswerList(string projectId, List<AnswerDto> answerList)
         {
             string sql = "";
-            int projectIdInt = Convert.ToInt32(projectId);
             SqlParameter[] para = new SqlParameter[] { };
-            Type t = typeof(int);
+            sql += "DELETE AnswerPhoto WHERE ProjectId='" + projectId + "'";
+            sql += " DELETE Answer WHERE ProjectId='" + projectId + "'";
             foreach (AnswerDto answer in answerList)
             {
-                sql += "DELETE AnswerPhoto WHERE AnswerId IN (SELECT AnswerId FROM Answer WHERE ProjectId = " + projectId.ToString();
-                sql += " AND ShopId = " + answer.ShopId.ToString() + ") ";
-                sql += "DELETE Answer WHERE ShopId = " + answer.ShopId.ToString();
-                sql += " AND ProjectId = " + projectId.ToString() + " ";
-                CheckType checkType = db.CheckType.Where(x => (x.CheckTypeName==answer.CheckTypeName)).FirstOrDefault();
-
-                sql += "INSERT INTO Answer(ProjectId,ShopId,ShopCode,ShopName,CheckCode,CheckTypeId,OtherProperty,AddCheck,ModifyUserId,ModifyDateTime,InUserId,InDateTime) VALUES('";
+                int checkTypeId = 0;
+                checkTypeId = masterService.GetCheckType(projectId, "", answer.CheckTypeName, true)[0].CheckTypeId;
+                sql += " INSERT INTO Answer VALUES('";
                 sql += projectId + "','";
-                sql += answer.ShopId.ToString() + "','";
                 sql += answer.ShopCode.ToString() + "','";
                 sql += answer.ShopName.ToString() + "','";
-                sql += answer.CheckCode+ "','";
+                sql += answer.CheckCode + "','";
                 sql += answer.CheckTypeId.ToString() + "','";
-                sql += answer.OtherProperty + "','";
-                sql += "N"+ "',";
-                sql += userId + ",GETDATE(),";
-                sql += userId + ",GETDATE())";
+                sql += "0','";
+                sql += answer.Column1 + "','";
+                sql += answer.Column2 + "','";
+                sql += answer.Column3 + "','";
+                sql += answer.Column4 + "','";
+                sql += answer.Column5 + "','";
+                sql += answer.Column6 + "','";
+                sql += answer.Column7 + "','";
+                sql += answer.Column8 + "','";
+                sql += answer.Column9 + "','";
+                sql += "N" + "',";
+                sql += answer.InUserID + ",GETDATE(),";
+                sql += answer.ModifyUserId + ",GETDATE())";
                 sql += " ";
+            }
+            db.Database.ExecuteSqlCommand(sql, para);
+        }
+        public void DeleteShopAnswer(List<AnswerDto> answerList)
+        {
+            string sql = "";
+            SqlParameter[] para = new SqlParameter[] { };
+            foreach (AnswerDto answer in answerList)
+            {
+                sql += "DELETE AnswerPhoto WHERE AnswerId = " + answer.AnswerId.ToString() + " ";
+                sql += "DELETE Answer WHERE AnswerId = " + answer.AnswerId.ToString() + " ";
             }
             db.Database.ExecuteSqlCommand(sql, para);
         }
@@ -135,23 +192,9 @@ namespace com.yrtech.InventoryAPI.Service
         /// 
         /// </summary>
         /// <param name="answer"></param>
-        public void SaveShopAnswer(AnswerDto answerDto)
+        public Answer SaveShopAnswer(Answer answer)
         {
-            Answer answer = new Answer();
-            answer.AddCheck = answerDto.AddCheck;
-            answer.AnswerId = answerDto.AnswerId;
-            answer.CheckCode = answerDto.CheckCode;
-            answer.CheckTypeId = answerDto.CheckTypeId;
-            answer.InDateTime = DateTime.Now;
-            answer.InUserID = answerDto.InUserID;
-            answer.ModifyDateTime = DateTime.Now;
-            answer.ModifyUserId = answerDto.ModifyUserId;
-            answer.OtherProperty = answerDto.OtherProperty;
-            answer.ProjectId = answerDto.ProjectId;
-            answer.Remark = answerDto.Remark;
-            answer.Score = answerDto.Score;
-            answer.ShopId = answerDto.ShopId;
-            Answer findOne = db.Answer.Where(x => (x.ProjectId == answer.ProjectId && x.ShopId == answer.ShopId && x.CheckCode == answer.CheckCode)).FirstOrDefault();
+            Answer findOne = db.Answer.Where(x => (x.AnswerId == answer.AnswerId)).FirstOrDefault();
             if (findOne == null)
             {
                 answer.InDateTime = DateTime.Now;
@@ -160,41 +203,23 @@ namespace com.yrtech.InventoryAPI.Service
             }
             else
             {
-                //findOne.PhotoName = answer.PhotoName;
-                findOne.Remark = answer.Remark;
-                findOne.Score = answer.Score;
-                findOne.OtherProperty = answer.OtherProperty;
-
+                findOne.CheckCode = answer.CheckCode;
+                findOne.RemarkId = answer.RemarkId;
+                findOne.ModifyDateTime = DateTime.Now;
+                findOne.ModifyUserId = answer.ModifyUserId;
+                findOne.Column1 = answer.Column1;
+                findOne.Column2 = answer.Column2;
+                findOne.Column3 = answer.Column3;
+                findOne.Column4 = answer.Column4;
+                findOne.Column5 = answer.Column5;
+                findOne.Column6 = answer.Column6;
+                findOne.Column7 = answer.Column7;
+                findOne.Column8 = answer.Column8;
+                findOne.Column9 = answer.Column9;
+                answer = findOne;
             }
             db.SaveChanges();
-
-            List<AnswerPhoto> answerPhotoList = new List<AnswerPhoto>();
-            foreach (AnswerPhotoDto photoDto in answerDto.answerPhotoList)
-            {
-                Answer answerfindOne = db.Answer.Where(x => (x.ProjectId == answer.ProjectId && x.ShopId == answer.ShopId && x.CheckCode == answer.CheckCode)).FirstOrDefault();
-
-                AnswerPhoto answerPhoto = new AnswerPhoto();
-                answerPhoto.AnswerId = answerfindOne.AnswerId;
-                answerPhoto.InDateTime = DateTime.Now;
-                answerPhoto.InUserId = answerDto.InUserID;
-                answerPhoto.ModifyDateTime = DateTime.Now;
-                answerPhoto.ModifyUserId = answerDto.ModifyUserId;
-                answerPhoto.PhotoId = photoDto.PhotoId;
-                answerPhoto.PhotoNameServer = photoDto.PhotoNameServer;
-                answerPhoto.PhotoUrl = photoDto.PhotoUrl;
-                SaveShopAnswerPhoto(answerPhoto);
-            }
-        }
-        public void DeleteShopAnswer(List<AnswerDto> answerList)
-        {
-            string sql = "";
-            SqlParameter[] para = new SqlParameter[] { };
-            Type t = typeof(int);
-            foreach (AnswerDto answer in answerList)
-            {
-                sql += "DELETE Answer WHERE AnswerId = " + answer.AnswerId.ToString()+" ";
-            }
-            db.Database.ExecuteSqlCommand(sql, para);
+            return answer;
         }
         /// <summary>
         /// 
@@ -211,10 +236,9 @@ namespace com.yrtech.InventoryAPI.Service
             }
             else
             {
-                findOne.PhotoNameServer = answerPhoto.PhotoNameServer;
                 findOne.PhotoUrl = answerPhoto.PhotoUrl;
                 findOne.ModifyDateTime = DateTime.Now;
-
+                findOne.ModifyUserId = answerPhoto.ModifyUserId;
             }
             db.SaveChanges();
         }

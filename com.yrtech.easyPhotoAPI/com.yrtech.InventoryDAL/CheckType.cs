@@ -17,6 +17,7 @@ namespace com.yrtech.InventoryDAL
         public int CheckTypeId { get; set; }
         public string CheckTypeName { get; set; }
         public int ProjectId { get; set; }
+        public Nullable<bool> UseChk { get; set; }
         public string InUserId { get; set; }
         public Nullable<System.DateTime> InDateTime { get; set; }
         public string ModifyUserId { get; set; }

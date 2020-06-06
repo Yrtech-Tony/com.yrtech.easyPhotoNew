@@ -11,11 +11,11 @@ namespace com.yrtech.InventoryAPI.DTO
         public int AnswerId { get; set; }
         public int PhotoId { get; set; }
         public int ProjectId { get; set; }
-        public int ShopId { get; set; }
         public string CheckCode { get; set; }
-        public string PhotoNameServer  { get; set; }
         public string PhotoName { get; set; }
         public string PhotoUrl { get; set; }
+        public string InUserId { get; set; }
+        public string ModifyUserId { get; set; }
         
     }
 }

@@ -12,17 +12,16 @@ namespace com.yrtech.InventoryDAL
     using System;
     using System.Collections.Generic;
     
-    public partial class UserInfo
+    public partial class ExtendColumnProject
     {
-        public int Id { get; set; }
-        public Nullable<int> ProjectId { get; set; }
-        public string ShopCode { get; set; }
-        public string ShopName { get; set; }
-        public string Password { get; set; }
-        public Nullable<System.DateTime> ExpireDateTime { get; set; }
-        public Nullable<int> InUserId { get; set; }
+        public int ProjectId { get; set; }
+        public string ColumnCode { get; set; }
+        public string ColumnName { get; set; }
+        public Nullable<bool> UseChk { get; set; }
+        public Nullable<bool> AddShowChk { get; set; }
+        public string InUserId { get; set; }
         public Nullable<System.DateTime> InDateTime { get; set; }
-        public Nullable<int> ModifyUserId { get; set; }
+        public string ModifyUserId { get; set; }
         public Nullable<System.DateTime> ModifyDateTime { get; set; }
     }
 }

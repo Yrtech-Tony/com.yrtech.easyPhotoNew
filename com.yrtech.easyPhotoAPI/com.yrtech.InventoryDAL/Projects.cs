@@ -24,8 +24,6 @@ namespace com.yrtech.InventoryDAL
         public Nullable<int> BrandId { get; set; }
         public string BrandName { get; set; }
         public Nullable<System.DateTime> ExpireDateTime { get; set; }
-        public Nullable<bool> ScoreShow { get; set; }
-        public Nullable<bool> OtherPropertyShow { get; set; }
         public string ModifyUserId { get; set; }
         public Nullable<System.DateTime> ModifyDateTime { get; set; }
         public string InUserID { get; set; }
