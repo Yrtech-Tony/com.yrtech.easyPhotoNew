@@ -111,7 +111,7 @@ namespace com.yrtech.InventoryAPI.Service
                             WHERE ProjectId = @ProjectId";
             if (!string.IsNullOrEmpty(key))
             {
-                sql += " AND (ShopCode LIKE '%'+@Key+'%' OR ShopName LIKE '%'+@Key+'%'";
+                sql += " AND (ShopCode LIKE '%'+@Key+'%' OR ShopName LIKE '%'+@Key+'%')";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<UserInfo>().ToList();
         }
@@ -129,6 +129,7 @@ namespace com.yrtech.InventoryAPI.Service
             foreach (UserInfo userInfo in userInfoList)
             {
                 sql += " INSERT INTO UserInfo VALUES('";
+                sql += userInfo.ProjectId.ToString() + "','";
                 sql += userInfo.ShopCode + "','";
                 sql += userInfo.ShopName + "','";
                 sql += Guid.NewGuid().ToString().Substring(0, 6) + "','";
@@ -176,7 +177,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (projectId == null) projectId = "";
             if (checkTypeId == null) checkTypeId = "";
             if (checkTypeName == null) checkTypeName = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
+             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
                                                         , new SqlParameter("@CheckTypeId", checkTypeId)
                                                      , new SqlParameter("@CheckTypeName", checkTypeName)
                                                      , new SqlParameter("@UseChk", useChk)};
