@@ -180,7 +180,7 @@ namespace com.yrtech.InventoryAPI.Service
              SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
                                                         , new SqlParameter("@CheckTypeId", checkTypeId)
                                                      , new SqlParameter("@CheckTypeName", checkTypeName)
-                                                     , new SqlParameter("@UseChk", useChk)};
+                                                     };
             Type t = typeof(CheckType);
             string sql = "";
             sql = @"SELECT *
@@ -201,6 +201,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (useChk != null)
             {
+                para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk)});
                 sql += " AND UseChk = @UseChk";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<CheckType>().ToList();
@@ -243,7 +244,7 @@ namespace com.yrtech.InventoryAPI.Service
                                                        , new SqlParameter("@RemarkId", remarkId)
                                                         , new SqlParameter("@AddCheck", addCheck)
                                                         , new SqlParameter("@RemarkName", remarkName)
-                                                        , new SqlParameter("@UseChk", useChk)};
+                                                       };
             Type t = typeof(Remark);
             string sql = "";
             sql = @"SELECT *
@@ -268,6 +269,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (useChk != null)
             {
+                para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk) });
                 sql += " AND UseChk = @UseChk";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<Remark>().ToList();
@@ -317,7 +319,7 @@ namespace com.yrtech.InventoryAPI.Service
                                                         ,new SqlParameter("@PhotoId", photoId)
                                                         , new SqlParameter("@AddCheck", addCheck)
                                                         , new SqlParameter("@PhotoName", photoName)
-                                                     , new SqlParameter("@UseChk", useChk)};
+                                                    };
             Type t = typeof(PhotoList);
             string sql = "";
             sql = @"SELECT *
@@ -342,6 +344,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (useChk != null)
             {
+                para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk) });
                 sql += " AND UseChk = @UseChk";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<PhotoList>().ToList();
