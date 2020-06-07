@@ -51,6 +51,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\com.yrtech.SurveyAPI\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\..\..\com.yrtech.SurveyAPI\packages\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Infragistics3.Documents.Excel.v11.1">
       <HintPath>..\packages\Infragistics3.Documents.Excel.v11.1.dll</HintPath>
     </Reference>

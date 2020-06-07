@@ -26,7 +26,7 @@ namespace com.yrtech.SurveyAPI.Controllers
                 List<AnswerDto> answerList = answerService.GetShopAnswerList(answerId,projectId, shopCode, checkCode,checkTypeId,photoCheck,addCheck, key);
                 foreach (AnswerDto answerDto in answerList)
                 {
-                    answerDto.AnswerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString());
+                    answerDto.AnswerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString(),"","");
                 }
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(answerList) };
             }
@@ -166,7 +166,7 @@ namespace com.yrtech.SurveyAPI.Controllers
         {
             try
             {
-                List<AnswerPhotoDto> photoList = answerService.GetAnswerPhotoList(answerId);
+                List<AnswerPhotoDto> photoList = answerService.GetAnswerPhotoList(answerId,"","");
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(photoList) };
             }
             catch (Exception ex)
@@ -190,6 +190,25 @@ namespace com.yrtech.SurveyAPI.Controllers
                 return new APIResult() { Status = false, Body = ex.Message.ToString() };
             }
 
+        }
+        [HttpGet]
+        [Route("Answer/AnswerPhotoDownLoad")]
+        public APIResult AnswerPhotoDownLoad(string projectId,string shopCode)
+        {
+            try
+            {
+                string downloadPath = answerService.AnswerPhotoDownLoad(projectId,shopCode);
+                if (string.IsNullOrEmpty(downloadPath))
+                {
+                    return new APIResult() { Status = false, Body = "没有可下载文件" };
+                }
+
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(downloadPath) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
         }
     }
 }

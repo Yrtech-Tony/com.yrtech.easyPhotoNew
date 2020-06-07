@@ -1,6 +1,8 @@
 ﻿using com.yrtech.InventoryAPI.Common;
 using com.yrtech.InventoryAPI.DTO;
 using com.yrtech.InventoryDAL;
+using ICSharpCode.SharpZipLib.Checksums;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -8,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Web.Hosting;
 
 namespace com.yrtech.InventoryAPI.Service
 {
@@ -121,21 +124,29 @@ namespace com.yrtech.InventoryAPI.Service
             sql += " Order BY A.CheckTypeId, CheckCode";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerDto>().ToList();
         }
-        public List<AnswerPhotoDto> GetAnswerPhotoList(string answerId)
+        public List<AnswerPhotoDto> GetAnswerPhotoList(string answerId,string projectId,string shopCode)
         {
             if (answerId == null) answerId = "";
+            if (projectId == null) projectId = "";
+            if (shopCode == null) shopCode = "";
 
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@AnswerId", answerId)
+                                                    ,new SqlParameter("@ProjectId", projectId)
+                                                    ,new SqlParameter("@ShopCode", shopCode)
                                                       };
             Type t = typeof(AnswerPhotoDto);
             string sql = "";
-            sql = @"SELECT A.ProjectId,A.CheckCode,B.PhotoId,B.PhotoUrl,C.PhotoName
+            sql = @"SELECT A.ProjectId,A.CheckCode,B.PhotoId,B.PhotoUrl,C.PhotoName,A.ShopCode,A.ShopName
                     FROM Answer A INNER JOIN AnswerPhoto B ON A.AnswerId = B.AnswerId
                                   INNER JOIN PhotoList C ON B.PhotoId = C.PhotoId
                     WHERE 1=1 ";
-            if (!string.IsNullOrEmpty(answerId))
+            if (!string.IsNullOrEmpty(projectId))
             {
-                sql += " AND A.AnswerId = @AnswerId";
+                sql += " AND A.ProjectId = @ProjectId";
+            }
+            if (!string.IsNullOrEmpty(shopCode))
+            {
+                sql += " AND A.ShopCode = @ShopCode";
             }
             if (!string.IsNullOrEmpty(answerId))
             {
@@ -241,6 +252,119 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.ModifyUserId = answerPhoto.ModifyUserId;
             }
             db.SaveChanges();
+        }
+        public string AnswerPhotoDownLoad(string projectId,string shopCode)
+        {
+
+            List<AnswerPhotoDto> list = GetAnswerPhotoList("",projectId,shopCode);
+            if (list == null || list.Count == 0) return "";
+            string defaultPath = HostingEnvironment.MapPath(@"~/");
+            string basePath = defaultPath + "DownLoadFile";//根目录
+            string downLoadfolder = DateTime.Now.ToString("yyyyMMddHHmmssfff");//文件下载的文件夹
+            string folder = basePath + @"\" + downLoadfolder;// 文件下载的路径
+            string downLoadPath = basePath + @"\" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".zip";//打包后的文件名
+            if (!Directory.Exists(basePath))
+            {
+                Directory.CreateDirectory(basePath);
+            }
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            
+            // 从OSS把文件下载到服务器
+            foreach (AnswerPhotoDto photo in list)
+            {
+                //string photoName = photo.ProjectId + "_" + photo.ShopCode + "_" + photo.PhotoName;
+                if (!Directory.Exists(folder + @"\" + photo.ProjectId))
+                {
+                    Directory.CreateDirectory(folder + @"\" + photo.ProjectId);//创建期号文件夹
+                }
+                if (!Directory.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode))
+                {
+                    Directory.CreateDirectory(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode);//创建经销商代码文件夹
+                }
+                if (File.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode+@"\" + photo.CheckCode+"_"+photo.PhotoName))
+                {
+                    File.Delete(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName);
+                }
+                try
+                {
+                    OSSClientHelper.GetObject(photo.PhotoUrl, folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName);
+                }
+                catch (Exception ex) { }
+            }
+            // 打包文件
+            if (!ZipInForFiles(list, downLoadfolder, basePath, downLoadPath, 9)) return "";
+
+            return downLoadPath.Replace(defaultPath, "");
+        }
+        /// <summary>
+        /// 压缩文件
+        /// </summary>
+        /// <param name="fileNames"></param>
+        /// <param name="foler"></param>
+        /// <param name="folderToZip"></param>
+        /// <param name="zipedFile"></param>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        private static bool ZipInForFiles(List<AnswerPhotoDto> fileNames, string foler, string folderToZip, string zipedFile, int level)
+        {
+            bool isSuccess = true;
+            if (!Directory.Exists(folderToZip))
+            {
+                return false;
+            }
+            try
+            {
+                using (ZipOutputStream zipOutStream = new ZipOutputStream(System.IO.File.Create(zipedFile)))
+                {
+                    zipOutStream.SetLevel(level);
+                    string comment = string.Empty;
+
+                    //创建当前文件夹
+                    ZipEntry entry = new ZipEntry(foler + "/"); //加上 “/” 才会当成是文件夹创建
+                    zipOutStream.PutNextEntry(entry);
+                    zipOutStream.Flush();
+
+                    Crc32 crc = new Crc32();
+
+                    foreach (AnswerPhotoDto photo in fileNames)
+                    {
+                        string photoName = photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName;
+                        string file = Path.Combine(folderToZip, foler, photoName);
+                        string extension = string.Empty;
+                        if (!System.IO.File.Exists(file))
+                        {
+                            comment += foler + "，文件：" + photoName + "不存在。\r\n";
+                            continue;
+                        }
+
+                        using (FileStream fs = System.IO.File.OpenRead(Path.Combine(folderToZip, foler, photoName)))
+                        {
+                            byte[] buffer = new byte[fs.Length];
+                            fs.Read(buffer, 0, buffer.Length);
+                            entry = new ZipEntry(foler + "/" + photoName);
+                            entry.DateTime = DateTime.Now;
+                            entry.Size = fs.Length;
+                            fs.Close();
+                            crc.Reset();
+                            crc.Update(buffer);
+                            entry.Crc = crc.Value;
+                            zipOutStream.PutNextEntry(entry);
+                            zipOutStream.Write(buffer, 0, buffer.Length);
+                        }
+                    }
+
+                    zipOutStream.SetComment(comment);
+                    zipOutStream.Finish();
+                }
+            }
+            catch (Exception)
+            {
+                isSuccess = false;
+            }
+            return isSuccess;
         }
     }
 }
