@@ -295,7 +295,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<ExtendColumnProject> extendColumnProjectList = masterService.GetExtendColumnProject(projectId, columnCode);
+                List<ExtendColumnProjectDto> extendColumnProjectList = masterService.GetExtendColumnProject(projectId, columnCode);
                 if (addShowChk == true) {
                     extendColumnProjectList = extendColumnProjectList.Where(x => x.AddShowChk == true && x.UseChk == true).ToList();
                 }

@@ -98,9 +98,9 @@ namespace com.yrtech.InventoryAPI.Service
             List<AnswerDto> list_N = answerService.GetShopAnswerList(projectId, shopCode, "", "", "", "N","","");
             List<AnswerDto> list_Y = answerService.GetShopAnswerList(projectId, shopCode, "", "", "", "Y","","");
             // 扩展列
-            List<ExtendColumnProject> ColumnList_List = masterService.GetExtendColumnProject(projectId, "");
+            List<ExtendColumnProjectDto> ColumnList_List = masterService.GetExtendColumnProject(projectId, "");
             // 在新增显示的扩展列
-            List<ExtendColumnProject> ColumnList_add = ColumnList_List.Where(x => x.AddShowChk==true).ToList();
+            List<ExtendColumnProjectDto> ColumnList_add = ColumnList_List.Where(x => x.AddShowChk==true).ToList();
             Workbook book = Workbook.Load(basePath + @"Content\Excel\" + "AnswerExport.xlsx", false);
             
             //填充数据

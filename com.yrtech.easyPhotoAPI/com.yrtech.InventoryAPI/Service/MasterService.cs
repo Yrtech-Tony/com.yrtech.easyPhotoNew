@@ -376,13 +376,13 @@ namespace com.yrtech.InventoryAPI.Service
         /// </summary>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public List<ExtendColumnProject> GetExtendColumnProject(string projectId,string columnCode)
+        public List<ExtendColumnProjectDto> GetExtendColumnProject(string projectId,string columnCode)
         {
             if (projectId == null) projectId = "";
             if (columnCode == null) columnCode = "";
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
                                                     ,new SqlParameter("@ColumnCode", columnCode) };
-            Type t = typeof(ExtendColumnProject);
+            Type t = typeof(ExtendColumnProjectDto);
             string sql = @"SELECT @ProjectId AS ProjectId,ColumnCode,
                             ISNULL((SELECT ColumnName FROM ExtendColumnProject WHERE ProjectId = @ProjectId  AND ColumnCode = A.ColumnCode),'') AS ColumnName
                             ,(SELECT AddShowChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS AddShowChk
@@ -392,8 +392,8 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 sql += " AND ColumnCode = @ColumnCode";
             }
-            sql += "ColumnCode ASC";
-            return db.Database.SqlQuery(t, sql, para).Cast<ExtendColumnProject>().ToList();
+            sql += "ORDER BY ColumnCode ASC";
+            return db.Database.SqlQuery(t, sql, para).Cast<ExtendColumnProjectDto>().ToList();
         }
         public void SaveExtendColumnProject(ExtendColumnProject extendColumnProject)
         {
