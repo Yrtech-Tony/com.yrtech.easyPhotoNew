@@ -185,8 +185,7 @@ namespace com.yrtech.InventoryAPI.Service
             string sql = "";
             sql = @"SELECT *
                     FROM [CheckType]
-                    WHERE 1=1   
-                    ";
+                    WHERE 1=1  ";
             if (!string.IsNullOrEmpty(projectId))
             {
                 sql += " AND ProjectId = @ProjectId";
@@ -201,7 +200,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (useChk != null)
             {
-                para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk)});
+                para= para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk)}).ToArray();
                 sql += " AND UseChk = @UseChk";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<CheckType>().ToList();
@@ -269,7 +268,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (useChk != null)
             {
-                para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk) });
+                para = para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk) }).ToArray();
                 sql += " AND UseChk = @UseChk";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<Remark>().ToList();
@@ -344,7 +343,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (useChk != null)
             {
-                para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk) });
+                para = para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk) }).ToArray();
                 sql += " AND UseChk = @UseChk";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<PhotoList>().ToList();

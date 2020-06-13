@@ -19,7 +19,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <returns></returns>
         public List<UserInfo> Login(string projectId,string accountId, string password)
         {
-            SqlParameter[] para = new SqlParameter[] {new SqlParameter("@AccountId", accountId),
+            SqlParameter[] para = new SqlParameter[] {new SqlParameter("@ProjectId", projectId),
                                                        new SqlParameter("@AccountId", accountId),
                                                        new SqlParameter("@Password",password)};
             Type t = typeof(UserInfo);

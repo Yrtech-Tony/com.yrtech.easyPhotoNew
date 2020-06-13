@@ -159,7 +159,7 @@ namespace com.yrtech.InventoryAPI.Service
         {
             string sql = "";
             SqlParameter[] para = new SqlParameter[] { };
-            sql += "DELETE AnswerPhoto WHERE ProjectId='" + projectId + "'";
+            sql += "DELETE AnswerPhoto WHERE AnswerId IN (SELECT AnswerId FROM Answer WHERE ProjectId='" + projectId + "')";
             sql += " DELETE Answer WHERE ProjectId='" + projectId + "'";
             foreach (AnswerDto answer in answerList)
             {

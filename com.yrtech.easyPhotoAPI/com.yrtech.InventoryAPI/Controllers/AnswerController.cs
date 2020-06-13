@@ -120,7 +120,6 @@ namespace com.yrtech.SurveyAPI.Controllers
                         answer.ImportRemark += "检查类型不存在或已不使用" + ";";
                     }
                 }
-
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(list) };
             }
             catch (Exception ex)
@@ -135,7 +134,6 @@ namespace com.yrtech.SurveyAPI.Controllers
         {
             try
             {
-                
                 List<AnswerDto> list = CommonHelper.DecodeString<List<AnswerDto>>(uploadData.ListJson);
                 string projectId = "";
                 if (list != null && list.Count > 0) projectId = list[0].ProjectId.ToString();
@@ -149,6 +147,9 @@ namespace com.yrtech.SurveyAPI.Controllers
                     {
                         answer.ImportChk = false;
                         answer.ImportRemark += "检查类型不存在或已不使用" + ";";
+                    }
+                    else {
+                        answer.CheckTypeId = checkTypeList[0].CheckTypeId;
                     }
                 }
                 answerService.ImportAnswerList(projectId, list);
