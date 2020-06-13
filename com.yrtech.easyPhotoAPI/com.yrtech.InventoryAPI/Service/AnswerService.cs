@@ -51,7 +51,7 @@ namespace com.yrtech.InventoryAPI.Service
             Type t = typeof(AnswerDto);
             string sql = "";
             sql = @"SELECT A.AnswerId,A.ProjectId,A.ShopCode,A.ShopName,B.CheckTypeName,A.CheckCode,A.CheckTypeId,B.CheckTypeName,
-                    A.RemarkId, ISNULL((SELECT RemarkName FROM Remark WHERE RemarkId = A.RemarkId),'') AS Remark
+                    A.RemarkId, ISNULL((SELECT RemarkName FROM Remark WHERE RemarkId = A.RemarkId),'') AS Remark,
                     A.AddCheck,A.ModifyUserId,A.ModifyDateTime,A.InUserId,A.InDateTime,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column1' AND UseChk = 1)
                          THEN Column1

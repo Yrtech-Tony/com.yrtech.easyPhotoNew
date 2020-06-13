@@ -423,9 +423,8 @@ namespace com.yrtech.InventoryAPI.Service
                                                     ,new SqlParameter("@ColumnCode", columnCode)
                                                     ,new SqlParameter("@ColumnValue", columnValue) };
             Type t = typeof(ExtendColumnProjectData);
-            string sql = @"SELECT ColumnCode,
-                           ColumnValue
-                            FROM ExtendColumnProject A WHERE ProjectId = @ProjectId AND ColumnCode = @ColumnCode";
+            string sql = @"SELECT *
+                            FROM ExtendColumnProjectData A WHERE ProjectId = @ProjectId AND ColumnCode = @ColumnCode";
             if (!string.IsNullOrEmpty(columnValue))
             {
                 sql += " AND ColumnValue = @ColumnValue";
