@@ -14,6 +14,7 @@ namespace com.yrtech.InventoryDAL
     
     public partial class ExtendColumnProjectData
     {
+        public int Id { get; set; }
         public int ProjectId { get; set; }
         public string ColumnCode { get; set; }
         public string ColumnValue { get; set; }

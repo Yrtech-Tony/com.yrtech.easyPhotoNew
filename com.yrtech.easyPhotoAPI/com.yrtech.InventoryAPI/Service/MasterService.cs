@@ -177,7 +177,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (projectId == null) projectId = "";
             if (checkTypeId == null) checkTypeId = "";
             if (checkTypeName == null) checkTypeName = "";
-             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
                                                         , new SqlParameter("@CheckTypeId", checkTypeId)
                                                      , new SqlParameter("@CheckTypeName", checkTypeName)
                                                      };
@@ -200,7 +200,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (useChk != null)
             {
-                para= para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk)}).ToArray();
+                para = para.Concat(new SqlParameter[] { new SqlParameter("@UseChk", useChk) }).ToArray();
                 sql += " AND UseChk = @UseChk";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<CheckType>().ToList();
@@ -367,6 +367,7 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.ModifyUserId = photoList.ModifyUserId;
                 findOne.PhotoName = photoList.PhotoName;
                 findOne.UseChk = photoList.UseChk;
+                findOne.AddCheck = photoList.AddCheck;
             }
             db.SaveChanges();
         }
@@ -375,7 +376,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// </summary>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public List<ExtendColumnProjectDto> GetExtendColumnProject(string projectId,string columnCode)
+        public List<ExtendColumnProjectDto> GetExtendColumnProject(string projectId, string columnCode)
         {
             if (projectId == null) projectId = "";
             if (columnCode == null) columnCode = "";
@@ -413,7 +414,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             db.SaveChanges();
         }
-        public List<ExtendColumnProjectData> GetExtendColumnProjectData(string projectId, string columnCode,string columnValue)
+        public List<ExtendColumnProjectDataDto> GetExtendColumnProjectData(string projectId, string columnCode, string columnValue)
         {
             if (projectId == null) projectId = "";
             if (columnCode == null) columnCode = "";
@@ -421,14 +422,16 @@ namespace com.yrtech.InventoryAPI.Service
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
                                                     ,new SqlParameter("@ColumnCode", columnCode)
                                                     ,new SqlParameter("@ColumnValue", columnValue) };
-            Type t = typeof(ExtendColumnProjectData);
-            string sql = @"SELECT *
-                            FROM ExtendColumnProjectData A WHERE ProjectId = @ProjectId AND ColumnCode = @ColumnCode";
+            Type t = typeof(ExtendColumnProjectDataDto);
+            string sql = @"SELECT A.*,B.ColumnName
+                            FROM ExtendColumnProjectData A INNER JOIN ExtendColumnProject B ON A.ProjectId = B.ProjectId 
+                                                                                            AND A.ColumnCode = B.ColumnCode
+                            WHERE A.ProjectId = @ProjectId AND A.ColumnCode = @ColumnCode";
             if (!string.IsNullOrEmpty(columnValue))
             {
                 sql += " AND ColumnValue = @ColumnValue";
             }
-            return db.Database.SqlQuery(t, sql, para).Cast<ExtendColumnProjectData>().ToList();
+            return db.Database.SqlQuery(t, sql, para).Cast<ExtendColumnProjectDataDto>().ToList();
         }
         /// <summary>
         /// 不需要更新直接插入即可
@@ -443,13 +446,12 @@ namespace com.yrtech.InventoryAPI.Service
         }
         public void DeleteExtendColumnProjectData(ExtendColumnProjectData extendColumnProjectData)
         {
-            
             string sql = "DELETE ExtendColumnProjectData WHERE ProjectId = '" + extendColumnProjectData.ProjectId.ToString() + "'";
             sql += " AND ColumnCode = '" + extendColumnProjectData.ColumnCode + "'";
             sql += " AND ColumnValue = '" + extendColumnProjectData.ColumnValue + "'";
             SqlParameter[] para = new SqlParameter[] { };
             db.Database.ExecuteSqlCommand(sql, para);
-            
+
         }
 
     }

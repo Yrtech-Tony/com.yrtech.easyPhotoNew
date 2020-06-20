@@ -190,6 +190,7 @@
     <Compile Include="DTO\Answer\AnswerDto.cs" />
     <Compile Include="DTO\Answer\AnswerPhotoDto.cs" />
     <Compile Include="DTO\Answer\AnswerShopInfoDto.cs" />
+    <Compile Include="DTO\Master\ExtendColumnProjectDataDto.cs" />
     <Compile Include="DTO\Master\ExtendColumnProjectDto.cs" />
     <Compile Include="DTO\Shop\ShopDto.cs" />
     <Compile Include="DTO\UploadData.cs" />

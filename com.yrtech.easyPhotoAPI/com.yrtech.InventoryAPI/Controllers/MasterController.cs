@@ -331,7 +331,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<ExtendColumnProjectData> extendColumnProjectList = masterService.GetExtendColumnProjectData(projectId, columnCode, "");
+                List<ExtendColumnProjectDataDto> extendColumnProjectList = masterService.GetExtendColumnProjectData(projectId, columnCode, "");
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(extendColumnProjectList) };
             }
             catch (Exception ex)
@@ -346,7 +346,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<ExtendColumnProjectData> list = masterService.GetExtendColumnProjectData(extendColumnProjectData.ProjectId.ToString(), extendColumnProjectData.ColumnCode, extendColumnProjectData.ColumnValue);
+                List<ExtendColumnProjectDataDto> list = masterService.GetExtendColumnProjectData(extendColumnProjectData.ProjectId.ToString(), extendColumnProjectData.ColumnCode, extendColumnProjectData.ColumnValue);
                 if (list != null && list.Count > 0)
                 {
                     return new APIResult() { Status = false, Body = "数据重复" };

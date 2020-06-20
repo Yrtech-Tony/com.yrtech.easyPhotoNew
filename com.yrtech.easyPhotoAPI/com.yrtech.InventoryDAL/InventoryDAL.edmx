@@ -80,8 +80,9 @@
         </EntityType>
         <EntityType Name="ExtendColumnProjectData">
           <Key>
-            <PropertyRef Name="ProjectId" />
+            <PropertyRef Name="Id" />
           </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProjectId" Type="int" Nullable="false" />
           <Property Name="ColumnCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ColumnValue" Type="nvarchar" MaxLength="100" />
@@ -172,13 +173,13 @@
           <EntitySet Name="AnswerPhoto" EntityType="Inventory.AnswerPhoto" />
           <EntitySet Name="CheckType" EntityType="Inventory.CheckType" />
           <EntitySet Name="ExtendColumn" EntityType="Inventory.ExtendColumn" />
-          <EntitySet Name="ExtendColumnProjectData" EntityType="Inventory.ExtendColumnProjectData" />
           <EntitySet Name="PhotoList" EntityType="Inventory.PhotoList" />
           <EntitySet Name="Projects" EntityType="Inventory.Projects" />
           <EntitySet Name="Remark" EntityType="Inventory.Remark" />
           <EntitySet Name="UserInfo" EntityType="Inventory.UserInfo" />
           <EntitySet Name="Answer" EntityType="Inventory.Answer" />
           <EntitySet Name="ExtendColumnProject" EntityType="Inventory.ExtendColumnProject" />
+          <EntitySet Name="ExtendColumnProjectData" EntityType="Inventory.ExtendColumnProjectData" />
         </EntityContainer>
         <EntityType Name="AnswerPhoto">
           <Key>
@@ -211,18 +212,6 @@
             <PropertyRef Name="ColumnCode" />
           </Key>
           <Property Name="ColumnCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="ExtendColumnProjectData">
-          <Key>
-            <PropertyRef Name="ProjectId" />
-          </Key>
-          <Property Name="ProjectId" Type="Int32" Nullable="false" />
-          <Property Name="ColumnCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ColumnValue" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="InDateTime" Type="DateTime" Precision="3" />
-          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="PhotoList">
           <Key>
@@ -327,6 +316,19 @@
           <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="ExtendColumnProjectData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectId" Type="Int32" Nullable="false" />
+          <Property Name="ColumnCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ColumnValue" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InDateTime" Type="DateTime" Precision="3" />
+          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -364,19 +366,6 @@
             <EntityTypeMapping TypeName="Inventory.ExtendColumn">
               <MappingFragment StoreEntitySet="ExtendColumn">
                 <ScalarProperty Name="ColumnCode" ColumnName="ColumnCode" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ExtendColumnProjectData">
-            <EntityTypeMapping TypeName="Inventory.ExtendColumnProjectData">
-              <MappingFragment StoreEntitySet="ExtendColumnProjectData">
-                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-                <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-                <ScalarProperty Name="ColumnValue" ColumnName="ColumnValue" />
-                <ScalarProperty Name="ColumnCode" ColumnName="ColumnCode" />
-                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -485,6 +474,20 @@
                 <ScalarProperty Name="ColumnName" ColumnName="ColumnName" />
                 <ScalarProperty Name="ColumnCode" ColumnName="ColumnCode" />
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExtendColumnProjectData">
+            <EntityTypeMapping TypeName="Inventory.ExtendColumnProjectData">
+              <MappingFragment StoreEntitySet="ExtendColumnProjectData">
+                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+                <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+                <ScalarProperty Name="ColumnValue" ColumnName="ColumnValue" />
+                <ScalarProperty Name="ColumnCode" ColumnName="ColumnCode" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
