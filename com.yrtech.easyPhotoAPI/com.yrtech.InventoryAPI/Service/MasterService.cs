@@ -280,6 +280,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="remark"></param>
         public void SaveRemark(Remark remark)
         {
+            if (remark.AddCheck == "Y") remark.CheckTypeId = null;
             Remark findOne = db.Remark.Where(x => (x.RemarkId == remark.RemarkId)).FirstOrDefault();
             if (findOne == null)
             {
@@ -322,7 +323,7 @@ namespace com.yrtech.InventoryAPI.Service
             Type t = typeof(PhotoList);
             string sql = "";
             sql = @"SELECT *
-                    FROM [PhotoList]
+                    FROM [PhotoList] 
                     WHERE 1=1   
                     ";
             if (!string.IsNullOrEmpty(checkTypeId))
@@ -354,6 +355,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="photoList"></param>
         public void SavePhotoList(PhotoList photoList)
         {
+            if (photoList.AddCheck == "Y") photoList.CheckTypeId = null;
             PhotoList findOne = db.PhotoList.Where(x => (x.PhotoId == photoList.PhotoId)).FirstOrDefault();
             if (findOne == null)
             {
