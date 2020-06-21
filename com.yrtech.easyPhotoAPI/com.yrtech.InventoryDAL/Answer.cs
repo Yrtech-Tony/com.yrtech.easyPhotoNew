@@ -20,7 +20,7 @@ namespace com.yrtech.InventoryDAL
         public string ShopName { get; set; }
         public string CheckCode { get; set; }
         public Nullable<int> CheckTypeId { get; set; }
-        public Nullable<int> RemarkId { get; set; }
+        public string Remark { get; set; }
         public string Column1 { get; set; }
         public string Column2 { get; set; }
         public string Column3 { get; set; }

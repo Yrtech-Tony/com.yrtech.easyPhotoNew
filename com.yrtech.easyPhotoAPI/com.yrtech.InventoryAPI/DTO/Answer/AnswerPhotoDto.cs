@@ -16,6 +16,7 @@ namespace com.yrtech.InventoryAPI.DTO
         public string ShopCode { get; set; }
         public string ShopName { get; set; }
         public string PhotoUrl { get; set; }
+        public bool MustChk { get; set; }
         public string InUserId { get; set; }
         public string ModifyUserId { get; set; }
         

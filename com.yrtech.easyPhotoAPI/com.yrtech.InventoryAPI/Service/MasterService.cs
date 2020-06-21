@@ -368,6 +368,7 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.PhotoName = photoList.PhotoName;
                 findOne.UseChk = photoList.UseChk;
                 findOne.AddCheck = photoList.AddCheck;
+                findOne.MustChk = photoList.MustChk;
             }
             db.SaveChanges();
         }

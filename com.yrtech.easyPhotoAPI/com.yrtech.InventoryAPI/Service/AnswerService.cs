@@ -50,8 +50,9 @@ namespace com.yrtech.InventoryAPI.Service
                                                         new SqlParameter("@Key", key)};
             Type t = typeof(AnswerDto);
             string sql = "";
-            sql = @"SELECT A.AnswerId,A.ProjectId,A.ShopCode,A.ShopName,B.CheckTypeName,A.CheckCode,A.CheckTypeId,B.CheckTypeName,
-                    A.RemarkId, ISNULL((SELECT RemarkName FROM Remark WHERE RemarkId = A.RemarkId),'') AS Remark,
+            sql = @"SELECT A.AnswerId,A.ProjectId,A.ShopCode,A.ShopName,A.CheckCode,A.CheckTypeId,
+                    ISNULL((SELECT CheckTypeName FROM CheckType WHERE CheckTypeId = A.CheckTypeId AND ProjectId = A.ProjectId),'') AS CheckTypeName
+                    ,A.Remark AS RemarkName,
                     A.AddCheck,A.ModifyUserId,A.ModifyDateTime,A.InUserId,A.InDateTime,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column1' AND UseChk = 1)
                          THEN Column1
@@ -80,7 +81,7 @@ namespace com.yrtech.InventoryAPI.Service
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column9' AND UseChk = 1)
                          THEN Column9
                     END AS Column9
-                    FROM Answer A INNER JOIN CheckType B ON A.CheckTypeId = B.CheckTypeId AND A.ProjectId = B.ProjectId
+                    FROM Answer A 
                     WHERE 1=1 ";
             if (!string.IsNullOrEmpty(answerId))
             {
@@ -136,7 +137,7 @@ namespace com.yrtech.InventoryAPI.Service
                                                       };
             Type t = typeof(AnswerPhotoDto);
             string sql = "";
-            sql = @"SELECT A.ProjectId,A.CheckCode,B.PhotoId,B.PhotoUrl,C.PhotoName,A.ShopCode,A.ShopName
+            sql = @"SELECT A.ProjectId,A.CheckCode,B.PhotoId,B.PhotoUrl,C.PhotoName,A.ShopCode,A.ShopName,ISNULL(C.MustChk,0) AS MustChk
                     FROM Answer A INNER JOIN AnswerPhoto B ON A.AnswerId = B.AnswerId
                                   INNER JOIN PhotoList C ON B.PhotoId = C.PhotoId
                     WHERE 1=1 ";
@@ -171,7 +172,7 @@ namespace com.yrtech.InventoryAPI.Service
                 sql += answer.ShopName.ToString() + "','";
                 sql += answer.CheckCode + "','";
                 sql += answer.CheckTypeId.ToString() + "','";
-                sql += "0','";
+                sql += "','";
                 sql += answer.Column1 + "','";
                 sql += answer.Column2 + "','";
                 sql += answer.Column3 + "','";
@@ -209,13 +210,14 @@ namespace com.yrtech.InventoryAPI.Service
             if (findOne == null)
             {
                 answer.InDateTime = DateTime.Now;
+                answer.ModifyDateTime = DateTime.Now;
                 answer.AddCheck = "Y";
-                db.Answer.Add(answer);
+                answer=db.Answer.Add(answer);
             }
             else
             {
                 findOne.CheckCode = answer.CheckCode;
-                findOne.RemarkId = answer.RemarkId;
+                findOne.Remark = answer.Remark;
                 findOne.ModifyDateTime = DateTime.Now;
                 findOne.ModifyUserId = answer.ModifyUserId;
                 findOne.Column1 = answer.Column1;
@@ -243,6 +245,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (findOne == null)
             {
                 answerPhoto.InDateTime = DateTime.Now;
+                answerPhoto.ModifyDateTime = DateTime.Now;
                 db.AnswerPhoto.Add(answerPhoto);
             }
             else

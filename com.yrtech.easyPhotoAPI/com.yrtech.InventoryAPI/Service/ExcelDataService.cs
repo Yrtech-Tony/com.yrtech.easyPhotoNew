@@ -95,14 +95,22 @@ namespace com.yrtech.InventoryAPI.Service
         // 导出清单
         public string AnswerExport(string projectId, string shopCode)
         {
-            List<AnswerDto> list_N = answerService.GetShopAnswerList(projectId, shopCode, "", "", "", "N","","");
-            List<AnswerDto> list_Y = answerService.GetShopAnswerList(projectId, shopCode, "", "", "", "Y","","");
+            List<AnswerDto> list_N = answerService.GetShopAnswerList("",projectId, shopCode, "", "", "","N","");
+            List<AnswerDto> list_Y = answerService.GetShopAnswerList("",projectId, shopCode, "", "", "", "Y","");
+            foreach (AnswerDto answerDto in list_N)
+            {
+                answerDto.AnswerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString(), "", "");
+            }
+            foreach (AnswerDto answerDto in list_Y)
+            {
+                answerDto.AnswerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString(), "", "");
+            }
             // 扩展列
             List<ExtendColumnProjectDto> ColumnList_List = masterService.GetExtendColumnProject(projectId, "");
             // 在新增显示的扩展列
             List<ExtendColumnProjectDto> ColumnList_add = ColumnList_List.Where(x => x.AddShowChk==true).ToList();
+
             Workbook book = Workbook.Load(basePath + @"Content\Excel\" + "AnswerExport.xlsx", false);
-            
             //填充数据
             Worksheet sheet = book.Worksheets[0];
             // 填充表头
@@ -150,38 +158,38 @@ namespace com.yrtech.InventoryAPI.Service
             string[] head1 = { "G","H", "I", "J", "K", "L", "M", "N", "O" };
             for (int i = 0; i < ColumnList_add.Count; i++)
             {
-                sheet.GetCell(head1[i] + 5).Value = ColumnList_add[i].ColumnName;
+                sheet1.GetCell(head1[i] + 5).Value = ColumnList_add[i].ColumnName;
             }
             int rowIndex1 = 1;
             foreach (AnswerDto item in list_Y)
             {
-                sheet.GetCell("A" + (rowIndex1 + 5)).Value = rowIndex.ToString();
+                sheet1.GetCell("A" + (rowIndex1 + 5)).Value = rowIndex1.ToString();
                 //经销商代码
-                sheet.GetCell("B" + (rowIndex1 + 5)).Value = item.ShopCode;
+                sheet1.GetCell("B" + (rowIndex1 + 5)).Value = item.ShopCode;
                 //经销商名称
-                sheet.GetCell("C" + (rowIndex1 + 5)).Value = item.ShopName;
+                sheet1.GetCell("C" + (rowIndex1 + 5)).Value = item.ShopName;
                 //检查代码
-                sheet.GetCell("D" + (rowIndex1 + 5)).Value = item.CheckCode;
+                sheet1.GetCell("D" + (rowIndex1 + 5)).Value = item.CheckCode;
                 //是否有照片
                 if (item.AnswerPhotoList != null && item.AnswerPhotoList.Count > 0)
                 {
-                    sheet.GetCell("E" + (rowIndex1 + 5)).Value = "有";
+                    sheet1.GetCell("E" + (rowIndex1 + 5)).Value = "有";
                 }
                 else
                 {
-                    sheet.GetCell("E" + (rowIndex1 + 5)).Value = "无";
+                    sheet1.GetCell("E" + (rowIndex1 + 5)).Value = "无";
                 }
-                sheet.GetCell("F" + (rowIndex1 + 5)).Value = item.RemarkName;
-                sheet.GetCell("G" + (rowIndex1 + 5)).Value = item.Column1;
-                sheet.GetCell("H" + (rowIndex1 + 5)).Value = item.Column2;
-                sheet.GetCell("I" + (rowIndex1 + 5)).Value = item.Column3;
-                sheet.GetCell("J" + (rowIndex1 + 5)).Value = item.Column4;
-                sheet.GetCell("K" + (rowIndex1 + 5)).Value = item.Column5;
-                sheet.GetCell("L" + (rowIndex1 + 5)).Value = item.Column6;
-                sheet.GetCell("M" + (rowIndex1 + 5)).Value = item.Column7;
-                sheet.GetCell("N" + (rowIndex1 + 5)).Value = item.Column8;
-                sheet.GetCell("O" + (rowIndex1 + 5)).Value = item.Column9;
-                rowIndex++;
+                sheet1.GetCell("F" + (rowIndex1 + 5)).Value = item.RemarkName;
+                sheet1.GetCell("G" + (rowIndex1 + 5)).Value = item.Column1;
+                sheet1.GetCell("H" + (rowIndex1 + 5)).Value = item.Column2;
+                sheet1.GetCell("I" + (rowIndex1 + 5)).Value = item.Column3;
+                sheet1.GetCell("J" + (rowIndex1 + 5)).Value = item.Column4;
+                sheet1.GetCell("K" + (rowIndex1 + 5)).Value = item.Column5;
+                sheet1.GetCell("L" + (rowIndex1 + 5)).Value = item.Column6;
+                sheet1.GetCell("M" + (rowIndex1 + 5)).Value = item.Column7;
+                sheet1.GetCell("N" + (rowIndex1 + 5)).Value = item.Column8;
+                sheet1.GetCell("O" + (rowIndex1 + 5)).Value = item.Column9;
+                rowIndex1++;
             }
 
             //保存excel文件

@@ -50,7 +50,7 @@ namespace com.yrtech.SurveyAPI.Controllers
                 answer.ShopName = answerdto.ShopName;
                 answer.CheckCode = answerdto.CheckCode;
                 answer.CheckTypeId = answerdto.CheckTypeId;
-                answer.RemarkId = answerdto.RemarkId;
+                answer.Remark = answerdto.RemarkName;
                 answer.AddCheck = answerdto.AddCheck;
                 answer.ModifyUserId = answerdto.ModifyUserId;
                 answer.InUserID = answerdto.InUserID;
@@ -67,7 +67,7 @@ namespace com.yrtech.SurveyAPI.Controllers
                 foreach (AnswerPhotoDto photoDto in answerdto.AnswerPhotoList)
                 {
                     AnswerPhoto photo = new AnswerPhoto();
-                    photo.AnswerId = photoDto.AnswerId;
+                    photo.AnswerId = answer.AnswerId;
                     photo.InUserId = photoDto.InUserId;
                     photo.ModifyUserId = photoDto.ModifyUserId;
                     photo.PhotoId = photoDto.PhotoId;
@@ -88,8 +88,8 @@ namespace com.yrtech.SurveyAPI.Controllers
         /// <param name="shopCode"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Answer/AnserExport")]
-        public APIResult AnserExport(string projectId, string shopCode)
+        [Route("Answer/AnswerExport")]
+        public APIResult AnswerExport(string projectId, string shopCode)
         {
             try
             {
