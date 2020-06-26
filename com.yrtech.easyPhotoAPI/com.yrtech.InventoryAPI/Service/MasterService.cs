@@ -18,23 +18,25 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="year"></param>
         /// <param name="expireDateTimeCheck"></param>
         /// <returns></returns>
-        public List<Projects> GetProject(string tenantId, string projectId, string brandId, string year, string expireDateTimeCheck)
+        public List<Projects> GetProject(string tenantId, string projectId, string projectCode,string projectName,string brandId, string year, string expireDateTimeCheck)
         {
             if (projectId == null) projectId = "";
             if (tenantId == null) tenantId = "";
             if (year == null) year = "";
             if (expireDateTimeCheck == null) expireDateTimeCheck = "";
+            if (projectCode == null) projectCode = "";
+            if (projectName == null) projectName = "";
             if (brandId == null) brandId = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@TenantId", tenantId),
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectCode", projectCode),
+                                                        new SqlParameter("@ProjectName", projectName),
+                                                        new SqlParameter("@TenantId", tenantId),
                                                         new SqlParameter("@ProjectId", projectId),
                                                         new SqlParameter("@Year", year),
                                                         new SqlParameter("@BrandId", brandId)};
             Type t = typeof(Projects);
             string sql = "";
             sql = @"SELECT * FROM Projects
-                    WHERE 1=1
-              
-      ";
+                    WHERE 1=1 ";
             if (!string.IsNullOrEmpty(tenantId))
             {
                 sql += " AND TenantId = @TenantId";
@@ -46,6 +48,14 @@ namespace com.yrtech.InventoryAPI.Service
             if (!string.IsNullOrEmpty(brandId))
             {
                 sql += " AND BrandId = @BrandId";
+            }
+            if (!string.IsNullOrEmpty(projectCode))
+            {
+                sql += " AND ProjectCode = @ProjectCode";
+            }
+            if (!string.IsNullOrEmpty(projectName))
+            {
+                sql += " AND ProjectName = @ProjectName";
             }
             if (!string.IsNullOrEmpty(year))
             {
@@ -74,6 +84,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (findOne == null)
             {
                 project.InDateTime = DateTime.Now;
+                project.ModifyDateTime = DateTime.Now;
                 db.Projects.Add(project);
             }
             else
@@ -215,6 +226,7 @@ namespace com.yrtech.InventoryAPI.Service
             if (findOne == null)
             {
                 checkType.InDateTime = DateTime.Now;
+                checkType.ModifyDateTime = DateTime.Now;
                 db.CheckType.Add(checkType);
             }
             else
@@ -233,13 +245,14 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="addCheck"></param>
         /// <param name="noteName"></param>
         /// <returns></returns>
-        public List<Remark> GetRemark(string checkTypeId, string remarkId, string addCheck, string remarkName, bool? useChk)
+        public List<Remark> GetRemark(string projectId,string checkTypeId, string remarkId, string addCheck, string remarkName, bool? useChk)
         {
             if (checkTypeId == null) checkTypeId = "";
             if (addCheck == null) addCheck = "";
             if (remarkId == null) remarkId = "";
             if (remarkName == null) remarkName = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@CheckTypeId", checkTypeId)
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
+                                                        ,new SqlParameter("@CheckTypeId", checkTypeId)
                                                        , new SqlParameter("@RemarkId", remarkId)
                                                         , new SqlParameter("@AddCheck", addCheck)
                                                         , new SqlParameter("@RemarkName", remarkName)
@@ -248,7 +261,7 @@ namespace com.yrtech.InventoryAPI.Service
             string sql = "";
             sql = @"SELECT *
                     FROM [Remark]
-                    WHERE 1=1 
+                    WHERE ProjectId = @ProjectId 
                     ";
             if (!string.IsNullOrEmpty(checkTypeId))
             {
@@ -295,11 +308,11 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.AddCheck = remark.AddCheck;
                 findOne.RemarkName = remark.RemarkName;
                 findOne.UseChk = remark.UseChk;
+                findOne.CheckTypeId = remark.CheckTypeId;
+                findOne.ProjectId = remark.ProjectId;
             }
             db.SaveChanges();
         }
-
-
 
         /// <summary>
         /// 
@@ -309,13 +322,14 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="addCheck"></param>
         /// <param name="photoName"></param>
         /// <returns></returns>
-        public List<PhotoList> GetPhotoList(string checkTypeId, string photoId, string addCheck, string photoName, bool? useChk)
+        public List<PhotoList> GetPhotoList(string projectId,string checkTypeId, string photoId, string addCheck, string photoName, bool? useChk)
         {
             if (checkTypeId == null) checkTypeId = "";
             if (photoId == null) photoId = "";
             if (addCheck == null) addCheck = "";
             if (photoName == null) photoName = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@CheckTypeId", checkTypeId)
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
+                                                    ,new SqlParameter("@CheckTypeId", checkTypeId)
                                                         ,new SqlParameter("@PhotoId", photoId)
                                                         , new SqlParameter("@AddCheck", addCheck)
                                                         , new SqlParameter("@PhotoName", photoName)
@@ -324,7 +338,7 @@ namespace com.yrtech.InventoryAPI.Service
             string sql = "";
             sql = @"SELECT *
                     FROM [PhotoList] 
-                    WHERE 1=1   
+                    WHERE ProjectId = @ProjectId 
                     ";
             if (!string.IsNullOrEmpty(checkTypeId))
             {
@@ -371,6 +385,8 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.UseChk = photoList.UseChk;
                 findOne.AddCheck = photoList.AddCheck;
                 findOne.MustChk = photoList.MustChk;
+                findOne.CheckTypeId = photoList.CheckTypeId;
+                findOne.ProjectId = photoList.ProjectId;
             }
             db.SaveChanges();
         }

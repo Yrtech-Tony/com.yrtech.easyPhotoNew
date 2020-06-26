@@ -26,7 +26,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<Projects> projectList = masterService.GetProject(tenantId, projectId, brandId, year, expireDateTimeCheck);
+                List<Projects> projectList = masterService.GetProject(tenantId, projectId,"","", brandId, year, expireDateTimeCheck);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(projectList) };
             }
             catch (Exception ex)
@@ -46,7 +46,24 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-
+                if (string.IsNullOrEmpty(project.ProjectCode.Replace(" ", "").ToString()))
+                {
+                    return new APIResult() { Status = false, Body = "期号代码不能为空" };
+                }
+                if (string.IsNullOrEmpty(project.ProjectName.Replace(" ", "").ToString()))
+                {
+                    return new APIResult() { Status = false, Body = "期号名称不能为空" };
+                }
+                List<Projects> projectList_Code = masterService.GetProject(project.TenantId.ToString(),"",project.ProjectCode,"",project.BrandId.ToString(),"","");
+                if (projectList_Code != null && projectList_Code.Count > 0 && projectList_Code[0].ProjectId != project.ProjectId)
+                {
+                    return new APIResult() { Status = false, Body = "期号代码重复" };
+                }
+                List<Projects> projectList_Name = masterService.GetProject(project.TenantId.ToString(), "", "", project.ProjectName, project.BrandId.ToString(), "", "");
+                if (projectList_Name != null && projectList_Name.Count > 0 && projectList_Name[0].ProjectId != project.ProjectId)
+                {
+                    return new APIResult() { Status = false, Body = "期号名称重复" };
+                }
                 masterService.SaveProjects(project);
                 return new APIResult() { Status = true, Body = "" };
             }
@@ -156,11 +173,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetRemark")]
-        public APIResult GetRemark(string checkTypeId, string remarkId, string addCheck, bool? useChk)
+        public APIResult GetRemark(string projectId,string checkTypeId, string remarkId, string addCheck, bool? useChk)
         {
             try
             {
-                List<Remark> remarkList = masterService.GetRemark(checkTypeId, remarkId, addCheck, "", useChk);
+                List<Remark> remarkList = masterService.GetRemark(projectId,checkTypeId, remarkId, addCheck, "", useChk);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(remarkList) };
             }
             catch (Exception ex)
@@ -175,11 +192,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<Remark> remarkList = masterService.GetRemark("", "", "", remark.RemarkName, null);
-                if (remarkList != null && remarkList.Count != 0 && remark.RemarkId != remarkList[0].RemarkId)
-                {
-                    return new APIResult() { Status = false, Body = "备注名称重复" };
-                }
+                //List<Remark> remarkList = masterService.GetRemark("", "", "", remark.RemarkName, null);
+                //if (remarkList != null && remarkList.Count != 0 && remark.RemarkId != remarkList[0].RemarkId)
+                //{
+                //    return new APIResult() { Status = false, Body = "备注名称重复" };
+                //}
 
                 masterService.SaveRemark(remark);
 
@@ -198,11 +215,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetPhotoList")]
-        public APIResult GetPhotoList(string checkTypeId, string photoId, string addCheck, bool? useChk)
+        public APIResult GetPhotoList(string projectId,string checkTypeId, string photoId, string addCheck, bool? useChk)
         {
             try
             {
-                List<PhotoList> photoList = masterService.GetPhotoList(checkTypeId, photoId, addCheck, "", useChk);
+                List<PhotoList> photoList = masterService.GetPhotoList(projectId,checkTypeId, photoId, addCheck, "", useChk);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(photoList) };
             }
             catch (Exception ex)
@@ -222,16 +239,16 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<PhotoList> photoList = masterService.GetPhotoList("", "", "", photo.PhotoName, null);
-                if (photoList != null && photoList.Count != 0 && photo.PhotoId != photoList[0].PhotoId)
-                {
-                    return new APIResult() { Status = false, Body = "照片名称重复" };
-                }
-                else
-                {
+                //List<PhotoList> photoList = masterService.GetPhotoList("", "", "", photo.PhotoName, null);
+                //if (photoList != null && photoList.Count != 0 && photo.PhotoId != photoList[0].PhotoId)
+                //{
+                //    return new APIResult() { Status = false, Body = "照片名称重复" };
+                //}
+                //else
+                //{
                     masterService.SavePhotoList(photo);
                     return new APIResult() { Status = true, Body = "" };
-                }
+                //}
             }
             catch (Exception ex)
             {

@@ -97,6 +97,7 @@
           </Key>
           <Property Name="PhotoId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PhotoName" Type="nvarchar" MaxLength="500" />
+          <Property Name="ProjectId" Type="int" />
           <Property Name="CheckTypeId" Type="int" />
           <Property Name="AddCheck" Type="nvarchar" MaxLength="50" />
           <Property Name="UseChk" Type="bit" />
@@ -130,6 +131,7 @@
             <PropertyRef Name="RemarkId" />
           </Key>
           <Property Name="RemarkId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectId" Type="int" />
           <Property Name="CheckTypeId" Type="int" />
           <Property Name="RemarkName" Type="nvarchar" MaxLength="150" />
           <Property Name="AddCheck" Type="nvarchar" MaxLength="50" />
@@ -175,12 +177,12 @@
           <EntitySet Name="CheckType" EntityType="Inventory.CheckType" />
           <EntitySet Name="ExtendColumn" EntityType="Inventory.ExtendColumn" />
           <EntitySet Name="Projects" EntityType="Inventory.Projects" />
-          <EntitySet Name="Remark" EntityType="Inventory.Remark" />
           <EntitySet Name="UserInfo" EntityType="Inventory.UserInfo" />
           <EntitySet Name="ExtendColumnProject" EntityType="Inventory.ExtendColumnProject" />
           <EntitySet Name="ExtendColumnProjectData" EntityType="Inventory.ExtendColumnProjectData" />
           <EntitySet Name="Answer" EntityType="Inventory.Answer" />
           <EntitySet Name="PhotoList" EntityType="Inventory.PhotoList" />
+          <EntitySet Name="Remark" EntityType="Inventory.Remark" />
         </EntityContainer>
         <EntityType Name="AnswerPhoto">
           <Key>
@@ -232,20 +234,6 @@
           <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
           <Property Name="InUserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InDateTime" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="Remark">
-          <Key>
-            <PropertyRef Name="RemarkId" />
-          </Key>
-          <Property Name="RemarkId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CheckTypeId" Type="Int32" />
-          <Property Name="RemarkName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="UseChk" Type="Boolean" />
-          <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="InDateTime" Type="DateTime" Precision="3" />
-          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="UserInfo">
           <Key>
@@ -322,6 +310,7 @@
           </Key>
           <Property Name="PhotoId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PhotoName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ProjectId" Type="Int32" />
           <Property Name="CheckTypeId" Type="Int32" />
           <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UseChk" Type="Boolean" />
@@ -330,6 +319,21 @@
           <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
           <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InDateTime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Remark">
+          <Key>
+            <PropertyRef Name="RemarkId" />
+          </Key>
+          <Property Name="RemarkId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectId" Type="Int32" />
+          <Property Name="CheckTypeId" Type="Int32" />
+          <Property Name="RemarkName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="AddCheck" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UseChk" Type="Boolean" />
+          <Property Name="InUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InDateTime" Type="DateTime" Precision="3" />
+          <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -388,21 +392,6 @@
                 <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
                 <ScalarProperty Name="TenantId" ColumnName="TenantId" />
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Remark">
-            <EntityTypeMapping TypeName="Inventory.Remark">
-              <MappingFragment StoreEntitySet="Remark">
-                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
-                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
-                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
-                <ScalarProperty Name="InUserId" ColumnName="InUserId" />
-                <ScalarProperty Name="UseChk" ColumnName="UseChk" />
-                <ScalarProperty Name="AddCheck" ColumnName="AddCheck" />
-                <ScalarProperty Name="RemarkName" ColumnName="RemarkName" />
-                <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
-                <ScalarProperty Name="RemarkId" ColumnName="RemarkId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -489,8 +478,25 @@
                 <ScalarProperty Name="UseChk" ColumnName="UseChk" />
                 <ScalarProperty Name="AddCheck" ColumnName="AddCheck" />
                 <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="PhotoName" ColumnName="PhotoName" />
                 <ScalarProperty Name="PhotoId" ColumnName="PhotoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Remark">
+            <EntityTypeMapping TypeName="Inventory.Remark">
+              <MappingFragment StoreEntitySet="Remark">
+                <ScalarProperty Name="ModifyDateTime" ColumnName="ModifyDateTime" />
+                <ScalarProperty Name="ModifyUserId" ColumnName="ModifyUserId" />
+                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+                <ScalarProperty Name="InUserId" ColumnName="InUserId" />
+                <ScalarProperty Name="UseChk" ColumnName="UseChk" />
+                <ScalarProperty Name="AddCheck" ColumnName="AddCheck" />
+                <ScalarProperty Name="RemarkName" ColumnName="RemarkName" />
+                <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="RemarkId" ColumnName="RemarkId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -15,6 +15,7 @@ namespace com.yrtech.InventoryAPI.DTO
         public string ShopCode { get; set; }
         public string ShopName { get; set; }
         public string CheckCode { get; set; }
+        public string CheckCodeShow { get; set; }
         public Nullable<int> CheckTypeId { get; set; }
         public string CheckTypeName { get; set; }
         public Nullable<int> RemarkId { get; set; }

@@ -113,6 +113,7 @@ namespace com.yrtech.InventoryAPI.Service
             Workbook book = Workbook.Load(basePath + @"Content\Excel\" + "AnswerExport.xlsx", false);
             //填充数据
             Worksheet sheet = book.Worksheets[0];
+            
             // 填充表头
             string[] head ={ "H", "I", "J", "K", "L", "M", "N", "O", "P" };
             for (int i = 0;i< ColumnList_List.Count;i++)
@@ -193,7 +194,13 @@ namespace com.yrtech.InventoryAPI.Service
             }
 
             //保存excel文件
-            string fileName = "AnswerList" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".xlsx";
+            string shopName = "经销商导出清单";
+            List<UserInfo> userInfoList = masterService.GetUserInfo(projectId, shopCode);
+            if (userInfoList != null && userInfoList.Count > 0)
+            {
+                shopName = userInfoList[0].ShopName;
+            }
+            string fileName = shopName + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".xlsx";
             string dirPath = basePath + @"\Temp\";
             DirectoryInfo dir = new DirectoryInfo(dirPath);
             if (!dir.Exists)

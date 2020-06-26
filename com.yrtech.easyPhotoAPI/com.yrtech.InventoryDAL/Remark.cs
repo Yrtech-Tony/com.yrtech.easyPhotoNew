@@ -15,6 +15,7 @@ namespace com.yrtech.InventoryDAL
     public partial class Remark
     {
         public int RemarkId { get; set; }
+        public Nullable<int> ProjectId { get; set; }
         public Nullable<int> CheckTypeId { get; set; }
         public string RemarkName { get; set; }
         public string AddCheck { get; set; }

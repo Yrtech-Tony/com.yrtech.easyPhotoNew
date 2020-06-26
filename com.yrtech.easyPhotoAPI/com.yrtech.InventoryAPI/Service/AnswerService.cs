@@ -50,7 +50,7 @@ namespace com.yrtech.InventoryAPI.Service
                                                         new SqlParameter("@Key", key)};
             Type t = typeof(AnswerDto);
             string sql = "";
-            sql = @"SELECT A.AnswerId,A.ProjectId,A.ShopCode,A.ShopName,A.CheckCode,A.CheckTypeId,
+            sql = @"SELECT A.AnswerId,A.ProjectId,A.ShopCode,A.ShopName,A.CheckCode,RIGHT(A.CheckCode,8) AS CheckCodeShow,A.CheckTypeId,
                     ISNULL((SELECT CheckTypeName FROM CheckType WHERE CheckTypeId = A.CheckTypeId AND ProjectId = A.ProjectId),'') AS CheckTypeName
                     ,A.Remark AS RemarkName,
                     A.AddCheck,A.ModifyUserId,A.ModifyDateTime,A.InUserId,A.InDateTime,
@@ -287,15 +287,17 @@ namespace com.yrtech.InventoryAPI.Service
                 {
                     Directory.CreateDirectory(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode);//创建经销商代码文件夹
                 }
-                if (File.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode+@"\" + photo.CheckCode+"_"+photo.PhotoName))
+                if (File.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode+@"\" + photo.CheckCode+"_"+photo.PhotoName+".jpg"))
                 {
-                    File.Delete(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName);
+                    File.Delete(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName+".jpg");
                 }
                 try
                 {
-                    OSSClientHelper.GetObject(photo.PhotoUrl, folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName);
+                    OSSClientHelper.GetObject(photo.PhotoUrl, folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName+".jpg");
                 }
-                catch (Exception ex) { }
+                catch (Exception ex) {
+
+                }
             }
             // 打包文件
             if (!ZipInForFiles(list, downLoadfolder, basePath, downLoadPath, 9)) return "";
@@ -334,7 +336,7 @@ namespace com.yrtech.InventoryAPI.Service
 
                     foreach (AnswerPhotoDto photo in fileNames)
                     {
-                        string photoName = photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName;
+                        string photoName = photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName+".jpg";
                         string file = Path.Combine(folderToZip, foler, photoName);
                         string extension = string.Empty;
                         if (!System.IO.File.Exists(file))
