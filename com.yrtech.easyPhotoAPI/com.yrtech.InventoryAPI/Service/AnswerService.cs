@@ -30,7 +30,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="photoCheck"></param>
         /// <param name="addCheck"></param>
         /// <returns></returns>
-        public List<AnswerDto> GetShopAnswerList(string answerId, string projectId, string shopCode, string checkCode, string checkTypeId, string photoCheck, string addCheck, string key)
+        public List<AnswerDto> GetShopAnswerListAll(string answerId, string projectId, string shopCode, string checkCode, string checkTypeId, string photoCheck, string addCheck, string key)
         {
             if (projectId == null) projectId = "";
             if (shopCode == null) shopCode = "";
@@ -122,8 +122,14 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 sql += " AND (A.ShopCode LIKE '%'+ @Key+'%' OR A.ShopName LIKE '%'+@Key+'%')";
             }
-            sql += " Order BY A.CheckTypeId, CheckCode";
+            sql += " Order BY A.ProjectId,A.ShopCode,A.CheckTypeId, CheckCode";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerDto>().ToList();
+        }
+        public List<AnswerDto> GetShopAnswerListByPage(string answerId, string projectId, string shopCode, string checkCode, string checkTypeId, string photoCheck, string addCheck, string key,int pageNum, int pageCount)
+        {
+            int startIndex = (pageNum - 1) * pageCount;
+
+            return GetShopAnswerListAll(answerId,projectId,shopCode,checkCode,checkTypeId,photoCheck,addCheck,key).Skip(startIndex).Take(pageCount).ToList();
         }
         public List<AnswerPhotoDto> GetAnswerPhotoList(string answerId,string projectId,string shopCode)
         {

@@ -19,11 +19,11 @@ namespace com.yrtech.SurveyAPI.Controllers
         ExcelDataService excelDataService = new ExcelDataService();
         [HttpGet]
         [Route("Answer/GetShopAnswerList")]
-        public APIResult GetShopAnswerList(string answerId,string projectId, string shopCode,string checkCode,string checkTypeId, string photoCheck, string addCheck,string key)
+        public APIResult GetShopAnswerList(string answerId,string projectId, string shopCode,string checkCode,string checkTypeId, string photoCheck, string addCheck,string key, int pageNum, int pageCount)
         {
             try
             {
-                List<AnswerDto> answerList = answerService.GetShopAnswerList(answerId,projectId, shopCode, checkCode,checkTypeId,photoCheck,addCheck, key);
+                List<AnswerDto> answerList = answerService.GetShopAnswerListByPage(answerId,projectId, shopCode, checkCode,checkTypeId,photoCheck,addCheck, key,pageNum,pageCount);
                 foreach (AnswerDto answerDto in answerList)
                 {
                     answerDto.AnswerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString(),"","");

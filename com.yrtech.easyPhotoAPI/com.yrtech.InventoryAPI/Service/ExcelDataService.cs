@@ -95,8 +95,8 @@ namespace com.yrtech.InventoryAPI.Service
         // 导出清单
         public string AnswerExport(string projectId, string shopCode)
         {
-            List<AnswerDto> list_N = answerService.GetShopAnswerList("",projectId, shopCode, "", "", "","N","");
-            List<AnswerDto> list_Y = answerService.GetShopAnswerList("",projectId, shopCode, "", "", "", "Y","");
+            List<AnswerDto> list_N = answerService.GetShopAnswerListAll("",projectId, shopCode, "", "", "","N","");
+            List<AnswerDto> list_Y = answerService.GetShopAnswerListAll("",projectId, shopCode, "", "", "", "Y","");
             foreach (AnswerDto answerDto in list_N)
             {
                 answerDto.AnswerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString(), "", "");
