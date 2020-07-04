@@ -8,6 +8,7 @@ namespace com.yrtech.InventoryAPI.Common
     public class APIResult
     {
         public bool Status { get; set; }
+        public int Total { get; set; }
         public string Body { get; set; }
     }
 }
