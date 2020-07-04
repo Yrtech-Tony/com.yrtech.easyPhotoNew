@@ -192,6 +192,7 @@
     <Compile Include="DTO\Answer\AnswerShopInfoDto.cs" />
     <Compile Include="DTO\Master\ExtendColumnProjectDataDto.cs" />
     <Compile Include="DTO\Master\ExtendColumnProjectDto.cs" />
+    <Compile Include="DTO\ReturnData.cs" />
     <Compile Include="DTO\Shop\ShopDto.cs" />
     <Compile Include="DTO\UploadData.cs" />
     <Compile Include="Global.asax.cs">
@@ -287,6 +288,8 @@
           <DevelopmentServerPort>53419</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:57328/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:57328/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

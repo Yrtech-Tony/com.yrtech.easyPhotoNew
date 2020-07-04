@@ -7,6 +7,7 @@ using com.yrtech.InventoryDAL;
 using com.yrtech.InventoryAPI.Controllers;
 using com.yrtech.InventoryAPI.DTO;
 using System.Net.Http;
+using System.Linq;
 
 namespace com.yrtech.SurveyAPI.Controllers
 {
@@ -19,26 +20,32 @@ namespace com.yrtech.SurveyAPI.Controllers
         ExcelDataService excelDataService = new ExcelDataService();
         [HttpGet]
         [Route("Answer/GetShopAnswerList")]
-        public APIResult GetShopAnswerList(string answerId,string projectId, string shopCode,string checkCode,string checkTypeId, string photoCheck, string addCheck,string key, int pageNum, int pageCount)
+        public ReturnData<AnswerDto> GetShopAnswerList(string answerId, string projectId, string shopCode, string checkCode, string checkTypeId,
+            string photoCheck, string addCheck, string key, int offset, int limit)
         {
+            ReturnData<AnswerDto> returnData = new ReturnData<AnswerDto>();
             try
             {
-                List<AnswerDto> answerList = answerService.GetShopAnswerListByPage(answerId,projectId, shopCode, checkCode,checkTypeId,photoCheck,addCheck, key,pageNum,pageCount);
+                List<AnswerDto> answerList = answerService.GetShopAnswerListAll(answerId, projectId, shopCode, checkCode, checkTypeId, photoCheck, addCheck, key);
+                returnData.total = answerList.Count; 
+                answerList = answerList.Skip(offset).Take(limit).ToList();
                 foreach (AnswerDto answerDto in answerList)
                 {
-                    answerDto.AnswerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString(),"","");
+                    answerDto.AnswerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString(), "", "");
                 }
-                return new APIResult() { Status = true, Body = CommonHelper.Encode(answerList) };
+                returnData.rows = answerList.ToArray();
+                return returnData;
             }
             catch (Exception ex)
             {
-                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+                returnData.errcode = ex.Message;
+                return returnData;
             }
 
         }
         [HttpPost]
         [Route("Answer/SaveShopAnswer")]
-        public APIResult SaveShopAnswer(UploadData  upload)
+        public APIResult SaveShopAnswer(UploadData upload)
         {
             try
             {
@@ -113,7 +120,7 @@ namespace com.yrtech.SurveyAPI.Controllers
                     answer.ImportChk = true;
                     answer.ImportRemark = "";
                     // 验证检查类型是否存在
-                    List<CheckType> checkTypeList = masterService.GetCheckType(projectId,"",answer.CheckTypeName,true);
+                    List<CheckType> checkTypeList = masterService.GetCheckType(projectId, "", answer.CheckTypeName, true);
                     if (checkTypeList == null || checkTypeList.Count == 0)
                     {
                         answer.ImportChk = false;
@@ -148,7 +155,8 @@ namespace com.yrtech.SurveyAPI.Controllers
                         answer.ImportChk = false;
                         answer.ImportRemark += "检查类型不存在或已不使用" + ";";
                     }
-                    else {
+                    else
+                    {
                         answer.CheckTypeId = checkTypeList[0].CheckTypeId;
                     }
                 }
@@ -167,7 +175,7 @@ namespace com.yrtech.SurveyAPI.Controllers
         {
             try
             {
-                List<AnswerPhotoDto> photoList = answerService.GetAnswerPhotoList(answerId,"","");
+                List<AnswerPhotoDto> photoList = answerService.GetAnswerPhotoList(answerId, "", "");
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(photoList) };
             }
             catch (Exception ex)
@@ -194,11 +202,11 @@ namespace com.yrtech.SurveyAPI.Controllers
         }
         [HttpGet]
         [Route("Answer/AnswerPhotoDownLoad")]
-        public APIResult AnswerPhotoDownLoad(string projectId,string shopCode)
+        public APIResult AnswerPhotoDownLoad(string projectId, string shopCode)
         {
             try
             {
-                string downloadPath = answerService.AnswerPhotoDownLoad(projectId,shopCode);
+                string downloadPath = answerService.AnswerPhotoDownLoad(projectId, shopCode);
                 if (string.IsNullOrEmpty(downloadPath))
                 {
                     return new APIResult() { Status = false, Body = "没有可下载文件" };
