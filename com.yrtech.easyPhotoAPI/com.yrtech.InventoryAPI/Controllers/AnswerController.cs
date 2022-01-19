@@ -21,7 +21,8 @@ namespace com.yrtech.SurveyAPI.Controllers
         [HttpGet]
         [Route("Answer/GetShopAnswerList")]
         public APIResult GetShopAnswerList(string answerId, string projectId, string shopCode, string checkCode, string checkTypeId,
-            string photoCheck, string addCheck, string key, int offset, int limit)
+            string photoCheck, string addCheck, string key, int offset=0, int limit=10000
+            )
         {
             ReturnData<AnswerDto> returnData = new ReturnData<AnswerDto>();
             try

@@ -44,6 +44,13 @@
           <Property Name="ModifyUserId" Type="nvarchar" MaxLength="50" />
           <Property Name="ModifyDateTime" Type="datetime" />
         </EntityType>
+        <EntityType Name="AppVersion">
+          <Key>
+            <PropertyRef Name="Version" />
+          </Key>
+          <Property Name="Version" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="InDateTime" Type="nchar" MaxLength="10" />
+        </EntityType>
         <EntityType Name="CheckType">
           <Key>
             <PropertyRef Name="CheckTypeId" />
@@ -159,6 +166,7 @@
         <EntityContainer Name="InventoryStoreContainer">
           <EntitySet Name="Answer" EntityType="Self.Answer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AnswerPhoto" EntityType="Self.AnswerPhoto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AppVersion" EntityType="Self.AppVersion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CheckType" EntityType="Self.CheckType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExtendColumn" EntityType="Self.ExtendColumn" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExtendColumnProject" EntityType="Self.ExtendColumnProject" Schema="dbo" store:Type="Tables" />
@@ -183,6 +191,7 @@
           <EntitySet Name="Answer" EntityType="Inventory.Answer" />
           <EntitySet Name="PhotoList" EntityType="Inventory.PhotoList" />
           <EntitySet Name="Remark" EntityType="Inventory.Remark" />
+          <EntitySet Name="AppVersion" EntityType="Inventory.AppVersion" />
         </EntityContainer>
         <EntityType Name="AnswerPhoto">
           <Key>
@@ -334,6 +343,13 @@
           <Property Name="InDateTime" Type="DateTime" Precision="3" />
           <Property Name="ModifyUserId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ModifyDateTime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="AppVersion">
+          <Key>
+            <PropertyRef Name="Version" />
+          </Key>
+          <Property Name="Version" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InDateTime" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -497,6 +513,14 @@
                 <ScalarProperty Name="CheckTypeId" ColumnName="CheckTypeId" />
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="RemarkId" ColumnName="RemarkId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppVersion">
+            <EntityTypeMapping TypeName="Inventory.AppVersion">
+              <MappingFragment StoreEntitySet="AppVersion">
+                <ScalarProperty Name="InDateTime" ColumnName="InDateTime" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

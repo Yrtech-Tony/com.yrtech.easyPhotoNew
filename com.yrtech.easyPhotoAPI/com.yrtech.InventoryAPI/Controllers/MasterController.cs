@@ -21,6 +21,36 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <param name="projectId"></param>
         /// <returns></returns>
         [HttpGet]
+        [Route("Master/GetAppVersion")]
+        public APIResult GetAppVersion()
+        {
+            try
+            {
+                List<AppVersion> versionList = masterService.GetAppVersion();
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(versionList) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpPost]
+        [Route("Master/SaveAppVersion")]
+        public APIResult SaveAppVersion(AppVersion appVersion)
+        {
+            try
+            {
+                masterService.SaveAppVersion(appVersion);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpGet]
         [Route("Master/GetProject")]
         public APIResult GetProject(string tenantId, string projectId, string brandId, string year, string expireDateTimeCheck)
         {

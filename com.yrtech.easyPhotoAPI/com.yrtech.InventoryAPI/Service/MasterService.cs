@@ -10,6 +10,21 @@ namespace com.yrtech.InventoryAPI.Service
     public class MasterService
     {
         com.yrtech.InventoryDAL.InventoryDAL db = new InventoryDAL.InventoryDAL();
+        public List<AppVersion> GetAppVersion()
+        {
+            SqlParameter[] para = new SqlParameter[] { };
+            Type t = typeof(AppVersion);
+            string sql = @"SELECT *
+                            FROM AppVersion A ";
+            return db.Database.SqlQuery(t, sql, para).Cast<AppVersion>().ToList();
+        }
+        public void SaveAppVersion(AppVersion appVersion)
+        {
+            string sql = "DELETE AppVersion ";
+            sql += " INSERT INTO AppVersion VALUES('" + appVersion.Version+"',GETDATE())";
+            SqlParameter[] para = new SqlParameter[] { };
+            db.Database.ExecuteSqlCommand(sql, para);
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -196,11 +211,11 @@ namespace com.yrtech.InventoryAPI.Service
             string sql = "";
             sql = @"SELECT *
                     FROM [CheckType]
-                    WHERE 1=1  ";
-            if (!string.IsNullOrEmpty(projectId))
-            {
-                sql += " AND ProjectId = @ProjectId";
-            }
+                    WHERE 1=1 AND ProjectId = @ProjectId ";
+            //if (!string.IsNullOrEmpty(projectId))
+            //{
+            //    sql += " AND ProjectId = @ProjectId";
+            //}
             if (!string.IsNullOrEmpty(checkTypeId))
             {
                 sql += " AND CheckTypeId = @CheckTypeId";
@@ -247,6 +262,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <returns></returns>
         public List<Remark> GetRemark(string projectId,string checkTypeId, string remarkId, string addCheck, string remarkName, bool? useChk)
         {
+            if (projectId == null) projectId = "";
             if (checkTypeId == null) checkTypeId = "";
             if (addCheck == null) addCheck = "";
             if (remarkId == null) remarkId = "";
@@ -324,6 +340,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <returns></returns>
         public List<PhotoList> GetPhotoList(string projectId,string checkTypeId, string photoId, string addCheck, string photoName, bool? useChk)
         {
+            if (projectId == null) projectId = "";
             if (checkTypeId == null) checkTypeId = "";
             if (photoId == null) photoId = "";
             if (addCheck == null) addCheck = "";

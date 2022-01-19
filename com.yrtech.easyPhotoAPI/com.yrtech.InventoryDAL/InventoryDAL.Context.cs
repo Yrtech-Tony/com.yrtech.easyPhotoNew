@@ -35,5 +35,6 @@ namespace com.yrtech.InventoryDAL
         public virtual DbSet<Answer> Answer { get; set; }
         public virtual DbSet<PhotoList> PhotoList { get; set; }
         public virtual DbSet<Remark> Remark { get; set; }
+        public virtual DbSet<AppVersion> AppVersion { get; set; }
     }
 }
