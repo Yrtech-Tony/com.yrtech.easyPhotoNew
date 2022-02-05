@@ -21,21 +21,22 @@ namespace com.yrtech.SurveyAPI.Controllers
         [HttpGet]
         [Route("Answer/GetShopAnswerList")]
         public APIResult GetShopAnswerList(string answerId, string projectId, string shopCode, string checkCode, string checkTypeId,
-            string photoCheck, string addCheck, string key, int offset=0, int limit=10000
+            string photoCheck, string addCheck, string key, int offset = 0, int limit = 10000
             )
         {
+            
             ReturnData<AnswerDto> returnData = new ReturnData<AnswerDto>();
             try
             {
                 List<AnswerDto> answerList = answerService.GetShopAnswerListAll(answerId, projectId, shopCode, checkCode, checkTypeId, photoCheck, addCheck, key);
-                int total = answerList.Count; 
+                int total = answerList.Count;
                 answerList = answerList.Skip(offset).Take(limit).ToList();
                 foreach (AnswerDto answerDto in answerList)
                 {
                     answerDto.AnswerPhotoList = answerService.GetAnswerPhotoList(answerDto.AnswerId.ToString(), "", "");
                 }
 
-                return new APIResult() { Status = true, Total=total, Body = CommonHelper.EncodeDto<AnswerDto>(answerList) };
+                return new APIResult() { Status = true, Total = total, Body = CommonHelper.EncodeDto<AnswerDto>(answerList) };
             }
             catch (Exception ex)
             {
@@ -109,7 +110,7 @@ namespace com.yrtech.SurveyAPI.Controllers
 
         }
         [HttpGet]
-        [Route("Master/AnswerExcelAnalysis")]
+        [Route("Answer/AnswerExcelAnalysis")]
         public APIResult AnswerExcelAnalysis(string projectId, string ossPath)
         {
             try
@@ -135,8 +136,24 @@ namespace com.yrtech.SurveyAPI.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("Answer/DeleteAnswerByShop")]
+        public APIResult DeleteAnswerByShop(string projectId, string shopCode)
+        {
+            try
+            {
+                shopCode = shopCode.Replace("，", ",");
+                answerService.DeleteAnswerByShop(projectId, shopCode);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
         [HttpPost]
-        [Route("Master/AnswerImport")]
+        [Route("Answer/AnswerImport")]
         public APIResult AnswerImport(UploadData uploadData)
         {
             try
@@ -184,14 +201,14 @@ namespace com.yrtech.SurveyAPI.Controllers
             }
 
         }
-        [HttpPost]
+        [HttpGet]
         [Route("Answer/DeleteAnswerList")]
-        public APIResult DeleteAnswerList(UploadData answer)
+        public APIResult DeleteAnswerList(string answerIdList)
         {
             try
             {
-                List<AnswerDto> answerList = CommonHelper.DecodeString<List<AnswerDto>>(answer.AnswerListJson);
-                answerService.DeleteShopAnswer(answerList);
+                string[] answerId = answerIdList.Split(',');
+                answerService.DeleteShopAnswer(answerId);
                 return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)

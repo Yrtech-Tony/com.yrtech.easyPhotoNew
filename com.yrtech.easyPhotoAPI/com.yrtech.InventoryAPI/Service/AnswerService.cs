@@ -120,18 +120,32 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (!string.IsNullOrEmpty(key))
             {
-                sql += " AND (A.ShopCode LIKE '%'+ @Key+'%' OR A.ShopName LIKE '%'+@Key+'%')";
+                key = key.Replace("，", ",");
+                sql += " AND ShopCode IN('";
+                string[] shopList = key.Split(',');
+                foreach (string shop in shopList)
+                {
+                    if (shop == shopList[shopList.Length - 1])
+                    {
+                        sql += shop+"'";
+                    }
+                    else
+                    {
+                        sql += shop + "',";
+                    }
+                }
+                sql += ")";
             }
             sql += " Order BY A.ProjectId,A.ShopCode,A.CheckTypeId, CheckCode";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerDto>().ToList();
         }
-        public List<AnswerDto> GetShopAnswerListByPage(string answerId, string projectId, string shopCode, string checkCode, string checkTypeId, string photoCheck, string addCheck, string key,int pageNum, int pageCount)
+        public List<AnswerDto> GetShopAnswerListByPage(string answerId, string projectId, string shopCode, string checkCode, string checkTypeId, string photoCheck, string addCheck, string key, int pageNum, int pageCount)
         {
             int startIndex = (pageNum - 1) * pageCount;
 
-            return GetShopAnswerListAll(answerId,projectId,shopCode,checkCode,checkTypeId,photoCheck,addCheck,key).Skip(startIndex).Take(pageCount).ToList();
+            return GetShopAnswerListAll(answerId, projectId, shopCode, checkCode, checkTypeId, photoCheck, addCheck, key).Skip(startIndex).Take(pageCount).ToList();
         }
-        public List<AnswerPhotoDto> GetAnswerPhotoList(string answerId,string projectId,string shopCode)
+        public List<AnswerPhotoDto> GetAnswerPhotoList(string answerId, string projectId, string shopCode)
         {
             if (answerId == null) answerId = "";
             if (projectId == null) projectId = "";
@@ -166,8 +180,8 @@ namespace com.yrtech.InventoryAPI.Service
         {
             string sql = "";
             SqlParameter[] para = new SqlParameter[] { };
-            sql += "DELETE AnswerPhoto WHERE AnswerId IN (SELECT AnswerId FROM Answer WHERE ProjectId='" + projectId + "')";
-            sql += " DELETE Answer WHERE ProjectId='" + projectId + "'";
+            //sql += "DELETE AnswerPhoto WHERE AnswerId IN (SELECT AnswerId FROM Answer WHERE ProjectId='" + projectId + "')";
+            //sql += " DELETE Answer WHERE ProjectId='" + projectId + "'";
             foreach (AnswerDto answer in answerList)
             {
                 int checkTypeId = 0;
@@ -195,17 +209,30 @@ namespace com.yrtech.InventoryAPI.Service
             }
             db.Database.ExecuteSqlCommand(sql, para);
         }
-        public void DeleteShopAnswer(List<AnswerDto> answerList)
+        public void DeleteShopAnswer(string[] answerList)
         {
             string sql = "";
             SqlParameter[] para = new SqlParameter[] { };
-            foreach (AnswerDto answer in answerList)
+            foreach (string answerId in answerList)
             {
-                sql += "DELETE AnswerPhoto WHERE AnswerId = " + answer.AnswerId.ToString() + " ";
-                sql += "DELETE Answer WHERE AnswerId = " + answer.AnswerId.ToString() + " ";
+                sql += "DELETE AnswerPhoto WHERE AnswerId = " + answerId + " ";
+                sql += "DELETE Answer WHERE AnswerId = " + answerId + " ";
             }
             db.Database.ExecuteSqlCommand(sql, para);
         }
+        public void DeleteAnswerByShop(string projectId, string shopCode)
+        {
+            string[] shopList = shopCode.Split(',');
+            string sql = "";
+            SqlParameter[] para = new SqlParameter[] { };
+            foreach (string shop in shopList)
+            {
+                sql += "DELETE AnswerPhoto WHERE AnswerId IN(SELECT AnswerId FROM Answer WHERE ProjectId= " + projectId + " AND ShopCode = " + shop + ") ";
+                sql += "DELETE Answer WHERE ProjectId = " + projectId + " AND ShopCode = " + shop;
+            }
+            db.Database.ExecuteSqlCommand(sql, para);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -218,7 +245,7 @@ namespace com.yrtech.InventoryAPI.Service
                 answer.InDateTime = DateTime.Now;
                 answer.ModifyDateTime = DateTime.Now;
                 answer.AddCheck = "Y";
-                answer=db.Answer.Add(answer);
+                answer = db.Answer.Add(answer);
             }
             else
             {
@@ -262,10 +289,10 @@ namespace com.yrtech.InventoryAPI.Service
             }
             db.SaveChanges();
         }
-        public string AnswerPhotoDownLoad(string projectId,string shopCode)
+        public string AnswerPhotoDownLoad(string projectId, string shopCode)
         {
 
-            List<AnswerPhotoDto> list = GetAnswerPhotoList("",projectId,shopCode);
+            List<AnswerPhotoDto> list = GetAnswerPhotoList("", projectId, shopCode);
             if (list == null || list.Count == 0) return "";
             string defaultPath = HostingEnvironment.MapPath(@"~/");
             string basePath = defaultPath + "DownLoadFile";//根目录
@@ -280,7 +307,7 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 Directory.CreateDirectory(folder);
             }
-            
+
             // 从OSS把文件下载到服务器
             foreach (AnswerPhotoDto photo in list)
             {
@@ -293,15 +320,16 @@ namespace com.yrtech.InventoryAPI.Service
                 {
                     Directory.CreateDirectory(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode);//创建经销商代码文件夹
                 }
-                if (File.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode+@"\" + photo.CheckCode+"_"+photo.PhotoName+".jpg"))
+                if (File.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg"))
                 {
-                    File.Delete(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName+".jpg");
+                    File.Delete(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg");
                 }
                 try
                 {
-                    OSSClientHelper.GetObject(photo.PhotoUrl, folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName+".jpg");
+                    OSSClientHelper.GetObject(photo.PhotoUrl, folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg");
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
 
                 }
             }
@@ -342,7 +370,7 @@ namespace com.yrtech.InventoryAPI.Service
 
                     foreach (AnswerPhotoDto photo in fileNames)
                     {
-                        string photoName = photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName+".jpg";
+                        string photoName = photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg";
                         string file = Path.Combine(folderToZip, foler, photoName);
                         string extension = string.Empty;
                         if (!System.IO.File.Exists(file))

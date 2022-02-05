@@ -85,7 +85,7 @@ namespace com.yrtech.InventoryAPI.Service
                 sql += " AND GETDATE()>ExpireDateTime";
             }
 
-            sql += " ORDER BY OrderNO DESC";
+            sql += " ORDER BY InDateTime DESC";
             return db.Database.SqlQuery(t, sql, para).Cast<Projects>().ToList();
 
         }

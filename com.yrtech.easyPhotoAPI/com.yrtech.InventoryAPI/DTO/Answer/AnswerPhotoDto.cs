@@ -8,7 +8,7 @@ namespace com.yrtech.InventoryAPI.DTO
     [Serializable]
     public class AnswerPhotoDto
     {
-        public int AnswerId { get; set; }
+        public long AnswerId { get; set; }
         public int PhotoId { get; set; }
         public int ProjectId { get; set; }
         public string CheckCode { get; set; }
