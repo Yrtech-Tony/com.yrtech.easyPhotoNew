@@ -21,7 +21,7 @@ namespace com.yrtech.InventoryAPI.Service
         public void SaveAppVersion(AppVersion appVersion)
         {
             string sql = "DELETE AppVersion ";
-            sql += " INSERT INTO AppVersion VALUES('" + appVersion.Version+"',GETDATE())";
+            sql += " INSERT INTO AppVersion VALUES('" + appVersion.Version + "',GETDATE())";
             SqlParameter[] para = new SqlParameter[] { };
             db.Database.ExecuteSqlCommand(sql, para);
         }
@@ -33,8 +33,9 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="year"></param>
         /// <param name="expireDateTimeCheck"></param>
         /// <returns></returns>
-        public List<Projects> GetProject(string tenantId, string projectId, string projectCode,string projectName,string brandId, string year, string expireDateTimeCheck)
+        public List<Projects> GetProject(string tenantId, string projectId, string projectCode, string projectName, string brandId, string year, string expireDateTimeCheck)
         {
+
             if (projectId == null) projectId = "";
             if (tenantId == null) tenantId = "";
             if (year == null) year = "";
@@ -260,7 +261,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="addCheck"></param>
         /// <param name="noteName"></param>
         /// <returns></returns>
-        public List<Remark> GetRemark(string projectId,string checkTypeId, string remarkId, string addCheck, string remarkName, bool? useChk)
+        public List<Remark> GetRemark(string projectId, string checkTypeId, string remarkId, string addCheck, string remarkName, bool? useChk)
         {
             if (projectId == null) projectId = "";
             if (checkTypeId == null) checkTypeId = "";
@@ -338,7 +339,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="addCheck"></param>
         /// <param name="photoName"></param>
         /// <returns></returns>
-        public List<PhotoList> GetPhotoList(string projectId,string checkTypeId, string photoId, string addCheck, string photoName, bool? useChk)
+        public List<PhotoList> GetPhotoList(string projectId, string checkTypeId, string photoId, string addCheck, string photoName, bool? useChk)
         {
             if (projectId == null) projectId = "";
             if (checkTypeId == null) checkTypeId = "";
@@ -423,12 +424,17 @@ namespace com.yrtech.InventoryAPI.Service
                             ISNULL((SELECT ColumnName FROM ExtendColumnProject WHERE ProjectId = @ProjectId  AND ColumnCode = A.ColumnCode),'') AS ColumnName
                             ,(SELECT AddShowChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS AddShowChk
                             ,(SELECT UseChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS UseChk
+                            ,(SELECT ListShowChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS ListShowChk
+                            ,(SELECT EditChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS EditChk
+                            ,CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProjectData WHERE ProjectId = @ProjectId AND ColumnCode = A.ColumnCode) THEN CAST(0 AS BIT) 
+                                 ELSE CAST(1 AS BIT)
+                             END AS TxtChk
                             FROM ExtendColumn A WHERE 1=1";
             if (!string.IsNullOrEmpty(columnCode))
             {
                 sql += " AND ColumnCode = @ColumnCode";
             }
-            sql += "ORDER BY ColumnCode ASC";
+            sql += " ORDER BY ColumnCode ASC";
             return db.Database.SqlQuery(t, sql, para).Cast<ExtendColumnProjectDto>().ToList();
         }
         public void SaveExtendColumnProject(ExtendColumnProject extendColumnProject)
@@ -447,6 +453,8 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.ColumnName = extendColumnProject.ColumnName;
                 findOne.AddShowChk = extendColumnProject.AddShowChk;
                 findOne.UseChk = extendColumnProject.UseChk;
+                findOne.ListShowChk = extendColumnProject.ListShowChk;
+                findOne.EditChk = extendColumnProject.EditChk;
             }
             db.SaveChanges();
         }
@@ -490,5 +498,65 @@ namespace com.yrtech.InventoryAPI.Service
 
         }
 
+        public List<FileType> GetFileType()
+        {
+            SqlParameter[] para = new SqlParameter[] { };
+            Type t = typeof(FileType);
+            string sql = @"SELECT A.*
+                            FROM FileType A ";
+            return db.Database.SqlQuery(t, sql, para).Cast<FileType>().ToList();
+        }
+        public List<FileNameOption> GetFileNameOption()
+        {
+            SqlParameter[] para = new SqlParameter[] { };
+            Type t = typeof(FileNameOption);
+            string sql = @"SELECT A.*
+                            FROM FileNameOption A ";
+            return db.Database.SqlQuery(t, sql, para).Cast<FileNameOption>().ToList();
+        }
+        public void SaveFileRename(FileRename fileRename)
+        {
+            // 只能新增不能修改
+            if (fileRename.SeqNO == 0)
+            {
+                FileRename findOneMax = db.FileRename.Where(x => (x.ProjectId == fileRename.ProjectId && x.FileTypeCode == fileRename.FileTypeCode)).OrderByDescending(x => x.SeqNO).FirstOrDefault();
+                if (findOneMax == null)
+                {
+                    fileRename.SeqNO = 1;
+                }
+                else
+                {
+                    fileRename.SeqNO = findOneMax.SeqNO + 1;
+                }
+                fileRename.InDateTime = DateTime.Now;
+                fileRename.ModifyDateTime = DateTime.Now;
+                db.FileRename.Add(fileRename);
+            }
+            db.SaveChanges();
+        }
+        public void DeleteFileRename(FileRename fileRename)
+        {
+            string sql = "DELETE FileRename WHERE FileNameId= '" + fileRename.FileNameId.ToString() + "'";
+            SqlParameter[] para = new SqlParameter[] { };
+            db.Database.ExecuteSqlCommand(sql, para);
+        }
+        public List<FileRenameDto> GetFileRename(string projectId, string fileTypeCode)
+        {
+            if (projectId == null) projectId = "";
+            if (fileTypeCode == null) fileTypeCode = "";
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
+                                                    ,new SqlParameter("@FileTypeCode", fileTypeCode) };
+            Type t = typeof(FileRenameDto);
+            string sql = @"SELECT A.*,D.ProjectCode,D.ProjectName,B.FileTypeName,C.OptionName
+                         FROM FileRename A INNER JOIN FileType B ON A.FileTypeCode = B.FileTypeCode
+				                        INNER JOIN FileNameOption C ON A.OptionCode = C.OptionCode
+				                    INNER JOIN Projects D ON A.ProjectId = D.ProjectId
+                        WHERE A.ProjectId = @ProjectId";
+            if (!string.IsNullOrEmpty(fileTypeCode))
+            {
+                sql += " AND A.FileTypeCode = @FileTypeCode";
+            }
+            return db.Database.SqlQuery(t, sql, para).Cast<FileRenameDto>().ToList();
+        }
     }
 }

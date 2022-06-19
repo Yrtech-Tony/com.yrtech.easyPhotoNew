@@ -72,6 +72,15 @@
     <Compile Include="ExtendColumnProjectData.cs">
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>
+    <Compile Include="FileNameOption.cs">
+      <DependentUpon>InventoryDAL.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FileRename.cs">
+      <DependentUpon>InventoryDAL.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FileType.cs">
+      <DependentUpon>InventoryDAL.tt</DependentUpon>
+    </Compile>
     <Compile Include="InventoryDAL.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

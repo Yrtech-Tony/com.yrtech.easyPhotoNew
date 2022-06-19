@@ -9,13 +9,16 @@
         <EntityTypeShape EntityType="Inventory.ExtendColumn" Width="1.5" PointX="2.75" PointY="4.75" />
         <EntityTypeShape EntityType="Inventory.Projects" Width="1.5" PointX="6.75" PointY="4.75" />
         <EntityTypeShape EntityType="Inventory.UserInfo" Width="1.5" PointX="9.375" PointY="4.75" />
-        <EntityTypeShape EntityType="Inventory.ExtendColumnProject" Width="1.5" PointX="5.375" PointY="9.75" />
         <EntityTypeShape EntityType="Inventory.ExtendColumnProjectData" Width="1.5" PointX="7.375" PointY="9.75" />
         <EntityTypeShape EntityType="Inventory.PhotoList" Width="1.5" PointX="0.75" PointY="6.75" />
         <EntityTypeShape EntityType="Inventory.Remark" Width="1.5" PointX="2.75" PointY="6.75" />
         <EntityTypeShape EntityType="Inventory.AppVersion" Width="1.5" PointX="7.375" PointY="0.75" />
-        <EntityTypeShape EntityType="Inventory.Answer" Width="1.5" PointX="9.75" PointY="8.75" />
         <EntityTypeShape EntityType="Inventory.AnswerPhoto" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Inventory.ExtendColumnProject" Width="1.5" PointX="9.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Inventory.Answer" Width="1.5" PointX="9.375" PointY="8.75" />
+        <EntityTypeShape EntityType="Inventory.FileType" Width="1.5" PointX="2.75" PointY="10.75" />
+        <EntityTypeShape EntityType="Inventory.FileNameOption" Width="1.5" PointX="11.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Inventory.FileRename" Width="1.5" PointX="11.375" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

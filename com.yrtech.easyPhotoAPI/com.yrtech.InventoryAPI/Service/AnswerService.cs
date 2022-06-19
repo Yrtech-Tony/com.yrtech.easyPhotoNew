@@ -20,6 +20,7 @@ namespace com.yrtech.InventoryAPI.Service
         MasterService masterService = new MasterService();
         AccountService accountService = new AccountService();
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -55,31 +56,31 @@ namespace com.yrtech.InventoryAPI.Service
                     ,A.Remark AS RemarkName,
                     A.AddCheck,A.ModifyUserId,A.ModifyDateTime,A.InUserId,A.InDateTime,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column1' AND UseChk = 1)
-                         THEN Column1
+                         THEN ISNULL(Column1,'')
                     END AS Column1,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column2' AND UseChk = 1)
-                         THEN Column2
+                         THEN ISNULL(Column2,'')
                     END AS Column2,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column3' AND UseChk = 1)
-                         THEN Column3
+                         THEN ISNULL(Column3,'')
                     END AS Column3,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column4' AND UseChk = 1)
-                         THEN Column4
+                         THEN ISNULL(Column4,'')
                     END AS Column4,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column5' AND UseChk = 1)
-                         THEN Column5
+                         THEN ISNULL(Column5,'')
                     END AS Column5,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column6' AND UseChk = 1)
-                         THEN Column6
+                         THEN ISNULL(Column6,'')
                     END AS Column6,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column7' AND UseChk = 1)
-                         THEN Column7
+                         THEN ISNULL(Column7,'')
                     END AS Column7,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column8' AND UseChk = 1)
-                         THEN Column8
+                         THEN ISNULL(Column8,'')
                     END AS Column8,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column9' AND UseChk = 1)
-                         THEN Column9
+                         THEN ISNULL(Column9,'')
                     END AS Column9
                     FROM Answer A 
                     WHERE 1=1 ";
@@ -107,11 +108,13 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 if (photoCheck == "Y")
                 {
-                    sql += " AND EXISTS(SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId ) ";
+                    sql += @" AND (EXISTS(SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId ) 
+                            OR  (Remark IS NOT NULL AND Remark<>''))";
                 }
                 else
                 {
-                    sql += " AND NOT EXISTS (SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId ) ";
+                    sql += @" AND NOT EXISTS (SELECT 1 FROM AnswerPhoto WHERE AnswerId =A.AnswerId ) 
+                               AND (Remark IS NULL OR Remark='' )";
                 }
             }
             if (!string.IsNullOrEmpty(addCheck))
@@ -127,11 +130,11 @@ namespace com.yrtech.InventoryAPI.Service
                 {
                     if (shop == shopList[shopList.Length - 1])
                     {
-                        sql += shop+"'";
+                        sql += shop + "'";
                     }
                     else
                     {
-                        sql += shop + "',";
+                        sql += shop + "','";
                     }
                 }
                 sql += ")";
@@ -167,7 +170,25 @@ namespace com.yrtech.InventoryAPI.Service
             }
             if (!string.IsNullOrEmpty(shopCode))
             {
-                sql += " AND A.ShopCode = @ShopCode";
+                if (!string.IsNullOrEmpty(shopCode))
+                {
+                    shopCode = shopCode.Replace("，", ",");
+                    sql += " AND A.ShopCode IN('";
+                    string[] shopList = shopCode.Split(',');
+                    foreach (string shop in shopList)
+                    {
+                        if (shop == shopList[shopList.Length - 1])
+                        {
+                            sql += shop + "'";
+                        }
+                        else
+                        {
+                            sql += shop + "','";
+                        }
+                    }
+                    sql += ")";
+                }
+                //sql += " AND A.ShopCode = @ShopCode";
             }
             if (!string.IsNullOrEmpty(answerId))
             {
@@ -227,8 +248,8 @@ namespace com.yrtech.InventoryAPI.Service
             SqlParameter[] para = new SqlParameter[] { };
             foreach (string shop in shopList)
             {
-                sql += "DELETE AnswerPhoto WHERE AnswerId IN(SELECT AnswerId FROM Answer WHERE ProjectId= " + projectId + " AND ShopCode = " + shop + ") ";
-                sql += "DELETE Answer WHERE ProjectId = " + projectId + " AND ShopCode = " + shop;
+                sql += "DELETE AnswerPhoto WHERE AnswerId IN(SELECT AnswerId FROM Answer WHERE ProjectId= " + projectId + " AND ShopCode = '" + shop + "') ";
+                sql += "DELETE Answer WHERE ProjectId = " + projectId + " AND ShopCode = '" + shop + "'";
             }
             db.Database.ExecuteSqlCommand(sql, para);
         }
@@ -289,6 +310,56 @@ namespace com.yrtech.InventoryAPI.Service
             }
             db.SaveChanges();
         }
+        public string GetFolderName(string projectId, string fileTypeCode, string shopCode, string shopName, string checkCode, string photoName)
+        {
+            string folderName = "";
+            List<FileRenameDto> fileRenameList_Folder = masterService.GetFileRename(projectId, fileTypeCode);
+            for (int i = 0; i < fileRenameList_Folder.Count; i++)
+            {
+                if (fileRenameList_Folder[i].SeqNO == i + 1)
+                {
+                    if (fileRenameList_Folder[i].OptionCode == "ProjectCode")
+                    {
+                        folderName += fileRenameList_Folder[i].ProjectCode + fileRenameList_Folder[i].ConnectStr;
+                    }
+
+                    if (fileRenameList_Folder[i].OptionCode == "ProjectName")
+                    {
+                        folderName += fileRenameList_Folder[i].ProjectName + fileRenameList_Folder[i].ConnectStr;
+                    }
+                    if (fileRenameList_Folder[i].OptionCode == "ShopCode")
+                    {
+                        folderName += shopCode + fileRenameList_Folder[i].ConnectStr;
+                    }
+                    if (fileRenameList_Folder[i].OptionCode == "ShopName")
+                    {
+                        folderName += shopName + fileRenameList_Folder[i].ConnectStr;
+                    }
+                    if (fileRenameList_Folder[i].OptionCode == "Other")
+                    {
+                        folderName += fileRenameList_Folder[i].OtherName + fileRenameList_Folder[i].ConnectStr;
+                    }
+                    if (fileRenameList_Folder[i].OptionCode == "CheckCode")
+                    {
+                        if (Convert.ToInt32(fileRenameList_Folder[i].EndIndex) > checkCode.Length)
+                        {
+                            fileRenameList_Folder[i].EndIndex = checkCode.Length;// 如果设置的结束位置大于总长度，取全部
+                        }
+                        if (Convert.ToInt32(fileRenameList_Folder[i].StartIndex) > checkCode.Length)
+                        {
+                            fileRenameList_Folder[i].StartIndex = 1;// 若设置的开始位置大于总长度，从0开始
+                        }
+                        checkCode = checkCode.Substring(Convert.ToInt32(fileRenameList_Folder[i].StartIndex) - 1, Convert.ToInt32(fileRenameList_Folder[i].EndIndex) - Convert.ToInt32(fileRenameList_Folder[i].StartIndex)+1);
+                        folderName += checkCode + fileRenameList_Folder[i].ConnectStr;
+                    }
+                    if (fileRenameList_Folder[i].OptionCode == "PhotoName")
+                    {
+                        folderName += photoName + fileRenameList_Folder[i].ConnectStr;
+                    }
+                }
+            }
+            return folderName;
+        }
         public string AnswerPhotoDownLoad(string projectId, string shopCode)
         {
 
@@ -311,25 +382,72 @@ namespace com.yrtech.InventoryAPI.Service
             // 从OSS把文件下载到服务器
             foreach (AnswerPhotoDto photo in list)
             {
-                //string photoName = photo.ProjectId + "_" + photo.ShopCode + "_" + photo.PhotoName;
-                if (!Directory.Exists(folder + @"\" + photo.ProjectId))
-                {
-                    Directory.CreateDirectory(folder + @"\" + photo.ProjectId);//创建期号文件夹
+                string folder1 = GetFolderName(photo.ProjectId.ToString(), "1", photo.ShopCode, photo.ShopName, "", "");
+                string folder2 = GetFolderName(photo.ProjectId.ToString(), "2", photo.ShopCode, photo.ShopName, "", "");
+                string folder3 = GetFolderName(photo.ProjectId.ToString(), "3", photo.ShopCode, photo.ShopName, "", "");
+                string folder4 = GetFolderName(photo.ProjectId.ToString(), "4", photo.ShopCode, photo.ShopName, photo.CheckCode, photo.PhotoName);
+                if (!string.IsNullOrEmpty(folder4)) // 照片的命名方式是否设置，如果设置了按照设置的方式下载
+                { // 创建1级目录
+                    if (!string.IsNullOrEmpty(folder1))
+                    {
+                        if (!Directory.Exists(folder + @"\" + folder1))
+                        {
+                            Directory.CreateDirectory(folder + @"\" + folder1);
+                        }
+                    }  // 创建2级目录
+                    if (!string.IsNullOrEmpty(folder2))
+                    {
+                        if (!Directory.Exists(folder + @"\" + folder1 + @"\" + folder2))
+                        {
+                            Directory.CreateDirectory(folder + @"\" + folder1 + @"\" + folder2);
+                        }
+                    }
+                    // 创建3级目录
+                    if (!string.IsNullOrEmpty(folder3))
+                    {
+                        if (!Directory.Exists(folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3))
+                        {
+                            Directory.CreateDirectory(folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3);
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(folder4))
+                    {
+                        if (File.Exists(folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3 + folder4 + ".jpg"))
+                        {
+                            File.Delete(folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3 + folder4 + ".jpg");
+                        }
+                    }
+
+
+                    try
+                    {
+                        OSSClientHelper.GetObject(photo.PhotoUrl, folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg");
+                    }
+                    catch (Exception ex)
+                    {
+                    }
                 }
-                if (!Directory.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode))
+                else // 未设置文件命名方式，使用默认的方式进行下载
                 {
-                    Directory.CreateDirectory(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode);//创建经销商代码文件夹
-                }
-                if (File.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg"))
-                {
-                    File.Delete(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg");
-                }
-                try
-                {
-                    OSSClientHelper.GetObject(photo.PhotoUrl, folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg");
-                }
-                catch (Exception ex)
-                {
+                    if (!Directory.Exists(folder + @"\" + photo.ProjectId))
+                    {
+                        Directory.CreateDirectory(folder + @"\" + photo.ProjectId);//创建期号文件夹
+                    }
+                    if (!Directory.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode))
+                    {
+                        Directory.CreateDirectory(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode);//创建经销商代码文件夹
+                    }
+                    if (File.Exists(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg"))
+                    {
+                        File.Delete(folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg");
+                    }
+                    try
+                    {
+                        OSSClientHelper.GetObject(photo.PhotoUrl, folder + @"\" + photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg");
+                    }
+                    catch (Exception ex)
+                    {
+                    }
 
                 }
             }
@@ -347,7 +465,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="zipedFile"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        private static bool ZipInForFiles(List<AnswerPhotoDto> fileNames, string foler, string folderToZip, string zipedFile, int level)
+        private  bool ZipInForFiles(List<AnswerPhotoDto> fileNames, string foler, string folderToZip, string zipedFile, int level)
         {
             bool isSuccess = true;
             if (!Directory.Exists(folderToZip))
@@ -370,7 +488,19 @@ namespace com.yrtech.InventoryAPI.Service
 
                     foreach (AnswerPhotoDto photo in fileNames)
                     {
-                        string photoName = photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg";
+                        string folder1 = GetFolderName(photo.ProjectId.ToString(), "1", photo.ShopCode, photo.ShopName, "", "");
+                        string folder2 = GetFolderName(photo.ProjectId.ToString(), "2", photo.ShopCode, photo.ShopName, "", "");
+                        string folder3 = GetFolderName(photo.ProjectId.ToString(), "3", photo.ShopCode, photo.ShopName, "", "");
+                        string folder4 = GetFolderName(photo.ProjectId.ToString(), "4", photo.ShopCode, photo.ShopName, photo.CheckCode, photo.PhotoName);
+                        string photoName = "";
+                        if (string.IsNullOrEmpty(folder4)) // 未设置照片命名方式，使用默认的下载方式
+                        {
+                             photoName = photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg";
+                        }
+                        else
+                        {
+                             photoName = folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg";
+                        }
                         string file = Path.Combine(folderToZip, foler, photoName);
                         string extension = string.Empty;
                         if (!System.IO.File.Exists(file))

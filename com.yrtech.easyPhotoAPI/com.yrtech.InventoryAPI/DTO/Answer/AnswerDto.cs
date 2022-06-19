@@ -29,6 +29,7 @@ namespace com.yrtech.InventoryAPI.DTO
         public string Column7 { get; set; }
         public string Column8 { get; set; }
         public string Column9 { get; set; }
+        
         public string AddCheck { get; set; }
         public bool? ImportChk { get; set; }
         public string ImportRemark { get; set; }

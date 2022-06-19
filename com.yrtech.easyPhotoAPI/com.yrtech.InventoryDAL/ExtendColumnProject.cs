@@ -19,6 +19,8 @@ namespace com.yrtech.InventoryDAL
         public string ColumnName { get; set; }
         public Nullable<bool> UseChk { get; set; }
         public Nullable<bool> AddShowChk { get; set; }
+        public Nullable<bool> ListShowChk { get; set; }
+        public Nullable<bool> EditChk { get; set; }
         public string InUserId { get; set; }
         public Nullable<System.DateTime> InDateTime { get; set; }
         public string ModifyUserId { get; set; }

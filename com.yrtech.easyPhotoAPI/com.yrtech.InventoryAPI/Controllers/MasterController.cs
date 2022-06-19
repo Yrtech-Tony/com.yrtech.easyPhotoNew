@@ -56,6 +56,7 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
+               // CommonHelper.log("tenantId" + tenantId + "projectId" + projectId);
                 List<Projects> projectList = masterService.GetProject(tenantId, projectId,"","", brandId, year, expireDateTimeCheck);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(projectList) };
             }
