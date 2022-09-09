@@ -103,6 +103,9 @@
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Recheck.cs">
+      <DependentUpon>InventoryDAL.tt</DependentUpon>
+    </Compile>
     <Compile Include="Remark.cs">
       <DependentUpon>InventoryDAL.tt</DependentUpon>
     </Compile>

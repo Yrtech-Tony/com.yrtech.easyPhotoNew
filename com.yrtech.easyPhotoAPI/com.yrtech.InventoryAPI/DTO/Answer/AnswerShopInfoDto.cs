@@ -10,10 +10,15 @@ namespace com.yrtech.InventoryAPI.DTO
     {
         public int Id { get; set; }
         public int ProjectId { get; set; }
+        public string ProjectCode { get; set; }
+        public string ProjectName { get; set; }
+        public string ShopCode { get; set; }
+        public string ShopName { get; set; }
+        public string ShopInStatus { get; set; }
+        public DateTime? ShopInDateTime { get; set; }
+        public DateTime? ShopOutDateTime { get; set; }
         public int ShopId { get; set; }
-        public string TeamLeaderName { get; set; }
-        public int UserId { get; set; }
-        public DateTime StartDate { get; set; }
+       
         public int InUserId { get; set;  }
         public DateTime InDateTime { get; set; }
         public int ModifyUserId { get; set; }

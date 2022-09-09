@@ -426,9 +426,7 @@ namespace com.yrtech.InventoryAPI.Service
                             ,(SELECT UseChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS UseChk
                             ,(SELECT ListShowChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS ListShowChk
                             ,(SELECT EditChk FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS EditChk
-                            ,CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProjectData WHERE ProjectId = @ProjectId AND ColumnCode = A.ColumnCode) THEN CAST(0 AS BIT) 
-                                 ELSE CAST(1 AS BIT)
-                             END AS TxtChk
+                            ,(SELECT ColumnType FROM ExtendColumnProject WHERE ProjectId =  @ProjectId AND ColumnCode = A.ColumnCode) AS ColumnType
                             FROM ExtendColumn A WHERE 1=1";
             if (!string.IsNullOrEmpty(columnCode))
             {
@@ -451,6 +449,7 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.ModifyDateTime = DateTime.Now;
                 findOne.ModifyUserId = extendColumnProject.ModifyUserId;
                 findOne.ColumnName = extendColumnProject.ColumnName;
+                findOne.ColumnType = extendColumnProject.ColumnType;
                 findOne.AddShowChk = extendColumnProject.AddShowChk;
                 findOne.UseChk = extendColumnProject.UseChk;
                 findOne.ListShowChk = extendColumnProject.ListShowChk;

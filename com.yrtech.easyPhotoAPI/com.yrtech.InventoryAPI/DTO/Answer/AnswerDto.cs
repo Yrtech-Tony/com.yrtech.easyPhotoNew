@@ -11,6 +11,7 @@ namespace com.yrtech.InventoryAPI.DTO
     {
         public long AnswerId { get; set; }
         public int ProjectId { get; set; }
+        public bool? RecheckStatus { get; set; }
         public int ShopId { get; set; }
         public string ShopCode { get; set; }
         public string ShopName { get; set; }

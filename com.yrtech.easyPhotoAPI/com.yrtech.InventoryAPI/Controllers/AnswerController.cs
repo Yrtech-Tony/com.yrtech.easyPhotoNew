@@ -24,7 +24,7 @@ namespace com.yrtech.SurveyAPI.Controllers
             string photoCheck, string addCheck, string key, int offset = 0, int limit = 10000
             )
         {
-            
+
             ReturnData<AnswerDto> returnData = new ReturnData<AnswerDto>();
             try
             {
@@ -101,7 +101,7 @@ namespace com.yrtech.SurveyAPI.Controllers
         {
             try
             {
-                
+
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(excelDataService.AnswerExport(projectId, shopCode)) };
             }
             catch (Exception ex)
@@ -145,6 +145,21 @@ namespace com.yrtech.SurveyAPI.Controllers
             {
                 shopCode = shopCode.Replace("，", ",");
                 answerService.DeleteAnswerByShop(projectId, shopCode);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpGet]
+        [Route("Answer/DeleteShopAnswerPhoto")]
+        public APIResult DeleteShopAnswerPhoto(string answerId, string photoId)
+        {
+            try
+            {
+                answerService.DeleteShopAnswerPhoto(answerId, photoId);
                 return new APIResult() { Status = true, Body = "" };
             }
             catch (Exception ex)
@@ -202,6 +217,37 @@ namespace com.yrtech.SurveyAPI.Controllers
             }
 
         }
+        // 进店状态查询
+        [HttpGet]
+        [Route("Answer/GetAnswerShopInfo")]
+        public APIResult GetAnswerShopInfo(string projectId, string shopCode)
+        {
+            try
+            {
+                List<AnswerShopInfoDto> list = answerService.GetAnswerShopInfo(projectId, shopCode);
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(list) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpGet]
+        [Route("Answer/AnswerShopInfoExport")]
+        public APIResult AnswerShopInfoExport(string projectId, string shopCode)
+        {
+            try
+            {
+
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(excelDataService.AnswerShopInfoExport(projectId, shopCode)) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
         [HttpGet]
         [Route("Answer/DeleteAnswerList")]
         public APIResult DeleteAnswerList(string answerIdList)
@@ -217,6 +263,21 @@ namespace com.yrtech.SurveyAPI.Controllers
                 return new APIResult() { Status = false, Body = ex.Message.ToString() };
             }
 
+        }
+
+        [HttpPost]
+        [Route("Answer/SaveRecheck")]
+        public APIResult SaveRecheck(Recheck recheck)
+        {
+            try
+            {
+                answerService.SaveRecheck(recheck);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
         }
         [HttpGet]
         [Route("Answer/AnswerPhotoDownLoad")]

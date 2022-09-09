@@ -421,5 +421,79 @@ namespace com.yrtech.InventoryAPI.Controllers
                 return new APIResult() { Status = false, Body = ex.Message.ToString() };
             }
         }
+
+        [HttpGet]
+        [Route("Master/GetFileType")]
+        public APIResult GetFileType()
+        {
+            try
+            {
+                List<FileType> fileTypeList = masterService.GetFileType();
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(fileTypeList) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpGet]
+        [Route("Master/GetFileNameOption")]
+        public APIResult GetFileNameOption()
+        {
+            try
+            {
+                List<FileNameOption> fileNameOptionList = masterService.GetFileNameOption();
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(fileNameOptionList) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpGet]
+        [Route("Master/GetFileRename")]
+        public APIResult GetFileRename(string projectId,string fileTypeCode)
+        {
+            try
+            {
+                List<FileRenameDto> fileRenameList = masterService.GetFileRename(projectId,fileTypeCode);
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(fileRenameList) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpPost]
+        [Route("Master/SaveFileRename")]
+        public APIResult SaveFileRename(FileRename fileRename)
+        {
+            try
+            {
+                masterService.SaveFileRename(fileRename);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
+        [HttpPost]
+        [Route("Master/DeleteFileRename")]
+        public APIResult DeleteFileRename(FileRename fileRename)
+        {
+            try
+            {
+                masterService.DeleteFileRename(fileRename);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
     }
 }

@@ -52,7 +52,9 @@ namespace com.yrtech.InventoryAPI.Service
             Type t = typeof(AnswerDto);
             string sql = "";
             sql = @"SELECT A.AnswerId,A.ProjectId,A.ShopCode,A.ShopName,A.CheckCode,RIGHT(A.CheckCode,8) AS CheckCodeShow,A.CheckTypeId,
-                    ISNULL((SELECT CheckTypeName FROM CheckType WHERE CheckTypeId = A.CheckTypeId AND ProjectId = A.ProjectId),'') AS CheckTypeName
+
+                    ISNULL((SELECT TOP 1 RecheckStatus FROM Recheck WHERE AnswerId = A.AnswerId),0) AS RecheckStatus
+                    ,ISNULL((SELECT CheckTypeName FROM CheckType WHERE CheckTypeId = A.CheckTypeId AND ProjectId = A.ProjectId),'') AS CheckTypeName
                     ,A.Remark AS RemarkName,
                     A.AddCheck,A.ModifyUserId,A.ModifyDateTime,A.InUserId,A.InDateTime,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column1' AND UseChk = 1)
@@ -83,15 +85,15 @@ namespace com.yrtech.InventoryAPI.Service
                          THEN ISNULL(Column9,'')
                     END AS Column9
                     FROM Answer A 
-                    WHERE 1=1 ";
+                    WHERE 1=1 AND A.ProjectId = @ProjectId";
             if (!string.IsNullOrEmpty(answerId))
             {
                 sql += " AND A.AnswerId = @AnswerId";
             }
-            if (!string.IsNullOrEmpty(projectId))
-            {
-                sql += " AND A.ProjectId = @ProjectId";
-            }
+            //if (!string.IsNullOrEmpty(projectId))
+            //{
+            //    sql += " AND A.ProjectId = @ProjectId";
+            //}
             if (!string.IsNullOrEmpty(shopCode))
             {
                 sql += " AND A.ShopCode = @ShopCode";
@@ -195,6 +197,71 @@ namespace com.yrtech.InventoryAPI.Service
                 sql += " AND A.AnswerId = @AnswerId";
             }
             sql += " Order By B.PhotoId";
+            return db.Database.SqlQuery(t, sql, para).Cast<AnswerPhotoDto>().ToList();
+        }
+
+        public List<AnswerPhotoDto> GetAnswerPhotoExport(string answerId, string projectId, string shopCode)
+        {
+            if (answerId == null) answerId = "";
+            if (projectId == null) projectId = "";
+            if (shopCode == null) shopCode = "";
+
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@AnswerId", answerId)
+                                                    ,new SqlParameter("@ProjectId", projectId)
+                                                    ,new SqlParameter("@ShopCode", shopCode)
+                                                      };
+            Type t = typeof(AnswerPhotoDto);
+            string sql = "";
+            sql = @"SELECT * FROM 
+                            (SELECT 
+                            A.ProjectId,A.ShopCode,A.ShopName,A.CheckCode,C.CheckTypeName,'N' AS AddCheck,B.PhotoName
+                            ,CASE WHEN EXISTS(SELECT 1 FROM dbo.AnswerPhoto WHERE AnswerId = A.AnswerId AND PhotoId = B.PhotoId)
+	                            THEN 'Y'
+	                            ELSE 'N'
+                            END AS Photo
+                            from answer A INNER JOIN PhotoList B ON A.ProjectId = B.ProjectId 
+									                            AND  A.CheckTypeId = B.CheckTypeId 
+									                            AND B.AddCheck = 'N'
+			                              INNER JOIN CheckType C ON A.CheckTypeId = C.CheckTypeId
+
+                            UNION ALL
+
+                            SELECT 
+                            A.ProjectId,A.ShopCode,A.ShopName,A.CheckCode,'' AS CheckTypeName,'Y' AS AddCheck,B.PhotoName
+                            ,CASE WHEN EXISTS(SELECT 1 FROM dbo.AnswerPhoto WHERE AnswerId = A.AnswerId AND PhotoId = B.PhotoId)
+	                            THEN 'Y'
+	                            ELSE 'N'
+                            END AS Photo
+                            from answer A INNER JOIN PhotoList B ON A.ProjectId = B.ProjectId  
+									                            AND B.AddCheck = 'Y' ) X WHERE 1=1 
+			   ";
+            if (!string.IsNullOrEmpty(projectId))
+            {
+                sql += " AND X.ProjectId = @ProjectId";
+            }
+            if (!string.IsNullOrEmpty(shopCode))
+            {
+                if (!string.IsNullOrEmpty(shopCode))
+                {
+                    shopCode = shopCode.Replace("，", ",");
+                    sql += " AND X.ShopCode IN('";
+                    string[] shopList = shopCode.Split(',');
+                    foreach (string shop in shopList)
+                    {
+                        if (shop == shopList[shopList.Length - 1])
+                        {
+                            sql += shop + "'";
+                        }
+                        else
+                        {
+                            sql += shop + "','";
+                        }
+                    }
+                    sql += ")";
+                }
+                //sql += " AND A.ShopCode = @ShopCode";
+            }
+            sql += " Order By X.ShopCode,X.ShopName,X.CheckCode";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerPhotoDto>().ToList();
         }
         public void ImportAnswerList(string projectId, List<AnswerDto> answerList)
@@ -310,6 +377,69 @@ namespace com.yrtech.InventoryAPI.Service
             }
             db.SaveChanges();
         }
+        public void DeleteShopAnswerPhoto(string answerId,string photoId)
+        {
+            if (photoId == null) photoId = "";
+            string sql = "";
+            SqlParameter[] para = new SqlParameter[] { };
+            sql += "DELETE AnswerPhoto WHERE AnswerId = " + answerId.ToString() + " ";
+            if (!string.IsNullOrEmpty(photoId))
+            {
+                sql += " AND PhotoId = " + photoId.ToString() + " ";
+            }
+            db.Database.ExecuteSqlCommand(sql, para);
+        }
+        // 查询进店状态
+        public List<AnswerShopInfoDto> GetAnswerShopInfo(string projectId, string shopCode)
+        {
+            if (projectId == null) projectId = "";
+            if (shopCode == null) shopCode = "";
+
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
+                                                    ,new SqlParameter("@ShopCode", shopCode)
+                                                      };
+            Type t = typeof(AnswerShopInfoDto);
+            string sql = "";
+            sql = @"
+                    SELECT B.ProjectCode,B.ProjectName,A.ShopCode,A.ShopName,
+                    CASE 
+                    WHEN EXISTS(SELECT 1 FROM Answer X INNER JOIN AnswerPhoto Y ON X.AnswerId = Y.AnswerId AND X.ProjectId = A.ProjectId AND X.ShopCode = A.ShopCode)
+                    THEN  '已进店'
+                    ELSE '未进店'
+                    END AS ShopInStatus,
+                    (SELECT TOP 1 X.InDateTime FROM AnswerPhoto X INNER JOIN Answer Y ON X.AnswerId = Y.AnswerId AND Y.ProjectId = A.ProjectId AND Y.ShopCode = A.ShopCode ORDER BY X.InDateTime)
+                    AS ShopInDateTime
+                    ,(SELECT TOP 1 X.InDateTime FROM AnswerPhoto X INNER JOIN Answer Y ON X.AnswerId = Y.AnswerId AND Y.ProjectId = A.ProjectId AND Y.ShopCode = A.ShopCode ORDER BY X.InDateTime DESC)
+                    AS ShopOutDateTime
+                    FROM UserInfo A INNER JOIN Projects B ON A.ProjectId = B.ProjectId
+                    WHERE 1=1";
+            if (!string.IsNullOrEmpty(projectId))
+            {
+                sql += " AND A.ProjectId = @ProjectId";
+            }
+            if (!string.IsNullOrEmpty(shopCode))
+            {
+                if (!string.IsNullOrEmpty(shopCode))
+                {
+                    shopCode = shopCode.Replace("，", ",");
+                    sql += " AND A.ShopCode IN('";
+                    string[] shopList = shopCode.Split(',');
+                    foreach (string shop in shopList)
+                    {
+                        if (shop == shopList[shopList.Length - 1])
+                        {
+                            sql += shop + "'";
+                        }
+                        else
+                        {
+                            sql += shop + "','";
+                        }
+                    }
+                    sql += ")";
+                }
+            }
+            return db.Database.SqlQuery(t, sql, para).Cast<AnswerShopInfoDto>().ToList();
+        }
         public string GetFolderName(string projectId, string fileTypeCode, string shopCode, string shopName, string checkCode, string photoName)
         {
             string folderName = "";
@@ -412,20 +542,20 @@ namespace com.yrtech.InventoryAPI.Service
                     }
                     if (!string.IsNullOrEmpty(folder4))
                     {
-                        if (File.Exists(folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3 + folder4 + ".jpg"))
+                        string filePath = (folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg").Replace("\\",@"\");
+                        if (File.Exists(filePath))
                         {
-                            File.Delete(folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3 + folder4 + ".jpg");
+                            File.Delete(filePath);
+                        }
+                        try
+                        {
+                            OSSClientHelper.GetObject(photo.PhotoUrl, filePath);
+                        }
+                        catch (Exception ex)
+                        {
                         }
                     }
-
-
-                    try
-                    {
-                        OSSClientHelper.GetObject(photo.PhotoUrl, folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg");
-                    }
-                    catch (Exception ex)
-                    {
-                    }
+                    
                 }
                 else // 未设置文件命名方式，使用默认的方式进行下载
                 {
@@ -448,13 +578,32 @@ namespace com.yrtech.InventoryAPI.Service
                     catch (Exception ex)
                     {
                     }
-
                 }
             }
             // 打包文件
-            if (!ZipInForFiles(list, downLoadfolder, basePath, downLoadPath, 9)) return "";
-
-            return downLoadPath.Replace(defaultPath, "");
+            if (!ZipInForFiles(list, downLoadfolder, basePath, downLoadPath, 9)) { return ""; }
+            else // 压缩成功后上传到OSS
+            {
+                return OSSClientHelper.PutObjectMultipart("DownTempFile" + @"/" + downLoadfolder + ".zip", downLoadPath);
+            }
+          //  return downLoadPath.Replace(defaultPath, "");
+        }
+        public void SaveRecheck(Recheck recheck)
+        {
+            Recheck findOne = db.Recheck.Where(x => (x.AnswerId == recheck.AnswerId)).FirstOrDefault();
+            if (findOne == null)
+            {
+                recheck.InDateTime = DateTime.Now;
+                recheck.ModifyDateTime = DateTime.Now;
+                db.Recheck.Add(recheck);
+            }
+            else
+            {
+                findOne.ModifyDateTime = DateTime.Now;
+                findOne.ModifyUserId = recheck.ModifyUserId;
+                findOne.RecheckStatus = recheck.RecheckStatus;
+            }
+            db.SaveChanges();
         }
         /// <summary>
         /// 压缩文件
@@ -499,7 +648,7 @@ namespace com.yrtech.InventoryAPI.Service
                         }
                         else
                         {
-                             photoName = folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg";
+                             photoName = (folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg").Replace("\\",@"\");
                         }
                         string file = Path.Combine(folderToZip, foler, photoName);
                         string extension = string.Empty;
