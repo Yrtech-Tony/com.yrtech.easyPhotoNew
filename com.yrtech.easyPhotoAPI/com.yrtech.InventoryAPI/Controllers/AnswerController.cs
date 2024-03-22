@@ -71,6 +71,12 @@ namespace com.yrtech.SurveyAPI.Controllers
                 answer.Column7 = answerdto.Column7;
                 answer.Column8 = answerdto.Column8;
                 answer.Column9 = answerdto.Column9;
+                answer.Column10 = answerdto.Column10;
+                answer.Column11 = answerdto.Column11;
+                answer.Column12 = answerdto.Column12;
+                answer.Column13 = answerdto.Column13;
+                answer.Column14 = answerdto.Column14;
+                answer.Column15= answerdto.Column15;
                 answer = answerService.SaveShopAnswer(answer);
                 foreach (AnswerPhotoDto photoDto in answerdto.AnswerPhotoList)
                 {
@@ -117,11 +123,12 @@ namespace com.yrtech.SurveyAPI.Controllers
             try
             {
                 List<AnswerDto> list = excelDataService.AnswerImport(ossPath);
+                //list
                 foreach (AnswerDto answer in list)
                 {
                     answer.ImportChk = true;
                     answer.ImportRemark = "";
-                    // 验证检查类型是否存在
+                    //验证检查类型是否存在
                     List<CheckType> checkTypeList = masterService.GetCheckType(projectId, "", answer.CheckTypeName, true);
                     if (checkTypeList == null || checkTypeList.Count == 0)
                     {

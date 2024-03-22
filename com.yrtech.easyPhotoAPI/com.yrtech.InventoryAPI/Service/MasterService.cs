@@ -121,17 +121,18 @@ namespace com.yrtech.InventoryAPI.Service
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="tenantId"></param>
-        /// <param name="accountId"></param>
-        /// <param name="accountName"></param>
-        /// <param name="expireDateCheck">N:未过期</param>
+        /// <param name="projectId"></param>
+        /// <param name="key"></param>
+        /// <param name="shopCode"></param>
         /// <returns></returns>
-        public List<UserInfo> GetUserInfo(string projectId, string key)
+        public List<UserInfo> GetUserInfo(string projectId, string key,string shopCode)
         {
             if (projectId == null) projectId = "";
             if (key == null) key = "";
+            if (shopCode == null) shopCode = "";
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
-                                                       ,new SqlParameter("@Key",key)};
+                                                       ,new SqlParameter("@Key",key)
+                                                        ,new SqlParameter("@ShopCode",shopCode)};
             Type t = typeof(UserInfo);
             string sql = @"SELECT *
                             FROM UserInfo A 
@@ -139,6 +140,10 @@ namespace com.yrtech.InventoryAPI.Service
             if (!string.IsNullOrEmpty(key))
             {
                 sql += " AND (ShopCode LIKE '%'+@Key+'%' OR ShopName LIKE '%'+@Key+'%')";
+            }
+            if (!string.IsNullOrEmpty(shopCode))
+            {
+                sql += " AND ShopCode = @ShopCode";
             }
             return db.Database.SqlQuery(t, sql, para).Cast<UserInfo>().ToList();
         }
@@ -161,6 +166,7 @@ namespace com.yrtech.InventoryAPI.Service
                 sql += userInfo.ShopName + "','";
                 sql += Guid.NewGuid().ToString().Substring(0, 6) + "','";
                 sql += userInfo.ExpireDateTime.ToString() + "','";
+                sql += userInfo.PhotoExpireDateTime.ToString() + "','";
                 sql += userInfo.InUserId.ToString() + "','";
                 sql += DateTime.Now.ToString() + "','";
                 sql += userInfo.ModifyUserId.ToString() + "','";
@@ -172,6 +178,12 @@ namespace com.yrtech.InventoryAPI.Service
         public void ResetExpireDateTime(string projectId, string expireDateTime)
         {
             string sql = @"UPDATE UserInfo SET  ExpireDateTime = '" + expireDateTime + "' WHERE  ProjectId = '" + projectId + "'";
+            SqlParameter[] para = new SqlParameter[] { };
+            db.Database.ExecuteSqlCommand(sql, para);
+        }
+        public void ResetPhotoExpireDateTime(string projectId, string expireDateTime)
+        {
+            string sql = @"UPDATE UserInfo SET  PhotoExpireDateTime = '" + expireDateTime + "' WHERE  ProjectId = '" + projectId + "'";
             SqlParameter[] para = new SqlParameter[] { };
             db.Database.ExecuteSqlCommand(sql, para);
         }
@@ -188,9 +200,29 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.ExpireDateTime = userInfo.ExpireDateTime;
                 findOne.ModifyUserId = userInfo.ModifyUserId;
                 findOne.Password = userInfo.Password;
+                findOne.PhotoExpireDateTime = userInfo.PhotoExpireDateTime;
                 findOne.ModifyDateTime = DateTime.Now;
             }
             db.SaveChanges();
+        }
+        public void UpdateUserInfoExpireDateTime(UserInfo userInfo)
+        {
+            string expireDateTime = "";
+            if (userInfo.ExpireDateTime != null)
+            {
+                expireDateTime = Convert.ToDateTime(userInfo.ExpireDateTime).ToString("yyyy-MM-dd") + " 23:59:59";
+            }
+            string photoExpireDateTime = "";
+            if (userInfo.PhotoExpireDateTime != null)
+            {
+                photoExpireDateTime = Convert.ToDateTime(userInfo.PhotoExpireDateTime).ToString("yyyy-MM-dd") + " 23:59:59";
+            }
+            string sql = @"UPDATE UserInfo SET  ExpireDateTime = '"  + expireDateTime + "',"
+                        + " PhotoExpireDateTime = '"+ photoExpireDateTime + "'"
+                        + " WHERE  ProjectId = '" + userInfo.ProjectId.ToString() + "'"
+                        +" AND ShopCode = '"+ userInfo.ShopCode+"'";
+            SqlParameter[] para = new SqlParameter[] { };
+            db.Database.ExecuteSqlCommand(sql, para);
         }
         /// <summary>
         /// 
@@ -432,7 +464,7 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 sql += " AND ColumnCode = @ColumnCode";
             }
-            sql += " ORDER BY ColumnCode ASC";
+            sql += " ORDER BY InDateTime ASC";
             return db.Database.SqlQuery(t, sql, para).Cast<ExtendColumnProjectDto>().ToList();
         }
         public void SaveExtendColumnProject(ExtendColumnProject extendColumnProject)
@@ -505,12 +537,14 @@ namespace com.yrtech.InventoryAPI.Service
                             FROM FileType A ";
             return db.Database.SqlQuery(t, sql, para).Cast<FileType>().ToList();
         }
-        public List<FileNameOption> GetFileNameOption()
+        public List<FileNameOption> GetFileNameOption(string projectId)
         {
-            SqlParameter[] para = new SqlParameter[] { };
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId) };
             Type t = typeof(FileNameOption);
-            string sql = @"SELECT A.*
-                            FROM FileNameOption A ";
+            string sql = @"SELECT OptionCode,OptionName FROM FileNameOption
+                            UNION ALL
+                        SELECT ColumnCode AS OptionCode,ColumnName AS OptionName FROM dbo.ExtendColumnProject 
+                        WHERE ProjectId = @ProjectId";
             return db.Database.SqlQuery(t, sql, para).Cast<FileNameOption>().ToList();
         }
         public void SaveFileRename(FileRename fileRename)
@@ -546,9 +580,13 @@ namespace com.yrtech.InventoryAPI.Service
             SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectId", projectId)
                                                     ,new SqlParameter("@FileTypeCode", fileTypeCode) };
             Type t = typeof(FileRenameDto);
-            string sql = @"SELECT A.*,D.ProjectCode,D.ProjectName,B.FileTypeName,C.OptionName
+            string sql = @"SELECT A.*,D.ProjectCode,D.ProjectName,B.FileTypeName
+                        ,CASE WHEN EXISTS(SELECT 1 FROM FileNameOption WHERE OptionCode = A.OptionCode) 
+                        THEN (SELECT TOP 1 OptionName FROM FileNameOption WHERE OptionCode = A.OptionCode)
+                        ELSE (SELECT TOP 1 ColumnName FROM ExtendColumnProject WHERE ColumnCode = A.OptionCode AND ProjectId = 14)
+                        END AS OptionName
                          FROM FileRename A INNER JOIN FileType B ON A.FileTypeCode = B.FileTypeCode
-				                        INNER JOIN FileNameOption C ON A.OptionCode = C.OptionCode
+				                       -- LEFT JOIN FileNameOption C ON A.OptionCode = C.OptionCode
 				                    INNER JOIN Projects D ON A.ProjectId = D.ProjectId
                         WHERE A.ProjectId = @ProjectId";
             if (!string.IsNullOrEmpty(fileTypeCode))

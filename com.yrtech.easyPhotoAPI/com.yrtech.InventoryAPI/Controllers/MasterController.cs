@@ -56,8 +56,8 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-               // CommonHelper.log("tenantId" + tenantId + "projectId" + projectId);
-                List<Projects> projectList = masterService.GetProject(tenantId, projectId,"","", brandId, year, expireDateTimeCheck);
+                // CommonHelper.log("tenantId" + tenantId + "projectId" + projectId);
+                List<Projects> projectList = masterService.GetProject(tenantId, projectId, "", "", brandId, year, expireDateTimeCheck);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(projectList) };
             }
             catch (Exception ex)
@@ -85,7 +85,7 @@ namespace com.yrtech.InventoryAPI.Controllers
                 {
                     return new APIResult() { Status = false, Body = "期号名称不能为空" };
                 }
-                List<Projects> projectList_Code = masterService.GetProject(project.TenantId.ToString(),"",project.ProjectCode,"",project.BrandId.ToString(),"","");
+                List<Projects> projectList_Code = masterService.GetProject(project.TenantId.ToString(), "", project.ProjectCode, "", project.BrandId.ToString(), "", "");
                 if (projectList_Code != null && projectList_Code.Count > 0 && projectList_Code[0].ProjectId != project.ProjectId)
                 {
                     return new APIResult() { Status = false, Body = "期号代码重复" };
@@ -115,11 +115,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetUserInfo")]
-        public APIResult GetUserInfo(string projectId, string key)
+        public APIResult GetUserInfo(string projectId, string key, string shopCode = "")
         {
             try
             {
-                List<UserInfo> userInfoList = masterService.GetUserInfo(projectId, key);
+                List<UserInfo> userInfoList = masterService.GetUserInfo(projectId, key, shopCode);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(userInfoList) };
             }
             catch (Exception ex)
@@ -143,6 +143,65 @@ namespace com.yrtech.InventoryAPI.Controllers
                 return new APIResult() { Status = false, Body = ex.Message.ToString() };
             }
         }
+
+        [HttpGet]
+        [Route("Master/UserInfoExcelAnalysis")]
+        public APIResult UserInfoExcelAnalysis(string projectId, string ossPath)
+        {
+            try
+            {
+                List<UserInfoDto> list = excelDataService.UserInfoImport(ossPath);
+                foreach (UserInfoDto userInfo in list)
+                {
+                    userInfo.ImportChk = true;
+                    userInfo.ImportRemark = "";
+                    // 验证检查类型是否存在
+                    List<UserInfo> userInfoList = masterService.GetUserInfo(projectId, "", userInfo.ShopCode);
+                    if (userInfoList == null || userInfoList.Count == 0)
+                    {
+                        userInfo.ImportChk = false;
+                        userInfo.ImportRemark += "经销商代码/账号不存在" + ";";
+                    }
+                    if (userInfo.ExpireDateTime == null)
+                    {
+                        userInfo.ImportChk = false;
+                        userInfo.ImportRemark += "过期时间不能为空" + ";";
+                    }
+                    if (userInfo.PhotoExpireDateTime == null)
+                    {
+                        userInfo.ImportChk = false;
+                        userInfo.ImportRemark += "过期时间(照片提交)不能为空" + ";";
+                    }
+                }
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(list) };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
+        [HttpPost]
+        [Route("Master/UserInfoImport")]
+        public APIResult UserInfoImport(UploadData uploadData)
+        {
+            try
+            {
+                List<UserInfo> list = CommonHelper.DecodeString<List<UserInfo>>(uploadData.ListJson);
+                string projectId = "";
+                if (list != null && list.Count > 0) projectId = list[0].ProjectId.ToString();
+                foreach (UserInfo userInfo in list)
+                {
+                    masterService.UpdateUserInfoExpireDateTime(userInfo);
+                }
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+
+        }
         [HttpGet]
         [Route("Master/ResetExpireDateTime")]
         public APIResult ResetExpireDateTime(string projectId, string expireDateTime)
@@ -151,6 +210,55 @@ namespace com.yrtech.InventoryAPI.Controllers
             {
                 masterService.ResetExpireDateTime(projectId, expireDateTime);
                 return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
+        [HttpGet]
+        [Route("Master/ResetPhotoExpireDateTime")]
+        public APIResult ResetPhotoExpireDateTime(string projectId, string expireDateTime)
+        {
+            try
+            {
+                masterService.ResetPhotoExpireDateTime(projectId, expireDateTime);
+                return new APIResult() { Status = true, Body = "" };
+            }
+            catch (Exception ex)
+            {
+                return new APIResult() { Status = false, Body = ex.Message.ToString() };
+            }
+        }
+        /// <summary>
+        /// 验证照片上传时间是否已超时
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="shopCode"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Master/PhotoExpireDateTimeCheck")]
+        public APIResult PhotoExpireDateTimeCheck(string projectId, string shopCode)
+        {
+            try
+            {
+                bool photoExpireDateTimeCheck = true; // 超时
+                List<UserInfo> userInfoList = masterService.GetUserInfo(projectId, "", shopCode);
+                if (userInfoList != null && userInfoList.Count > 0)
+                {
+                    DateTime? expireDateTime = userInfoList[0].PhotoExpireDateTime == null ? userInfoList[0].ExpireDateTime : userInfoList[0].PhotoExpireDateTime;
+
+                    if (expireDateTime > DateTime.Now)
+                    {
+                        photoExpireDateTimeCheck = false;
+                    }
+                    else
+                    {
+                        photoExpireDateTimeCheck = true;
+                    }
+                }
+
+                return new APIResult() { Status = true, Body = CommonHelper.Encode(photoExpireDateTimeCheck) };
             }
             catch (Exception ex)
             {
@@ -204,11 +312,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetRemark")]
-        public APIResult GetRemark(string projectId,string checkTypeId, string remarkId, string addCheck, bool? useChk)
+        public APIResult GetRemark(string projectId, string checkTypeId, string remarkId, string addCheck, bool? useChk)
         {
             try
             {
-                List<Remark> remarkList = masterService.GetRemark(projectId,checkTypeId, remarkId, addCheck, "", useChk);
+                List<Remark> remarkList = masterService.GetRemark(projectId, checkTypeId, remarkId, addCheck, "", useChk);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(remarkList) };
             }
             catch (Exception ex)
@@ -246,11 +354,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Master/GetPhotoList")]
-        public APIResult GetPhotoList(string projectId,string checkTypeId, string photoId, string addCheck, bool? useChk)
+        public APIResult GetPhotoList(string projectId, string checkTypeId, string photoId, string addCheck, bool? useChk)
         {
             try
             {
-                List<PhotoList> photoList = masterService.GetPhotoList(projectId,checkTypeId, photoId, addCheck, "", useChk);
+                List<PhotoList> photoList = masterService.GetPhotoList(projectId, checkTypeId, photoId, addCheck, "", useChk);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(photoList) };
             }
             catch (Exception ex)
@@ -277,8 +385,8 @@ namespace com.yrtech.InventoryAPI.Controllers
                 //}
                 //else
                 //{
-                    masterService.SavePhotoList(photo);
-                    return new APIResult() { Status = true, Body = "" };
+                masterService.SavePhotoList(photo);
+                return new APIResult() { Status = true, Body = "" };
                 //}
             }
             catch (Exception ex)
@@ -339,12 +447,13 @@ namespace com.yrtech.InventoryAPI.Controllers
         }
         [HttpGet]
         [Route("Master/GetExtendColumnProject")]
-        public APIResult GetExtendColumnProject(string projectId, string columnCode,bool? addShowChk)
+        public APIResult GetExtendColumnProject(string projectId, string columnCode, bool? addShowChk)
         {
             try
             {
                 List<ExtendColumnProjectDto> extendColumnProjectList = masterService.GetExtendColumnProject(projectId, columnCode);
-                if (addShowChk == true) {
+                if (addShowChk == true)
+                {
                     extendColumnProjectList = extendColumnProjectList.Where(x => x.AddShowChk == true && x.UseChk == true).ToList();
                 }
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(extendColumnProjectList) };
@@ -439,11 +548,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         }
         [HttpGet]
         [Route("Master/GetFileNameOption")]
-        public APIResult GetFileNameOption()
+        public APIResult GetFileNameOption(string projectId)
         {
             try
             {
-                List<FileNameOption> fileNameOptionList = masterService.GetFileNameOption();
+                List<FileNameOption> fileNameOptionList = masterService.GetFileNameOption(projectId);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(fileNameOptionList) };
             }
             catch (Exception ex)
@@ -454,11 +563,11 @@ namespace com.yrtech.InventoryAPI.Controllers
         }
         [HttpGet]
         [Route("Master/GetFileRename")]
-        public APIResult GetFileRename(string projectId,string fileTypeCode)
+        public APIResult GetFileRename(string projectId, string fileTypeCode)
         {
             try
             {
-                List<FileRenameDto> fileRenameList = masterService.GetFileRename(projectId,fileTypeCode);
+                List<FileRenameDto> fileRenameList = masterService.GetFileRename(projectId, fileTypeCode);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(fileRenameList) };
             }
             catch (Exception ex)

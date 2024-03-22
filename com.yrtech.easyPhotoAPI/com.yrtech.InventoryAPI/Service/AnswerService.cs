@@ -19,8 +19,6 @@ namespace com.yrtech.InventoryAPI.Service
         com.yrtech.InventoryDAL.InventoryDAL db = new InventoryDAL.InventoryDAL();
         MasterService masterService = new MasterService();
         AccountService accountService = new AccountService();
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -83,7 +81,25 @@ namespace com.yrtech.InventoryAPI.Service
                     END AS Column8,
                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column9' AND UseChk = 1)
                          THEN ISNULL(Column9,'')
-                    END AS Column9
+                    END AS Column9,
+                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column10' AND UseChk = 1)
+                         THEN ISNULL(Column10,'')
+                    END AS Column10,
+                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column11' AND UseChk = 1)
+                         THEN ISNULL(Column11,'')
+                    END AS Column11,
+                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column12' AND UseChk = 1)
+                         THEN ISNULL(Column12,'')
+                    END AS Column12,
+                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column13' AND UseChk = 1)
+                         THEN ISNULL(Column13,'')
+                    END AS Column13,
+                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column14' AND UseChk = 1)
+                         THEN ISNULL(Column14,'')
+                    END AS Column14,
+                     CASE WHEN EXISTS(SELECT 1 FROM ExtendColumnProject WHERE ProjectId = A.ProjectId AND ColumnCode = 'Column15' AND UseChk = 1)
+                         THEN ISNULL(Column15,'')
+                    END AS Column15
                     FROM Answer A 
                     WHERE 1=1 AND A.ProjectId = @ProjectId";
             if (!string.IsNullOrEmpty(answerId))
@@ -162,9 +178,11 @@ namespace com.yrtech.InventoryAPI.Service
                                                       };
             Type t = typeof(AnswerPhotoDto);
             string sql = "";
-            sql = @"SELECT A.ProjectId,A.CheckCode,B.PhotoId,B.PhotoUrl,C.PhotoName,A.ShopCode,A.ShopName,ISNULL(C.MustChk,0) AS MustChk
+            sql = @"SELECT A.AnswerId,A.ProjectId,A.CheckCode,B.PhotoId,B.PhotoUrl,C.PhotoName,A.ShopCode,A.ShopName,ISNULL(C.MustChk,0) AS MustChk
+                    ,ISNULL(D.CheckTypeName,'') AS CheckTypeName
                     FROM Answer A INNER JOIN AnswerPhoto B ON A.AnswerId = B.AnswerId
                                   INNER JOIN PhotoList C ON B.PhotoId = C.PhotoId
+                                  LEFT JOIN CheckType D ON A.CheckTypeId = D.CheckTypeId AND A.ProjectId = D.ProjectId
                     WHERE 1=1 ";
             if (!string.IsNullOrEmpty(projectId))
             {
@@ -199,7 +217,6 @@ namespace com.yrtech.InventoryAPI.Service
             sql += " Order By B.PhotoId";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerPhotoDto>().ToList();
         }
-
         public List<AnswerPhotoDto> GetAnswerPhotoExport(string answerId, string projectId, string shopCode)
         {
             if (answerId == null) answerId = "";
@@ -259,7 +276,6 @@ namespace com.yrtech.InventoryAPI.Service
                     }
                     sql += ")";
                 }
-                //sql += " AND A.ShopCode = @ShopCode";
             }
             sql += " Order By X.ShopCode,X.ShopName,X.CheckCode";
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerPhotoDto>().ToList();
@@ -290,6 +306,12 @@ namespace com.yrtech.InventoryAPI.Service
                 sql += answer.Column7 + "','";
                 sql += answer.Column8 + "','";
                 sql += answer.Column9 + "','";
+                sql += answer.Column10 + "','";
+                sql += answer.Column11 + "','";
+                sql += answer.Column12 + "','";
+                sql += answer.Column13 + "','";
+                sql += answer.Column14 + "','";
+                sql += answer.Column15 + "','";
                 sql += "N" + "',";
                 sql += answer.InUserID + ",GETDATE(),";
                 sql += answer.ModifyUserId + ",GETDATE())";
@@ -320,7 +342,85 @@ namespace com.yrtech.InventoryAPI.Service
             }
             db.Database.ExecuteSqlCommand(sql, para);
         }
-
+        /// <summary>
+        /// 下载照片时使用，把扩展列拼成List形式
+        /// </summary>
+        /// <param name="answerId"></param>
+        /// <returns></returns>
+        public List<ExtendColumnProjectDto> GetAnswerColumnListByAnswerId(string answerId, string projectId)
+        {
+            List<ExtendColumnProjectDto> columnList = new List<ExtendColumnProjectDto>();
+            List<AnswerDto> answerList = GetShopAnswerListAll(answerId, projectId, "", "", "", "", "", "");
+            if (answerList != null && answerList.Count > 0)
+            {
+                AnswerDto ansewr = answerList[0];
+                columnList = masterService.GetExtendColumnProject(projectId, "");
+                foreach (ExtendColumnProjectDto column in columnList)
+                {
+                    if (column.ColumnCode == "Column1")
+                    {
+                        column.ColumnAnswer = ansewr.Column1;
+                    }
+                    if (column.ColumnCode == "Column2")
+                    {
+                        column.ColumnAnswer = ansewr.Column2;
+                    }
+                    if (column.ColumnCode == "Column3")
+                    {
+                        column.ColumnAnswer = ansewr.Column3;
+                    }
+                    if (column.ColumnCode == "Column4")
+                    {
+                        column.ColumnAnswer = ansewr.Column4;
+                    }
+                    if (column.ColumnCode == "Column5")
+                    {
+                        column.ColumnAnswer = ansewr.Column5;
+                    }
+                    if (column.ColumnCode == "Column6")
+                    {
+                        column.ColumnAnswer = ansewr.Column6;
+                    }
+                    if (column.ColumnCode == "Column7")
+                    {
+                        column.ColumnAnswer = ansewr.Column7;
+                    }
+                    if (column.ColumnCode == "Column8")
+                    {
+                        column.ColumnAnswer = ansewr.Column8;
+                    }
+                    if (column.ColumnCode == "Column9")
+                    {
+                        column.ColumnAnswer = ansewr.Column9;
+                    }
+                    if (column.ColumnCode == "Column10")
+                    {
+                        column.ColumnAnswer = ansewr.Column10;
+                    }
+                    if (column.ColumnCode == "Column11")
+                    {
+                        column.ColumnAnswer = ansewr.Column11;
+                    }
+                    if (column.ColumnCode == "Column12")
+                    {
+                        column.ColumnAnswer = ansewr.Column12;
+                    }
+                    if (column.ColumnCode == "Column13")
+                    {
+                        column.ColumnAnswer = ansewr.Column13;
+                    }
+                    if (column.ColumnCode == "Column14")
+                    {
+                        column.ColumnAnswer = ansewr.Column14;
+                    }
+                    if (column.ColumnCode == "Column15")
+                    {
+                        column.ColumnAnswer = ansewr.Column15;
+                    }
+                }
+            }
+            return columnList;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -350,10 +450,64 @@ namespace com.yrtech.InventoryAPI.Service
                 findOne.Column7 = answer.Column7;
                 findOne.Column8 = answer.Column8;
                 findOne.Column9 = answer.Column9;
+                findOne.Column10 = answer.Column10;
+                findOne.Column11 = answer.Column11;
+                findOne.Column12 = answer.Column12;
+                findOne.Column13 = answer.Column13;
+                findOne.Column14 = answer.Column14;
+                findOne.Column15 = answer.Column15;
                 answer = findOne;
             }
             db.SaveChanges();
             return answer;
+        }
+        public List<AnswerDto> AnswerCheckTypeCodeToId(List<AnswerDto> list)
+        {
+            string sql = "";
+            Type t = typeof(AnswerDto);
+            SqlParameter[] para = new SqlParameter[] { };
+            sql += @"CREATE TABLE #T(
+                                    CREATE TABLE [dbo].[Answer](
+	                                [ProjectId] [int] NOT NULL,
+	                                [ShopCode] [nvarchar](100) NULL,
+	                                [ShopName] [nvarchar](100) NULL,
+	                                [CheckCode] [nvarchar](max) NOT NULL,
+	                                [CheckTypeId] [int] NULL,
+	                                [Remark] [nvarchar](max) NULL,
+	                                [Column1] [nvarchar](100) NULL,
+	                                [Column2] [nvarchar](100) NULL,
+	                                [Column3] [nvarchar](100) NULL,
+	                                [Column4] [nvarchar](100) NULL,
+	                                [Column5] [nvarchar](100) NULL,
+	                                [Column6] [nvarchar](100) NULL,
+	                                [Column7] [nvarchar](100) NULL,
+	                                [Column8] [nvarchar](100) NULL,
+	                                [Column9] [nvarchar](100) NULL,
+	                                [Column10] [nvarchar](100) NULL,
+	                                [Column11] [nvarchar](100) NULL,
+	                                [Column12] [nvarchar](100) NULL,
+	                                [Column13] [nvarchar](100) NULL,
+	                                [Column14] [nvarchar](100) NULL,
+	                                [Column15] [nvarchar](100) NULL,
+	                                [AddCheck] [nvarchar](50) NULL)
+                                    ImportChk BIT NULL,
+                                    ImportRemark NVARCHAR(50) NULL )
+                                    ";
+            foreach (AnswerDto answer in list)
+            {
+                sql += " INSERT INTO #T (ProjectId,CheckCode,CheckTypeName,ImportChk)VALUES('" + answer.ProjectId.ToString() + "','";
+                sql += answer.CheckCode + "','";
+                sql += answer.CheckTypeName + "','";
+                sql += "1";
+                sql += "')";
+            }
+            sql += @" UPDATAE #T 
+                     SET CheckTypeId = B.CheckTypeId
+                    FROM  #T A INNER JOIN CheckType B ON A.ProjectId = B.ProjectId AND A.CheckTypeName = B.CheckTypeName AND B.UseChk=1";
+            sql += @" UPDATE #T SET ImportChk=0, ImportRemark = '检查类型不存在或已不使用';
+                      WHERE CheckTypeId=0 OR CheckTypeId IS NULL";
+            sql += " SELECT * FROM #T ";
+            return db.Database.SqlQuery(t, sql, para).Cast<AnswerDto>().ToList();
         }
         /// <summary>
         /// 
@@ -377,7 +531,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             db.SaveChanges();
         }
-        public void DeleteShopAnswerPhoto(string answerId,string photoId)
+        public void DeleteShopAnswerPhoto(string answerId, string photoId)
         {
             if (photoId == null) photoId = "";
             string sql = "";
@@ -440,7 +594,7 @@ namespace com.yrtech.InventoryAPI.Service
             }
             return db.Database.SqlQuery(t, sql, para).Cast<AnswerShopInfoDto>().ToList();
         }
-        public string GetFolderName(string projectId, string fileTypeCode, string shopCode, string shopName, string checkCode, string photoName)
+        public string GetFolderName(string projectId, string fileTypeCode, string shopCode, string shopName, string checkCode, string photoName, string checkType, List<ExtendColumnProjectDto> columneList)
         {
             string folderName = "";
             List<FileRenameDto> fileRenameList_Folder = masterService.GetFileRename(projectId, fileTypeCode);
@@ -471,20 +625,39 @@ namespace com.yrtech.InventoryAPI.Service
                     }
                     if (fileRenameList_Folder[i].OptionCode == "CheckCode")
                     {
-                        if (Convert.ToInt32(fileRenameList_Folder[i].EndIndex) > checkCode.Length)
+                        if (Convert.ToInt32(fileRenameList_Folder[i].EndIndex) > checkCode.Length || fileRenameList_Folder[i].EndIndex == null)
                         {
                             fileRenameList_Folder[i].EndIndex = checkCode.Length;// 如果设置的结束位置大于总长度，取全部
                         }
-                        if (Convert.ToInt32(fileRenameList_Folder[i].StartIndex) > checkCode.Length)
+                        if (Convert.ToInt32(fileRenameList_Folder[i].StartIndex) > checkCode.Length || fileRenameList_Folder[i].StartIndex == null)
                         {
                             fileRenameList_Folder[i].StartIndex = 1;// 若设置的开始位置大于总长度，从0开始
                         }
-                        checkCode = checkCode.Substring(Convert.ToInt32(fileRenameList_Folder[i].StartIndex) - 1, Convert.ToInt32(fileRenameList_Folder[i].EndIndex) - Convert.ToInt32(fileRenameList_Folder[i].StartIndex)+1);
+
+                        checkCode = checkCode.Substring(Convert.ToInt32(fileRenameList_Folder[i].StartIndex) - 1, Convert.ToInt32(fileRenameList_Folder[i].EndIndex) - Convert.ToInt32(fileRenameList_Folder[i].StartIndex) + 1);
                         folderName += checkCode + fileRenameList_Folder[i].ConnectStr;
+                    }
+                    if (fileRenameList_Folder[i].OptionCode == "CheckType")
+                    {
+                        folderName += checkType + fileRenameList_Folder[i].ConnectStr;
                     }
                     if (fileRenameList_Folder[i].OptionCode == "PhotoName")
                     {
                         folderName += photoName + fileRenameList_Folder[i].ConnectStr;
+                    }
+                    foreach (ExtendColumnProjectDto column in columneList)
+                    {
+                        if (fileRenameList_Folder[i].OptionCode == column.ColumnCode)
+                        {
+                            if (!string.IsNullOrEmpty(column.ColumnAnswer))
+                            {
+                                folderName += column.ColumnAnswer + fileRenameList_Folder[i].ConnectStr;
+                            }
+                            else
+                            {
+                                folderName += "无数据" + fileRenameList_Folder[i].ConnectStr;
+                            }
+                        }
                     }
                 }
             }
@@ -512,10 +685,10 @@ namespace com.yrtech.InventoryAPI.Service
             // 从OSS把文件下载到服务器
             foreach (AnswerPhotoDto photo in list)
             {
-                string folder1 = GetFolderName(photo.ProjectId.ToString(), "1", photo.ShopCode, photo.ShopName, "", "");
-                string folder2 = GetFolderName(photo.ProjectId.ToString(), "2", photo.ShopCode, photo.ShopName, "", "");
-                string folder3 = GetFolderName(photo.ProjectId.ToString(), "3", photo.ShopCode, photo.ShopName, "", "");
-                string folder4 = GetFolderName(photo.ProjectId.ToString(), "4", photo.ShopCode, photo.ShopName, photo.CheckCode, photo.PhotoName);
+                string folder1 = GetFolderName(photo.ProjectId.ToString(), "1", photo.ShopCode, photo.ShopName, "", "", photo.CheckTypeName, GetAnswerColumnListByAnswerId(photo.AnswerId.ToString(), photo.ProjectId.ToString()));
+                string folder2 = GetFolderName(photo.ProjectId.ToString(), "2", photo.ShopCode, photo.ShopName, "", "", photo.CheckTypeName, GetAnswerColumnListByAnswerId(photo.AnswerId.ToString(), photo.ProjectId.ToString()));
+                string folder3 = GetFolderName(photo.ProjectId.ToString(), "3", photo.ShopCode, photo.ShopName, "", "", photo.CheckTypeName, GetAnswerColumnListByAnswerId(photo.AnswerId.ToString(), photo.ProjectId.ToString()));
+                string folder4 = GetFolderName(photo.ProjectId.ToString(), "4", photo.ShopCode, photo.ShopName, photo.CheckCode, photo.PhotoName, photo.CheckTypeName, GetAnswerColumnListByAnswerId(photo.AnswerId.ToString(), photo.ProjectId.ToString()));
                 if (!string.IsNullOrEmpty(folder4)) // 照片的命名方式是否设置，如果设置了按照设置的方式下载
                 { // 创建1级目录
                     if (!string.IsNullOrEmpty(folder1))
@@ -542,7 +715,7 @@ namespace com.yrtech.InventoryAPI.Service
                     }
                     if (!string.IsNullOrEmpty(folder4))
                     {
-                        string filePath = (folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg").Replace("\\",@"\");
+                        string filePath = (folder + @"\" + folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg").Replace("\\", @"\");
                         if (File.Exists(filePath))
                         {
                             File.Delete(filePath);
@@ -555,7 +728,7 @@ namespace com.yrtech.InventoryAPI.Service
                         {
                         }
                     }
-                    
+
                 }
                 else // 未设置文件命名方式，使用默认的方式进行下载
                 {
@@ -586,7 +759,7 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 return OSSClientHelper.PutObjectMultipart("DownTempFile" + @"/" + downLoadfolder + ".zip", downLoadPath);
             }
-          //  return downLoadPath.Replace(defaultPath, "");
+            //  return downLoadPath.Replace(defaultPath, "");
         }
         public void SaveRecheck(Recheck recheck)
         {
@@ -614,7 +787,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="zipedFile"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        private  bool ZipInForFiles(List<AnswerPhotoDto> fileNames, string foler, string folderToZip, string zipedFile, int level)
+        private bool ZipInForFiles(List<AnswerPhotoDto> fileNames, string foler, string folderToZip, string zipedFile, int level)
         {
             bool isSuccess = true;
             if (!Directory.Exists(folderToZip))
@@ -637,18 +810,18 @@ namespace com.yrtech.InventoryAPI.Service
 
                     foreach (AnswerPhotoDto photo in fileNames)
                     {
-                        string folder1 = GetFolderName(photo.ProjectId.ToString(), "1", photo.ShopCode, photo.ShopName, "", "");
-                        string folder2 = GetFolderName(photo.ProjectId.ToString(), "2", photo.ShopCode, photo.ShopName, "", "");
-                        string folder3 = GetFolderName(photo.ProjectId.ToString(), "3", photo.ShopCode, photo.ShopName, "", "");
-                        string folder4 = GetFolderName(photo.ProjectId.ToString(), "4", photo.ShopCode, photo.ShopName, photo.CheckCode, photo.PhotoName);
+                        string folder1 = GetFolderName(photo.ProjectId.ToString(), "1", photo.ShopCode, photo.ShopName, "", "", photo.CheckTypeName, GetAnswerColumnListByAnswerId(photo.AnswerId.ToString(), photo.ProjectId.ToString()));
+                        string folder2 = GetFolderName(photo.ProjectId.ToString(), "2", photo.ShopCode, photo.ShopName, "", "", photo.CheckTypeName, GetAnswerColumnListByAnswerId(photo.AnswerId.ToString(), photo.ProjectId.ToString()));
+                        string folder3 = GetFolderName(photo.ProjectId.ToString(), "3", photo.ShopCode, photo.ShopName, "", "", photo.CheckTypeName, GetAnswerColumnListByAnswerId(photo.AnswerId.ToString(), photo.ProjectId.ToString()));
+                        string folder4 = GetFolderName(photo.ProjectId.ToString(), "4", photo.ShopCode, photo.ShopName, photo.CheckCode, photo.PhotoName, photo.CheckTypeName, GetAnswerColumnListByAnswerId(photo.AnswerId.ToString(), photo.ProjectId.ToString()));
                         string photoName = "";
                         if (string.IsNullOrEmpty(folder4)) // 未设置照片命名方式，使用默认的下载方式
                         {
-                             photoName = photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg";
+                            photoName = photo.ProjectId + @"\" + photo.ShopCode + @"\" + photo.CheckCode + "_" + photo.PhotoName + ".jpg";
                         }
                         else
                         {
-                             photoName = (folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg").Replace("\\",@"\");
+                            photoName = (folder1 + @"\" + folder2 + @"\" + folder3 + @"\" + folder4 + ".jpg").Replace("\\", @"\");
                         }
                         string file = Path.Combine(folderToZip, foler, photoName);
                         string extension = string.Empty;

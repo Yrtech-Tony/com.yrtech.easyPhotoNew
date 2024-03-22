@@ -30,7 +30,12 @@ namespace com.yrtech.InventoryAPI.DTO
         public string Column7 { get; set; }
         public string Column8 { get; set; }
         public string Column9 { get; set; }
-        
+        public string Column10 { get; set; }
+        public string Column11 { get; set; }
+        public string Column12 { get; set; }
+        public string Column13 { get; set; }
+        public string Column14 { get; set; }
+        public string Column15 { get; set; }
         public string AddCheck { get; set; }
         public bool? ImportChk { get; set; }
         public string ImportRemark { get; set; }
