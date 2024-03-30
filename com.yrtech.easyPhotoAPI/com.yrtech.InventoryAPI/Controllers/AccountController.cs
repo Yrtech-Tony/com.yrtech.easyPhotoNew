@@ -20,9 +20,10 @@ namespace com.yrtech.InventoryAPI.Controllers
         {
             try
             {
-                List<UserInfo> accountlist = accountService.Login(projectId,accountId, password);
+                List<UserInfoDto> accountlist = accountService.Login(projectId,accountId, password);
                 if (accountlist != null && accountlist.Count != 0)
                 {
+                    accountlist[0].OSSInfo = masterService.GetHiddenCode("OSS信息", "");
                     return new APIResult() { Status = true, Body = CommonHelper.Encode(accountlist) };
                 }
                 else

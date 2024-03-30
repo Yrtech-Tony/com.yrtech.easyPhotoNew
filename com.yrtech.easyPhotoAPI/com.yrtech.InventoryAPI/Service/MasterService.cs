@@ -10,6 +10,28 @@ namespace com.yrtech.InventoryAPI.Service
     public class MasterService
     {
         com.yrtech.InventoryDAL.InventoryDAL db = new InventoryDAL.InventoryDAL();
+        // 获取Survey 的 HiddenColum
+        public List<HiddenColumn> GetHiddenCode(string hiddenCodeGroup, string hiddenCode)
+        {
+
+            if (hiddenCodeGroup == null) hiddenCodeGroup = "";
+            if (hiddenCode == null) hiddenCode = "";
+            Type t = typeof(HiddenColumn);
+            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@HiddenCodeGroup", hiddenCodeGroup),
+                                                        new SqlParameter("@HiddenCode", hiddenCode) };
+            string sql = "";
+            sql = @"SELECT *
+                   FROM [com.yrtech.survey].[dbo].[HiddenColumn] WHERE 1=1";
+            if (!string.IsNullOrEmpty(hiddenCodeGroup))
+            {
+                sql += " AND HiddenCodeGroup = @HiddenCodeGroup";
+            }
+            if (!string.IsNullOrEmpty(hiddenCode))
+            {
+                sql += " AND HiddenCode = @HiddenCode";
+            }
+            return db.Database.SqlQuery(t, sql, para).Cast<HiddenColumn>().ToList();
+        }
         public List<AppVersion> GetAppVersion()
         {
             SqlParameter[] para = new SqlParameter[] { };
