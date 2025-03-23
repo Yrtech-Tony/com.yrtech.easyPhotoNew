@@ -29,6 +29,33 @@ namespace com.yrtech.InventoryAPI.Service
                             AND GETDATE()<ExpireDateTime";
             return db.Database.SqlQuery(t, sql, para).Cast<UserInfoDto>().ToList();
         }
-      
+        public List<UserInfoDto> LoginForMobile(string accountId, string password)
+        {
+            SqlParameter[] para = new SqlParameter[] {new SqlParameter("@AccountId", accountId),
+                                                       new SqlParameter("@Password",password)};
+            Type t = typeof(UserInfoDto);
+            string sql = @"SELECT A.*
+                            FROM UserInfo A 
+                            WHERE ShopCode = @AccountId AND [Password] = @Password
+                            AND GETDATE()<ExpireDateTime";
+            return db.Database.SqlQuery(t, sql, para).Cast<UserInfoDto>().ToList();
+        }
+        public void UserIdOpenIdSave(UserInfoOpenId userInfoOpenId)
+        {
+            UserInfoOpenId findOne = db.UserInfoOpenId.Where(x => (x.UserId == userInfoOpenId.UserId && x.OpenId == userInfoOpenId.OpenId)).FirstOrDefault();
+            if (findOne == null)
+            {
+                userInfoOpenId.InDateTime = DateTime.Now;
+                userInfoOpenId.ModifyDateTime = DateTime.Now;
+                db.UserInfoOpenId.Add(userInfoOpenId);
+            }
+            else
+            {
+                findOne.TelNO = userInfoOpenId.TelNO;
+                findOne.ModifyDateTime = DateTime.Now;
+                findOne.ModifyUserId = userInfoOpenId.ModifyUserId;
+            }
+            db.SaveChanges();
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace com.yrtech.InventoryAPI.Service
         // 导出用户信息
         public string UserInfoExport(string projectId, string key)
         {
-            List<UserInfo> list = masterService.GetUserInfo(projectId, key,"");
+            List<UserInfo> list = masterService.GetUserInfo(projectId, key, "");
             Workbook book = Workbook.Load(basePath + @"Content\Excel\" + "UserInfoExport.xlsx", false);
             //填充数据
             Worksheet sheet = book.Worksheets[0];
@@ -79,8 +79,9 @@ namespace com.yrtech.InventoryAPI.Service
                 {
                     userInfo.ExpireDateTime = null;
                 }
-                else {
-                    userInfo.ExpireDateTime = Convert.ToDateTime(sheet.GetCell("B" + (i + 2)).Value.ToString()+" 23:59:59");
+                else
+                {
+                    userInfo.ExpireDateTime = Convert.ToDateTime(sheet.GetCell("B" + (i + 2)).Value.ToString() + " 23:59:59");
                 }
                 if (string.IsNullOrEmpty(sheet.GetCell("C" + (i + 2)).Value.ToString()))
                 {
@@ -88,7 +89,7 @@ namespace com.yrtech.InventoryAPI.Service
                 }
                 else
                 {
-                    userInfo.PhotoExpireDateTime = Convert.ToDateTime(sheet.GetCell("C" + (i + 2)).Value.ToString()+ " 23:59:59");
+                    userInfo.PhotoExpireDateTime = Convert.ToDateTime(sheet.GetCell("C" + (i + 2)).Value.ToString() + " 23:59:59");
                 }
                 list.Add(userInfo);
             }
@@ -128,23 +129,85 @@ namespace com.yrtech.InventoryAPI.Service
                 answer.Column13 = sheet.GetCell("Q" + (i + 2)).Value == null ? "" : sheet.GetCell("Q" + (i + 2)).Value.ToString().Trim();
                 answer.Column14 = sheet.GetCell("R" + (i + 2)).Value == null ? "" : sheet.GetCell("R" + (i + 2)).Value.ToString().Trim();
                 answer.Column15 = sheet.GetCell("S" + (i + 2)).Value == null ? "" : sheet.GetCell("S" + (i + 2)).Value.ToString().Trim();
+                answer.Column16 = sheet.GetCell("T" + (i + 2)).Value == null ? "" : sheet.GetCell("T" + (i + 2)).Value.ToString().Trim();
+                answer.Column17 = sheet.GetCell("U" + (i + 2)).Value == null ? "" : sheet.GetCell("U" + (i + 2)).Value.ToString().Trim();
+                answer.Column18 = sheet.GetCell("V" + (i + 2)).Value == null ? "" : sheet.GetCell("V" + (i + 2)).Value.ToString().Trim();
+                answer.Column19 = sheet.GetCell("W" + (i + 2)).Value == null ? "" : sheet.GetCell("W" + (i + 2)).Value.ToString().Trim();
+                answer.Column20 = sheet.GetCell("X" + (i + 2)).Value == null ? "" : sheet.GetCell("X" + (i + 2)).Value.ToString().Trim();
                 list.Add(answer);
             }
             return list;
         }
 
+        // 任务
+        public List<TaskDto> TaskAndAnswer(string ossPath)
+        {
+            // 从OSS下载文件
+            string downLoadFilePath = basePath + @"Content\Excel\ExcelImport\" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".xlsx";
+            OSSClientHelper.GetObject(ossPath, downLoadFilePath);
+            Workbook book = Workbook.Load(downLoadFilePath, false);
+            #region 任务解析
+            Worksheet sheet_task = book.Worksheets[0];
+            List<TaskDto> taskList = new List<TaskDto>();
+            for (int i = 0; i < 100000; i++)
+            {
+                string taskCode = sheet_task.GetCell("A" + (i + 2)).Value == null ? "" : sheet_task.GetCell("A" + (i + 2)).Value.ToString().Trim();
+                if (string.IsNullOrEmpty(taskCode)) break;
+                TaskDto task = new TaskDto();
+                // 任务代码
+                task.TaskCode = taskCode;
+                // 任务名称
+                task.TaskName = sheet_task.GetCell("B" + (i + 2)).Value == null ? "" : sheet_task.GetCell("B" + (i + 2)).Value.ToString().Trim();
+                // 开始日期
+                object startDate = sheet_task.GetCell("C" + (i + 2)).Value;
+                if (startDate == null)
+                {
+                    task.StartDate = null;
+                }
+                else
+                {
+                    DateTime startDate_date;
+                    if (DateTime.TryParse(startDate.ToString(), out startDate_date))
+                    {
+                        task.StartDate = Convert.ToDateTime(startDate);
+                    }
+
+                }
+                // 结束日期
+                object endDate = sheet_task.GetCell("D" + (i + 2)).Value;
+                if (endDate == null)
+                {
+                    task.ExpireDateTime = null;
+                }
+                else
+                {
+                    DateTime endDate_date;
+                    if (DateTime.TryParse(endDate.ToString(), out endDate_date))
+                    {
+                        task.ExpireDateTime = Convert.ToDateTime(endDate);
+                    }
+
+                }
+                taskList.Add(task);
+            }
+
+            #endregion
+           
+            return taskList;
+        }
         // 导出清单
         public string AnswerExport(string projectId, string shopCode)
         {
-            List<Projects> projectList = masterService.GetProject("", projectId, "", "", "", "", "");
-            //string path = "";
-            if (projectList != null && projectList.Count > 0 && projectList[0].ExportRecheck == true)
-            {
-               return  AnswerExportRecheck(projectId, shopCode);
-            }
-            else {
-               return  AnswerExportNoRecheck(projectId, shopCode);
-            }
+            //List<Projects> projectList = masterService.GetProject("","", projectId, "", "", );
+            ////string path = "";
+            //if (projectList != null && projectList.Count > 0 && projectList[0].ExportRecheck == true)
+            //{
+            //   return  AnswerExportRecheck(projectId, shopCode);
+            //}
+            //else {
+            //   return  AnswerExportNoRecheck(projectId, shopCode);
+            //}
+            return "";
         }
         public string AnswerExportRecheck(string projectId, string shopCode)
         {
@@ -169,7 +232,7 @@ namespace com.yrtech.InventoryAPI.Service
             Worksheet sheet = book.Worksheets[0];
 
             // 填充表头
-            string[] head = { "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W" };
+            string[] head = { "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB" };
             for (int i = 0; i < ColumnList_List.Count; i++)
             {
                 sheet.GetCell(head[i] + 5).Value = ColumnList_List[i].ColumnName;
@@ -307,17 +370,64 @@ namespace com.yrtech.InventoryAPI.Service
                 }
                 List<ExtendColumnProjectDto> ColumnList_List_Column15 = ColumnList_List.Where(x => x.ColumnCode == "Column15").ToList();
                 if (ColumnList_List_Column15 != null && ColumnList_List_Column15.Count > 0 && ColumnList_List_Column15[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column15))
-                { sheet.GetCell("W" + (rowIndex + 5)).Value = DateTime.Parse(item.Column15); }
+                {
+                    sheet.GetCell("W" + (rowIndex + 5)).Value = DateTime.Parse(item.Column15);
+                }
                 else
                 {
                     sheet.GetCell("W" + (rowIndex + 5)).Value = item.Column15;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column16 = ColumnList_List.Where(x => x.ColumnCode == "Column16").ToList();
+                if (ColumnList_List_Column16 != null && ColumnList_List_Column16.Count > 0 && ColumnList_List_Column16[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column16))
+                {
+                    sheet.GetCell("X" + (rowIndex + 5)).Value = DateTime.Parse(item.Column16);
+                }
+                else
+                {
+                    sheet.GetCell("X" + (rowIndex + 5)).Value = item.Column16;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column17 = ColumnList_List.Where(x => x.ColumnCode == "Column17").ToList();
+                if (ColumnList_List_Column17 != null && ColumnList_List_Column17.Count > 0 && ColumnList_List_Column17[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column17))
+                {
+                    sheet.GetCell("Y" + (rowIndex + 5)).Value = DateTime.Parse(item.Column17);
+                }
+                else
+                {
+                    sheet.GetCell("Y" + (rowIndex + 5)).Value = item.Column17;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column18 = ColumnList_List.Where(x => x.ColumnCode == "Column18").ToList();
+                if (ColumnList_List_Column18 != null && ColumnList_List_Column18.Count > 0 && ColumnList_List_Column18[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column18))
+                {
+                    sheet.GetCell("Z" + (rowIndex + 5)).Value = DateTime.Parse(item.Column18);
+                }
+                else
+                {
+                    sheet.GetCell("Z" + (rowIndex + 5)).Value = item.Column18;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column19 = ColumnList_List.Where(x => x.ColumnCode == "Column19").ToList();
+                if (ColumnList_List_Column19 != null && ColumnList_List_Column19.Count > 0 && ColumnList_List_Column19[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column19))
+                {
+                    sheet.GetCell("AA" + (rowIndex + 5)).Value = DateTime.Parse(item.Column19);
+                }
+                else
+                {
+                    sheet.GetCell("AA" + (rowIndex + 5)).Value = item.Column19;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column20 = ColumnList_List.Where(x => x.ColumnCode == "Column20").ToList();
+                if (ColumnList_List_Column20 != null && ColumnList_List_Column20.Count > 0 && ColumnList_List_Column20[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column20))
+                {
+                    sheet.GetCell("AB" + (rowIndex + 5)).Value = DateTime.Parse(item.Column20);
+                }
+                else
+                {
+                    sheet.GetCell("AB" + (rowIndex + 5)).Value = item.Column20;
                 }
                 rowIndex++;
             }
             //填充数据
             Worksheet sheet1 = book.Worksheets[1];
             // 填充表头
-            string[] head1 = { "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V" };
+            string[] head1 = { "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA" };
             for (int i = 0; i < ColumnList_add.Count; i++)
             {
                 sheet1.GetCell(head1[i] + 5).Value = ColumnList_add[i].ColumnName;
@@ -451,10 +561,57 @@ namespace com.yrtech.InventoryAPI.Service
                 }
                 List<ExtendColumnProjectDto> ColumnList_List_Column15 = ColumnList_List.Where(x => x.ColumnCode == "Column15").ToList();
                 if (ColumnList_List_Column15 != null && ColumnList_List_Column15.Count > 0 && ColumnList_List_Column15[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column15))
-                { sheet1.GetCell("V" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column15); }
+                {
+                    sheet1.GetCell("V" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column15);
+                }
                 else
                 {
                     sheet1.GetCell("V" + (rowIndex1 + 5)).Value = item.Column15;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column16 = ColumnList_List.Where(x => x.ColumnCode == "Column16").ToList();
+                if (ColumnList_List_Column16 != null && ColumnList_List_Column16.Count > 0 && ColumnList_List_Column16[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column16))
+                {
+                    sheet1.GetCell("W" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column16);
+                }
+                else
+                {
+                    sheet1.GetCell("W" + (rowIndex1 + 5)).Value = item.Column16;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column17 = ColumnList_List.Where(x => x.ColumnCode == "Column17").ToList();
+                if (ColumnList_List_Column17 != null && ColumnList_List_Column17.Count > 0 && ColumnList_List_Column17[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column17))
+                {
+                    sheet1.GetCell("X" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column17);
+                }
+                else
+                {
+                    sheet1.GetCell("X" + (rowIndex1 + 5)).Value = item.Column17;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column18 = ColumnList_List.Where(x => x.ColumnCode == "Column18").ToList();
+                if (ColumnList_List_Column18 != null && ColumnList_List_Column18.Count > 0 && ColumnList_List_Column18[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column18))
+                {
+                    sheet1.GetCell("Y" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column18);
+                }
+                else
+                {
+                    sheet1.GetCell("Y" + (rowIndex1 + 5)).Value = item.Column18;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column19 = ColumnList_List.Where(x => x.ColumnCode == "Column19").ToList();
+                if (ColumnList_List_Column19 != null && ColumnList_List_Column19.Count > 0 && ColumnList_List_Column19[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column19))
+                {
+                    sheet1.GetCell("Z" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column19);
+                }
+                else
+                {
+                    sheet1.GetCell("Z" + (rowIndex1 + 5)).Value = item.Column19;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column20 = ColumnList_List.Where(x => x.ColumnCode == "Column20").ToList();
+                if (ColumnList_List_Column20 != null && ColumnList_List_Column20.Count > 0 && ColumnList_List_Column20[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column20))
+                {
+                    sheet1.GetCell("AA" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column20);
+                }
+                else
+                {
+                    sheet1.GetCell("AA" + (rowIndex1 + 5)).Value = item.Column20;
                 }
                 rowIndex1++;
             }
@@ -500,8 +657,8 @@ namespace com.yrtech.InventoryAPI.Service
         }
         public string AnswerExportNoRecheck(string projectId, string shopCode)
         {
-            List<AnswerDto> list_N = answerService.GetShopAnswerListAll("",projectId, "", "", "", "","N", shopCode);
-            List<AnswerDto> list_Y = answerService.GetShopAnswerListAll("",projectId, "", "", "", "", "Y", shopCode);
+            List<AnswerDto> list_N = answerService.GetShopAnswerListAll("", projectId, "", "", "", "", "N", shopCode);
+            List<AnswerDto> list_Y = answerService.GetShopAnswerListAll("", projectId, "", "", "", "", "Y", shopCode);
             List<AnswerPhotoDto> list_Photo = answerService.GetAnswerPhotoExport("", projectId, shopCode);
             foreach (AnswerDto answerDto in list_N)
             {
@@ -514,17 +671,17 @@ namespace com.yrtech.InventoryAPI.Service
             // 扩展列
             List<ExtendColumnProjectDto> ColumnList_List = masterService.GetExtendColumnProject(projectId, "");
             // 在新增显示的扩展列
-            List<ExtendColumnProjectDto> ColumnList_add = ColumnList_List.Where(x => x.AddShowChk==true).ToList();
+            List<ExtendColumnProjectDto> ColumnList_add = ColumnList_List.Where(x => x.AddShowChk == true).ToList();
 
             Workbook book = Workbook.Load(basePath + @"Content\Excel\" + "AnswerExport.xlsx", false);
             //填充数据
             Worksheet sheet = book.Worksheets[0];
-            
+
             // 填充表头
-            string[] head ={ "H", "I","J", "K", "L", "M", "N", "O", "P","Q", "R", "S", "T", "U", "V", "W" };
-            for (int i = 0;i< ColumnList_List.Count;i++)
+            string[] head = { "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA" };
+            for (int i = 0; i < ColumnList_List.Count; i++)
             {
-                sheet.GetCell(head[i]+5).Value = ColumnList_List[i].ColumnName;
+                sheet.GetCell(head[i] + 5).Value = ColumnList_List[i].ColumnName;
             }
             int rowIndex = 1;
             foreach (AnswerDto item in list_N)
@@ -538,9 +695,9 @@ namespace com.yrtech.InventoryAPI.Service
                 //else {
                 //    sheet.GetCell("B" + (rowIndex + 5)).Value = "否";
                 //}
-                
+
                 //经销商代码
-                
+
                 sheet.GetCell("B" + (rowIndex + 5)).Value = item.ShopCode;
                 //经销商名称
                 sheet.GetCell("C" + (rowIndex + 5)).Value = item.ShopName;
@@ -559,7 +716,7 @@ namespace com.yrtech.InventoryAPI.Service
                 }
                 sheet.GetCell("G" + (rowIndex + 5)).Value = item.RemarkName;
                 List<ExtendColumnProjectDto> ColumnList_List_Column1 = ColumnList_List.Where(x => x.ColumnCode == "Column1").ToList();
-                if (ColumnList_List_Column1 != null && ColumnList_List_Column1.Count > 0 && ColumnList_List_Column1[0].ColumnType == "2"&&!string.IsNullOrEmpty(item.Column1))
+                if (ColumnList_List_Column1 != null && ColumnList_List_Column1.Count > 0 && ColumnList_List_Column1[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column1))
                 { sheet.GetCell("H" + (rowIndex + 5)).Value = DateTime.Parse(item.Column1); }
                 else
                 {
@@ -658,17 +815,64 @@ namespace com.yrtech.InventoryAPI.Service
                 }
                 List<ExtendColumnProjectDto> ColumnList_List_Column15 = ColumnList_List.Where(x => x.ColumnCode == "Column15").ToList();
                 if (ColumnList_List_Column15 != null && ColumnList_List_Column15.Count > 0 && ColumnList_List_Column15[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column15))
-                { sheet.GetCell("V" + (rowIndex + 5)).Value = DateTime.Parse(item.Column15); }
+                {
+                    sheet.GetCell("V" + (rowIndex + 5)).Value = DateTime.Parse(item.Column15);
+                }
                 else
                 {
                     sheet.GetCell("V" + (rowIndex + 5)).Value = item.Column15;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column16 = ColumnList_List.Where(x => x.ColumnCode == "Column16").ToList();
+                if (ColumnList_List_Column16 != null && ColumnList_List_Column16.Count > 0 && ColumnList_List_Column16[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column16))
+                {
+                    sheet.GetCell("W" + (rowIndex + 5)).Value = DateTime.Parse(item.Column16);
+                }
+                else
+                {
+                    sheet.GetCell("W" + (rowIndex + 5)).Value = item.Column16;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column17 = ColumnList_List.Where(x => x.ColumnCode == "Column17").ToList();
+                if (ColumnList_List_Column17 != null && ColumnList_List_Column17.Count > 0 && ColumnList_List_Column17[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column17))
+                {
+                    sheet.GetCell("X" + (rowIndex + 5)).Value = DateTime.Parse(item.Column17);
+                }
+                else
+                {
+                    sheet.GetCell("X" + (rowIndex + 5)).Value = item.Column17;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column18 = ColumnList_List.Where(x => x.ColumnCode == "Column18").ToList();
+                if (ColumnList_List_Column18 != null && ColumnList_List_Column18.Count > 0 && ColumnList_List_Column18[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column18))
+                {
+                    sheet.GetCell("Y" + (rowIndex + 5)).Value = DateTime.Parse(item.Column18);
+                }
+                else
+                {
+                    sheet.GetCell("Y" + (rowIndex + 5)).Value = item.Column18;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column19 = ColumnList_List.Where(x => x.ColumnCode == "Column19").ToList();
+                if (ColumnList_List_Column19 != null && ColumnList_List_Column19.Count > 0 && ColumnList_List_Column19[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column19))
+                {
+                    sheet.GetCell("Z" + (rowIndex + 5)).Value = DateTime.Parse(item.Column19);
+                }
+                else
+                {
+                    sheet.GetCell("Z" + (rowIndex + 5)).Value = item.Column19;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column20 = ColumnList_List.Where(x => x.ColumnCode == "Column20").ToList();
+                if (ColumnList_List_Column20 != null && ColumnList_List_Column20.Count > 0 && ColumnList_List_Column20[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column20))
+                {
+                    sheet.GetCell("AA" + (rowIndex + 5)).Value = DateTime.Parse(item.Column20);
+                }
+                else
+                {
+                    sheet.GetCell("AA" + (rowIndex + 5)).Value = item.Column20;
                 }
                 rowIndex++;
             }
             //填充数据
             Worksheet sheet1 = book.Worksheets[1];
             // 填充表头
-            string[] head1 = { "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V" };
+            string[] head1 = { "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
             for (int i = 0; i < ColumnList_add.Count; i++)
             {
                 sheet1.GetCell(head1[i] + 5).Value = ColumnList_add[i].ColumnName;
@@ -802,10 +1006,57 @@ namespace com.yrtech.InventoryAPI.Service
                 }
                 List<ExtendColumnProjectDto> ColumnList_List_Column15 = ColumnList_List.Where(x => x.ColumnCode == "Column15").ToList();
                 if (ColumnList_List_Column15 != null && ColumnList_List_Column15.Count > 0 && ColumnList_List_Column15[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column15))
-                { sheet1.GetCell("U" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column15); }
+                {
+                    sheet1.GetCell("U" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column15);
+                }
                 else
                 {
                     sheet1.GetCell("U" + (rowIndex1 + 5)).Value = item.Column15;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column16 = ColumnList_List.Where(x => x.ColumnCode == "Column16").ToList();
+                if (ColumnList_List_Column16 != null && ColumnList_List_Column16.Count > 0 && ColumnList_List_Column16[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column16))
+                {
+                    sheet1.GetCell("V" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column16);
+                }
+                else
+                {
+                    sheet1.GetCell("V" + (rowIndex1 + 5)).Value = item.Column16;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column17 = ColumnList_List.Where(x => x.ColumnCode == "Column17").ToList();
+                if (ColumnList_List_Column17 != null && ColumnList_List_Column17.Count > 0 && ColumnList_List_Column17[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column17))
+                {
+                    sheet1.GetCell("W" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column17);
+                }
+                else
+                {
+                    sheet1.GetCell("W" + (rowIndex1 + 5)).Value = item.Column17;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column18 = ColumnList_List.Where(x => x.ColumnCode == "Column18").ToList();
+                if (ColumnList_List_Column18 != null && ColumnList_List_Column18.Count > 0 && ColumnList_List_Column18[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column18))
+                {
+                    sheet1.GetCell("X" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column18);
+                }
+                else
+                {
+                    sheet1.GetCell("X" + (rowIndex1 + 5)).Value = item.Column18;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column19 = ColumnList_List.Where(x => x.ColumnCode == "Column19").ToList();
+                if (ColumnList_List_Column19 != null && ColumnList_List_Column19.Count > 0 && ColumnList_List_Column19[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column19))
+                {
+                    sheet1.GetCell("Y" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column19);
+                }
+                else
+                {
+                    sheet1.GetCell("Y" + (rowIndex1 + 5)).Value = item.Column19;
+                }
+                List<ExtendColumnProjectDto> ColumnList_List_Column20 = ColumnList_List.Where(x => x.ColumnCode == "Column20").ToList();
+                if (ColumnList_List_Column20 != null && ColumnList_List_Column20.Count > 0 && ColumnList_List_Column20[0].ColumnType == "2" && !string.IsNullOrEmpty(item.Column20))
+                {
+                    sheet1.GetCell("Z" + (rowIndex1 + 5)).Value = DateTime.Parse(item.Column20);
+                }
+                else
+                {
+                    sheet1.GetCell("Z" + (rowIndex1 + 5)).Value = item.Column20;
                 }
                 rowIndex1++;
             }

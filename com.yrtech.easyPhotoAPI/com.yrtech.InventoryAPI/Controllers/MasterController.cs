@@ -52,19 +52,17 @@ namespace com.yrtech.InventoryAPI.Controllers
         }
         [HttpGet]
         [Route("Master/GetProject")]
-        public APIResult GetProject(string tenantId, string projectId, string brandId, string year, string expireDateTimeCheck)
+        public APIResult GetProject(string tenantId, string brandId, string projectId, string year,string projectCode, string projectName)
         {
             try
             {
-                // CommonHelper.log("tenantId" + tenantId + "projectId" + projectId);
-                List<Projects> projectList = masterService.GetProject(tenantId, projectId, "", "", brandId, year, expireDateTimeCheck);
+                List<ProjectDto> projectList = masterService.GetProject(tenantId, brandId,projectId,year,projectCode,projectName);
                 return new APIResult() { Status = true, Body = CommonHelper.Encode(projectList) };
             }
             catch (Exception ex)
             {
                 return new APIResult() { Status = false, Body = ex.Message.ToString() };
             }
-
         }
         /// <summary>
         /// 
@@ -85,12 +83,12 @@ namespace com.yrtech.InventoryAPI.Controllers
                 {
                     return new APIResult() { Status = false, Body = "期号名称不能为空" };
                 }
-                List<Projects> projectList_Code = masterService.GetProject(project.TenantId.ToString(), "", project.ProjectCode, "", project.BrandId.ToString(), "", "");
+                List<ProjectDto> projectList_Code = masterService.GetProject(project.TenantId.ToString(),project.BrandId.ToString(),"","",project.ProjectCode,"");
                 if (projectList_Code != null && projectList_Code.Count > 0 && projectList_Code[0].ProjectId != project.ProjectId)
                 {
                     return new APIResult() { Status = false, Body = "期号代码重复" };
                 }
-                List<Projects> projectList_Name = masterService.GetProject(project.TenantId.ToString(), "", "", project.ProjectName, project.BrandId.ToString(), "", "");
+                List<ProjectDto> projectList_Name = masterService.GetProject(project.TenantId.ToString(), project.BrandId.ToString(), "","", "",project.ProjectName);
                 if (projectList_Name != null && projectList_Name.Count > 0 && projectList_Name[0].ProjectId != project.ProjectId)
                 {
                     return new APIResult() { Status = false, Body = "期号名称重复" };

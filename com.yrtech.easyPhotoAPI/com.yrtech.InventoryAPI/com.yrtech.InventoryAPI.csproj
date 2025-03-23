@@ -52,7 +52,7 @@
       <HintPath>..\..\..\com.yrtech.SurveyAPI\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\..\..\com.yrtech.SurveyAPI\packages\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\packages\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Infragistics3.Documents.Excel.v11.1">
       <HintPath>..\packages\Infragistics3.Documents.Excel.v11.1.dll</HintPath>
@@ -187,6 +187,9 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
     <Compile Include="DTO\Account\AccountDto.cs" />
+    <Compile Include="DTO\Answer\TaskDto.cs" />
+    <Compile Include="DTO\Answer\TaskStatusDto.cs" />
+    <Compile Include="DTO\Answer\ProjectDto.cs" />
     <Compile Include="DTO\Answer\AnswerDto.cs" />
     <Compile Include="DTO\Answer\AnswerPhotoDto.cs" />
     <Compile Include="DTO\Answer\AnswerShopInfoDto.cs" />
@@ -258,18 +261,18 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\com.yrtech.InventoryDAL\com.yrtech.InventoryDAL.csproj">
-      <Project>{54e2b6c7-4374-4dc2-9435-0ee3b3ebc39d}</Project>
-      <Name>com.yrtech.InventoryDAL</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\com.yrtech.InventoryDAL\com.yrtech.InventoryDAL.csproj">
+      <Project>{54e2b6c7-4374-4dc2-9435-0ee3b3ebc39d}</Project>
+      <Name>com.yrtech.InventoryDAL</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

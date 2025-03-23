@@ -55,25 +55,29 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="year"></param>
         /// <param name="expireDateTimeCheck"></param>
         /// <returns></returns>
-        public List<Projects> GetProject(string tenantId, string projectId, string projectCode, string projectName, string brandId, string year, string expireDateTimeCheck)
+        public List<ProjectDto> GetProject(string tenantId, string brandId, string projectId,string year,string projectCode,string projectName)
         {
 
             if (projectId == null) projectId = "";
-            if (tenantId == null) tenantId = "";
-            if (year == null) year = "";
-            if (expireDateTimeCheck == null) expireDateTimeCheck = "";
             if (projectCode == null) projectCode = "";
             if (projectName == null) projectName = "";
+            if (tenantId == null) tenantId = "";
             if (brandId == null) brandId = "";
-            SqlParameter[] para = new SqlParameter[] { new SqlParameter("@ProjectCode", projectCode),
-                                                        new SqlParameter("@ProjectName", projectName),
+            if (year == null) year = "";
+
+
+            SqlParameter[] para = new SqlParameter[] {
                                                         new SqlParameter("@TenantId", tenantId),
+                                                        new SqlParameter("@BrandId", brandId),
                                                         new SqlParameter("@ProjectId", projectId),
+                                                        new SqlParameter("@ProjectCode", projectCode),
                                                         new SqlParameter("@Year", year),
-                                                        new SqlParameter("@BrandId", brandId)};
-            Type t = typeof(Projects);
+                                                        new SqlParameter("@ProjectName", projectName)
+            };
+            Type t = typeof(ProjectDto);
             string sql = "";
-            sql = @"SELECT * FROM Projects
+            sql = @"SELECT *
+                    FROM Projects  
                     WHERE 1=1 ";
             if (!string.IsNullOrEmpty(tenantId))
             {
@@ -87,30 +91,19 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 sql += " AND BrandId = @BrandId";
             }
-            if (!string.IsNullOrEmpty(projectCode))
-            {
-                sql += " AND ProjectCode = @ProjectCode";
-            }
-            if (!string.IsNullOrEmpty(projectName))
-            {
-                sql += " AND ProjectName = @ProjectName";
-            }
             if (!string.IsNullOrEmpty(year))
             {
                 sql += " AND Year = @Year";
             }
-            if (expireDateTimeCheck == "N") // N:没有过期的，不传查询全部
+            if (!string.IsNullOrEmpty(projectCode))
             {
-                sql += " AND GETDATE()<ExpireDateTime";
+                sql += " AND ProjectCode = @ProjectCode ";
             }
-            else if (expireDateTimeCheck == "Y")
+            if (!string.IsNullOrEmpty(projectName))
             {
-                sql += " AND GETDATE()>ExpireDateTime";
+                sql += " AND ProjectName = @ProjectName ";
             }
-
-            sql += " ORDER BY InDateTime DESC";
-            return db.Database.SqlQuery(t, sql, para).Cast<Projects>().ToList();
-
+           return db.Database.SqlQuery(t, sql, para).Cast<ProjectDto>().ToList();
         }
         /// <summary>
         /// 
@@ -129,7 +122,6 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 findOne.BrandId = project.BrandId;
                 findOne.BrandName = project.BrandName;
-                findOne.ExpireDateTime = project.ExpireDateTime;
                 findOne.ModifyUserId = project.ModifyUserId;
                 findOne.OrderNO = project.OrderNO;
                 findOne.ProjectCode = project.ProjectCode;
@@ -147,7 +139,7 @@ namespace com.yrtech.InventoryAPI.Service
         /// <param name="key"></param>
         /// <param name="shopCode"></param>
         /// <returns></returns>
-        public List<UserInfo> GetUserInfo(string projectId, string key,string shopCode)
+        public List<UserInfo> GetUserInfo(string projectId, string key, string shopCode)
         {
             if (projectId == null) projectId = "";
             if (key == null) key = "";
@@ -239,10 +231,10 @@ namespace com.yrtech.InventoryAPI.Service
             {
                 photoExpireDateTime = Convert.ToDateTime(userInfo.PhotoExpireDateTime).ToString("yyyy-MM-dd") + " 23:59:59";
             }
-            string sql = @"UPDATE UserInfo SET  ExpireDateTime = '"  + expireDateTime + "',"
-                        + " PhotoExpireDateTime = '"+ photoExpireDateTime + "'"
+            string sql = @"UPDATE UserInfo SET  ExpireDateTime = '" + expireDateTime + "',"
+                        + " PhotoExpireDateTime = '" + photoExpireDateTime + "'"
                         + " WHERE  ProjectId = '" + userInfo.ProjectId.ToString() + "'"
-                        +" AND ShopCode = '"+ userInfo.ShopCode+"'";
+                        + " AND ShopCode = '" + userInfo.ShopCode + "'";
             SqlParameter[] para = new SqlParameter[] { };
             db.Database.ExecuteSqlCommand(sql, para);
         }

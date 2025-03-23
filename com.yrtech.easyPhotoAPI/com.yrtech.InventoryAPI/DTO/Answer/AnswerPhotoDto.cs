@@ -11,6 +11,7 @@ namespace com.yrtech.InventoryAPI.DTO
         public long AnswerId { get; set; }
         public int PhotoId { get; set; }
         public int ProjectId { get; set; }
+        public int TaskId { get; set; }
         public string CheckCode { get; set; }
         public string PhotoName { get; set; }
         public string CheckTypeName { get; set; }
